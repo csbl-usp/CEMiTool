@@ -392,7 +392,7 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     PPI_wanted_pos <- posL[, c(1,2)]
     
     
-    if(split==TRUE){
+    if(split==TRUE){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         NewM_M <- ifelse(AorB == 2, paste0("M", mod, ".A"), paste0("M", mod, ".B"))
     }else{
         NewM_M <- paste0("M.", mod)
@@ -419,9 +419,9 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     # }
     # colnames(results_pos) <- append(colnames(results_pos)[1:3], 1:nPerm)
     
-    if(verbose) message("Doing permutations")
+    if(verbose) message("Doing permutations") # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     
-    results_perm <- foreach(icount(nPerm)) %do% {
+    results_perm <- foreach(icount(nPerm)) %do% { # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         random_pos <- geneS[as.character(Gpos2), sample(ncol(geneS), ncol(geneS))]
         CorMatrixB_pos <- cor(t(random_pos), tgeneSGpos2, use = "everything", method = corr.method)
         #results_pos <- cbind(results_pos, CorMatrixB_pos[as.matrix(PPI_wanted_pos)])
@@ -429,7 +429,7 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     }
     results_perm <- as.data.frame(results_perm)
     results_pos <- cbind(results_pos, results_perm)
-    colnames(results_pos) <- append(colnames(results_pos)[1:3], 1:nPerm)
+    colnames(results_pos) <- append(colnames(results_pos)[1:3], 1:nPerm) # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     stopImplicitCluster()
     
     #times <- results_pos[,4:ncol(results_pos)] < results_pos[,3]
@@ -462,12 +462,12 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     #message("Finished counting")
     
     PPI_wanted_pos[, "Correlation"] <- CorMatrix[as.matrix(PPI_wanted_pos)]
-    PPI_wanted_pos[, "P.value"] <- 1-times_bool/nPerm
+    PPI_wanted_pos[, "P.value"] <- 1-times_bool/nPerm # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     #	message("Function SplitModules:: rows with p-value above ", cutPvalue, " : ", sum(PPI_wanted_pos[, "P.value"] >= cutPvalue), " (", sum(PPI_wanted_pos[, "P.value"] >= cutPvalue)/nrow(PPI_wanted_pos), ")")
     #	message("Function SplitModules:: rows with p-value below ", cutPvalue, " : ", sum(PPI_wanted_pos[, "P.value"] < cutPvalue), " (", sum(PPI_wanted_pos[, "P.value"] < cutPvalue)/nrow(PPI_wanted_pos), ")")
     PPI_wanted_pos <- PPI_wanted_pos[which(PPI_wanted_pos[, "P.value"] < cutPvalue), ]
     PPI_wanted_pos <- PPI_wanted_pos[order(PPI_wanted_pos[, "Correlation"], decreasing = TRUE), ]
-    Gpos3 <- unique(c(PPI_wanted_pos[, 1], PPI_wanted_pos[, 2]))
+    Gpos3 <- unique(c(PPI_wanted_pos[, 1], PPI_wanted_pos[, 2])) 
     
     PPI_wanted_final <- GetPPIs(PPI_wanted_pos, Gpos3) 
     
