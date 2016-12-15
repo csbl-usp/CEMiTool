@@ -185,8 +185,6 @@ suppressMessages({
 allowWGCNAThreads()
 
 
-#Check if session is not interactive and parse doc text for function arguments
-
 #' Determines soft-threshold and creates co-expression modules.
 #' 
 #' @param data An expression data.frame.
@@ -300,7 +298,7 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     dev.off()
     
     # Merging similar modules
-    if(merge_bool == TRUE){
+    if(merge_bool){
         # Calculating eigengenes
         MEList <- moduleEigengenes(D, colors = ourColors)
         MEs <- MEList$eigengenes
@@ -358,7 +356,6 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     names(params) <- c("phi", "ourBeta")
     res <- list(data=data2, parameters=params)
     
-    #print(list(exprs_f, set_dir, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, ourBeta, phi, ourR2, ourK, ncol(exp.df), ourGM, ourNGzero, ourNMods))
     params <- list(exprs_f, set_dir, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, ourBeta, phi, ourR2, ourK, ncol(exp.df))
     params <- unlist(lapply(params, function(x) ifelse(is.null(x), NA, x)))
     
@@ -393,7 +390,7 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     PPI_wanted_pos <- posL[, c(1,2)]
     
     
-    if(split==TRUE){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    if(split){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         NewM_M <- ifelse(AorB == 2, paste0("M", mod, ".A"), paste0("M", mod, ".B"))
     }else{
         NewM_M <- paste0("M.", mod)
