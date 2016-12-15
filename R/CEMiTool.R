@@ -149,7 +149,6 @@ suppressMessages({
     sink("/dev/null")
     library(WGCNA)
     sink()
-    library("networkD3")
     library("reshape2") #for melt function
     library("matrixStats") #for rowCounts function
     library("igraph")
@@ -163,7 +162,6 @@ suppressMessages({
     library("stringr") # for axis label wrapping (ORA) 
     library("gplots")  # for printing the parameters table
     library("rmarkdown")
-    library("htmlwidgets")
     library("ff")
     library("foreach")
     library("doParallel")
