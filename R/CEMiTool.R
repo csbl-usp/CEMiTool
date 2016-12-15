@@ -545,7 +545,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
     E(g)$weights <- 1- dataX[,"Correlation"]
     
     
-    if(!is.null(interact)){
+    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         interactions.1  <- paste0(interact.df[, "Gene1"], "_", interact.df[, "Gene2"])
         interactions.1 <- interactions.1[which(interactions.1 %in% dataX$compare)]
         interactions.2 <- paste0(interact.df[, "Gene2"], "_", interact.df[, "Gene1"])
@@ -604,7 +604,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
     dataX$to.y   <- my.df[, "y"][match(dataX[,2], my.df$nodes)]
     
     
-    if(!is.null(interact)){
+    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         int.not.int$from.x <- my.df[, "x"][match(int.not.int[,1], my.df$nodes)] 
         int.not.int$from.y <- my.df[, "y"][match(int.not.int[,1], my.df$nodes)]
         int.not.int$to.x   <- my.df[, "x"][match(int.not.int[,2], my.df$nodes)] 
@@ -619,7 +619,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
         colnames(int.not.int)[1:2] <- c("X", "Y")
     }
     
-    dataX$weights      <- ifelse(is.null(interact), Edge_width, dataX$weights)
+    dataX$weights      <- ifelse(is.null(interact), Edge_width, dataX$weights) # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     Numbers <- table(my.df$group)
     Names   <- rownames(Numbers)
     rects   <- data.frame()
@@ -686,7 +686,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
                                        width = 0.5), color = "black", alpha = 0.5)
     
     
-    if(!is.null(interact)){
+    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         if(nrow(int.not.int) > 0){
             graphplot <- graphplot + geom_segment(data = int.not.int, aes(x = from.x, xend = to.x, y = from.y, yend = to.y, 
                                                                           width = 0.5), color = mod.col, alpha = 0.5)
