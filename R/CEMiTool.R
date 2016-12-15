@@ -142,16 +142,13 @@ if (!interactive() && !exists('SOURCE')) {
         }
     }
 }   
-#args <- commandArgs(trailingOnly = TRUE)
+
 set_dir     <- arg[["directory"]] #Ex: /Users/helder/Desktop/CEMtool/Test
-##Expression table (with header and first column containing unique probe/gene IDs)
 exprs_f     <- arg[["exprsfile"]] #Ex: Expression_dataset2.txt
-##Name for outputfiles
 name_out    <- arg[["output"]] #Ex: Lepto
 cutPvalue   <- as.numeric(arg[["pvalue"]]) #Cutoff permutation-based p-value for gene-gene correlation. Default = 0.05
 nPerm       <- as.numeric(arg[["permutations"]]) #Number of permutations. Default = 1000.
 MinSize     <- as.numeric(arg[["mingenes"]]) #Minimal number of genes in sub-modules. Default = 20
-#all_colors  <- arg[7] #Vector of n contiguous RGB colors represented in hex (as #FFFFFF) for the modules. 
 #Default = c(topo.colors(16),rainbow(16),heat.colors(20),
 #            topo.colors(16),rainbow(16),heat.colors(20))
 corr.method <- tolower(arg[["correlation"]])
@@ -189,6 +186,12 @@ if(!is.null(gmt_f)){
 # Check variable values
 print(c(set_dir, exprs_f, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, beta_bool, unsign, split, verbose))
 
+#' Determines soft-threshold and creates co-expression modules.
+#' 
+#' @param data An expression data.frame.
+#' @param file_name A string for the output file name.
+#' @param corr.method A string for the correlation method 
+#' @return List of WGCNA results.
 goWGCNA <- function(data, file_name, corr.method = "spearman"){
     # This function takes the expression data,
     # determines the soft-threshold, merges based on eigengene similarity
@@ -200,14 +203,14 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     powers <- c(c(1:10), seq(12, 20, 2))
     
     # Selecting type of network to be used
-    networkType <- ifelse(unsign == TRUE, "unsigned", "signed")
+    networkType <- ifelse(unsign == TRUE, "unsigned", "signed") # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     
     #Use Spearman as default. Cite paper:
     #Evaluation of Gene Association Methods for 
     #Coexpression Network Construction and Biological Knowledge Discovery
     
     # Automatic selection of soft-thresholding power beta
-    if(verbose) message("Selecting Beta")
+    if(verbose) message("Selecting Beta") # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     beta <- pickSoftThreshold(D, powerVector = powers, verbose = 5, 
                               corOptions = list(use = "p", method = corr.method), networkType = networkType, moreNetworkConcepts = TRUE)
     fit <- -sign(beta$fitIndices[, 3])*beta$fitIndices[, 2]
@@ -235,11 +238,11 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     }
     
     # Choosing between set beta, WGCNA beta and CEMiTool beta
-    if(!is.null(set_beta)){
+    if(!is.null(set_beta)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: referecen to global variable
         st[2] <- set_beta
         print("Using set beta:")
         print(st[2])
-    }else if(!as.logical(beta_bool)){
+    }else if(!as.logical(beta_bool)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         st[2] <- beta$powerEstimate 
         print("Using WGCNA beta:")
         print(st[2])
