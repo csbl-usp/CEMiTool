@@ -66,48 +66,6 @@ University of Sao Paulo, Brazil
 " -> doc
 
 ########################################################################
-suppressMessages({
-    library("ggplot2")
-    sink("/dev/null")
-    library(WGCNA)
-    sink()
-    library("networkD3")
-    library("reshape2") #for melt function
-    library("matrixStats") #for rowCounts function
-    library("igraph")
-    require("cowplot") #for plot_grid function
-    library("scales")
-    library("org.Hs.eg.db")
-    library("corrplot")
-    library("mGSZ")
-    library("dplyr")
-    library("data.table")
-    library("stringr") # for axis label wrapping (ORA) 
-    library("gplots")  # for printing the parameters table
-    library("rmarkdown")
-    library("htmlwidgets")
-    library("ff")
-    library("foreach")
-    library("doParallel")
-    library("iterators")
-    library("BiocParallel")
-    if(!require("devtools")){
-        install.packages("devtools")
-        library("devtools")
-    }
-    if(!require("plotflow")){
-        install_github("trinker/plotflow")
-        library("plotflow")
-    }
-    if(!require("fgsea")){
-        install_github("ctlab/fgsea")
-        library("fgsea")
-    }
-})
-allowWGCNAThreads()
-
-
-#Check if session is not interactive and parse doc text for function arguments
 if (!interactive() && !exists('SOURCE')) {
     # Get and check arguments.
     suppressMessages(library(docopt))
@@ -185,6 +143,49 @@ if(!is.null(gmt_f)){
 }
 # Check variable values
 print(c(set_dir, exprs_f, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, beta_bool, unsign, split, verbose))
+
+suppressMessages({
+    library("ggplot2")
+    sink("/dev/null")
+    library(WGCNA)
+    sink()
+    library("networkD3")
+    library("reshape2") #for melt function
+    library("matrixStats") #for rowCounts function
+    library("igraph")
+    require("cowplot") #for plot_grid function
+    library("scales")
+    library("org.Hs.eg.db")
+    library("corrplot")
+    library("mGSZ")
+    library("dplyr")
+    library("data.table")
+    library("stringr") # for axis label wrapping (ORA) 
+    library("gplots")  # for printing the parameters table
+    library("rmarkdown")
+    library("htmlwidgets")
+    library("ff")
+    library("foreach")
+    library("doParallel")
+    library("iterators")
+    library("BiocParallel")
+    if(!require("devtools")){
+        install.packages("devtools")
+        library("devtools")
+    }
+    if(!require("plotflow")){
+        install_github("trinker/plotflow")
+        library("plotflow")
+    }
+    if(!require("fgsea")){
+        install_github("ctlab/fgsea")
+        library("fgsea")
+    }
+})
+allowWGCNAThreads()
+
+
+#Check if session is not interactive and parse doc text for function arguments
 
 #' Determines soft-threshold and creates co-expression modules.
 #' 
