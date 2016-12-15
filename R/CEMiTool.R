@@ -500,13 +500,13 @@ PlotLines <- function(ExpX, rects) {
     Gmean  <- apply(ExpX, 2, mean)
     time <- c(1:(ncol(ExpX)))
     
-    mmm <- as.data.frame(cbind(time, Gmean))
+    mmm <- as.data.frame(cbind(time, Gmean)) # THIS IS BAD AND YOU SHOULD FEEL BAD: bad variable name
     mmm <- cbind(mmm,rep("mean", nrow(mmm)))
     colnames(mmm)[3] <- "group"
-    xx <- t(ExpX)
-    xx_long <- melt(xx,id = colnames(xx))  
+    xx <- t(ExpX) # THIS IS BAD AND YOU SHOULD FEEL BAD: bad variable name
+    xx_long <- melt(xx,id = colnames(xx)) # THIS IS BAD AND YOU SHOULD FEEL BAD: bad variable name
     coltime <- rep(time, nrow(ExpX))
-    xx_long <- cbind(xx_long, coltime)
+    xx_long <- cbind(xx_long, coltime) 
     colnames(xx_long)[2] <- "gene"
     Lineplot <- ggplot() + 
         geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf, fill = col), alpha = 0.2) +
