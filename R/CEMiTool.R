@@ -9,7 +9,7 @@ Just submit your data and CEMiTool will identify Co-Expression gene Modules and 
 
 (Full article: 
 
-Usage: CEMiTool.R [-d <v>] EXPRSFILE [-i <v> -o <v> -p <v> -q <v> -n <v> -m <v> -c <v> -t <v> -s <v> -f <v> -e <v> -b <v> -u <v> -l <v> -v <v> --min-module=<v> --set-beta=<v> --merge-bool=<v> --diss-thres=<v> --samples-column=<v> --gene-column=<v>]
+Usage: CEMiTool.R [-d DIR] EXPRSFILE [-i INTERACT -o OUT -p CORPVAL -q ORAPVAL -n PERM -m MINGEN -c COR -t ANNOT -s GMT -e GENNUM --min-module=MINMOD --set-beta=BETA --diss-thres=THRESH --samples-column=SAMPLECOL --gene-column=GENECOL -f -b -u -l -v --merge-bool]
 
 Input:
 EXPRSFILE           a normalized expression file .txt format
@@ -27,28 +27,28 @@ A label_PPIs.txt file, with information about interactions between each gene pai
 in the network.
 
 Options:
--d --directory=<v>      set working directory [default: ./]
--i --interact=<v>       optional gene interaction file
--o --output=<v>         name output file [default: results]
--p --pvalue=<v>         p-value for gene-gene correlation [default: 0.05]
--q --pvalue-ora=<v>     p-value for over representation analysis [default: 0.05]
--n --permutations=<v>   number of permutations [default: 1000]
--m --mingenes=<v>       minimal number of genes per SUBMODULE [default: 20]
--c --correlation=<v>    selected correlation method [default: spearman]
--t --template=<v>       optional template file
--s --gmtfile=<v>        optional gmt file (geneSets)
--f --filter=<v>         filter expression file by 60% most expressed and 'genenum' most variant genes [default: FALSE]
--e --genenum=<v>        number of genes to filter [default: 4000]
--b --beta-bool=<v>      whether or not to change WGCNA beta [default: TRUE]
--u --unsign=<v>         whether or not to use unsigned networks vs. signed networks [default: TRUE]
--l --split=<v>          whether or not to spLit modules [default: TRUE]
--v --verbose=<v>        display progress messages [default: FALSE]
---min-module=<v>        minimum MODULE size [default: 30]
---set-beta=<v>          override selected beta value
---merge-bool=<v>        whether or not to merge related modules based on eigengene similarity [default: TRUE]
---diss-thres=<v>        module merging correlation threshold for eigengene similarity [default: 0.8]
---gene-column=<v>	    the column name containing gene symbols in expression file [default: Symbol]
---samples-column=<v>    the column name containing sample names in template file [default: SampleName]
+-d DIR --directory=DIR                set working directory [default: ./]
+-i INTERACT --interact=INTERACT       optional gene interaction file
+-o OUT --output=OUT                   name output file [default: results]
+-p CORPVAL --pvalue=CORPVAL           p-value for gene-gene correlation [default: 0.05]
+-q ORAPVAL --pvalue-ora=ORAPVAL       p-value for over representation analysis [default: 0.05]
+-n PERM --permutations=PERM           number of permutations [default: 1000]
+-m MINGEN --mingenes=MINGEN           minimal number of genes per SUBMODULE [default: 20]
+-c COR --correlation=COR              selected correlation method [default: spearman]
+-t ANNOT --template=ANNOT             optional template file
+-s GMT --gmtfile=GMT                  optional gmt file (geneSets)
+-e GENNUM --genenum=GENNUM            number of genes to filter [default: 4000]
+--min-module=MINMOD                   minimum MODULE size [default: 30]
+--set-beta=BETA                       override selected beta value
+--diss-thres=THRESH                   module merging correlation threshold for eigengene similarity [default: 0.8]
+--gene-column=GENECOL	              the column name containing gene symbols in expression file [default: Symbol]
+--samples-column=SAMPLECOL            the column name containing sample names in template file [default: SampleName]
+-f --filter                           filter expression file by 60% most expressed and 'genenum' most variant genes [default: FALSE]
+-b --beta-bool                        change WGCNA beta
+-u --unsign                           use unsigned networks
+-l --split                            split modules
+-v --verbose                          display progress messages
+--merge-bool                          merge related modules based on eigengene similarity
 
 Authors:
 
