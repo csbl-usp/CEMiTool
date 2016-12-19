@@ -1,6 +1,6 @@
-#' Module Overenrichment Analysis
+#' Module Overrepresentation Analysis
 #'
-#' Perfoms overenrichment analysis for each co-expression module found
+#' Perfoms overrepresentation analysis for each co-expression module found
 #'
 #' @param test
 #'
