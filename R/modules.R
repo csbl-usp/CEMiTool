@@ -12,7 +12,7 @@
 #'
 #' @export
 find_modules <- function(exprs, cor_method=c('pearson', 'spearman')) {
-
+    #goWGCNA + SplitModules
 }
 
 
