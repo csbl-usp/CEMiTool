@@ -18,7 +18,7 @@
 #' @return just god knows 
 #'
 #' @examples
-#' cemitool(exprs=expression.df, cor_method='pearson')
+#' cemitool(exprs=expression.df)
 #'
 #' @export
 cemitool <- function(exprs, 
@@ -31,8 +31,33 @@ cemitool <- function(exprs,
                      nperm=1000,
                      min_ngen=30,
                      diss_thresh=0.8,
+                     plot=F,
                      verbose=F)
 {
+    coex_mods <- find_modules(exprs,
+                              cor_method=match.arg(cor_method),
+                              verbose=verbose)
+
+    # if user provides annot file
+    if (!is.null(annot)) {
+        #run mod_gsea
+    }
+
+    # if user provides .gmt file
+    if (!is.null(gmt)) {
+        #run mod_ora
+    }
+    
+    # if user provides ppi file
+    if (!is.null(ppi)) {
+        
+    }
+
+    # plots all desired charts
+    if (plot) {
+    
+    }
+
 }
 
 
