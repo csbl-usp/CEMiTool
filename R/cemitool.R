@@ -18,7 +18,7 @@
 #' @return just god knows 
 #'
 #' @examples
-#' cemitool(exprs=expression.df, cor.method='pearson')
+#' cemitool(exprs=expression.df, cor_method='pearson')
 #'
 #' @export
 cemitool <- function(exprs, 
@@ -31,6 +31,8 @@ cemitool <- function(exprs,
                      nperm=1000,
                      min_ngen=30,
                      diss_thresh=0.8,
-                      verbose=F){}
+                     verbose=F)
+{
+}
 
 

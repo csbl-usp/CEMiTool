@@ -8,9 +8,11 @@
 #' @return just god knows 
 #'
 #' @examples
-#' find_modules(exprs=expression.df, cor.method='pearson')
+#' coex_mods <- find_modules(exprs=expression.df, cor_method='pearson')
 #'
 #' @export
-find_modules <- function(exprs, cor.method=c('pearson', 'spearman')){}
+find_modules <- function(exprs, cor_method=c('pearson', 'spearman')) {
+
+}
 
 
