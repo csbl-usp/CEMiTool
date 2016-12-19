@@ -22,7 +22,7 @@ mod_ora <- function(test){}
 #' @return None
 #'
 #' @examples
-#' mod_ora(test)
+#' mod_gsea(test)
 #'
 #' @export
 mod_gsea <- function(test){}
