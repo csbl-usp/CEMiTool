@@ -22,15 +22,15 @@
 #'
 #' @export
 cemitool <- function(exprs, 
-					 annot,
-					 ppi,
-					 gmt,
-					 cor_method=c('pearson', 'spearman'),
-					 cor_pval=0.05,
-					 ora_pval=0.05,
-					 nperm=1000,
-					 min_ngen=30,
-					 diss_thresh=0.8,
-					 verbose=F){}
+                     annot,
+                     ppi,
+                     gmt,
+                     cor_method=c('pearson', 'spearman'),
+                     cor_pval=0.05,
+                     ora_pval=0.05,
+                     nperm=1000,
+                     min_ngen=30,
+                     diss_thresh=0.8,
+                      verbose=F){}
 
 
