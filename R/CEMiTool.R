@@ -1,4 +1,3 @@
- 
 #!/usr/bin/env Rscript
 
 base.path <- getwd()
@@ -142,7 +141,7 @@ if(!is.null(gmt_f)){
     gmt_f <- normalizePath(gmt_f)
 }
 # Check variable values
-print(c(set_dir, exprs_f, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, beta_bool, unsign, split, verbose))
+print(str(arg))
 
 suppressMessages({
     library("ggplot2")
@@ -189,6 +188,372 @@ allowWGCNAThreads()
 #' @param file_name A string for the output file name.
 #' @param corr.method A string for the correlation method 
 #' @return List of WGCNA results.
+
+main <- function(){
+    # Get colors
+    all_colors <- rep(rainbow(16, s = 1, v = 0.7 ), 20)
+    
+    #Remove "#"
+    all_colors <- substr(all_colors, 2, 7)
+    plot.text <- TRUE
+    
+    
+    setwd(set_dir)
+    
+    # Read expression file
+    if(verbose) message("Reading expression file")
+    exp.df <- read.delim(exprs_f, sep = "\t", header = TRUE, row.names = gene_column)
+    exp.gsea <- exp.df
+    
+    # Filter
+    if (filt == TRUE){
+        if(verbose) message("Filtering")
+        exp.df <- just.filter(exp.df, genenum)
+    }
+    
+    # Read template file and create plot rectangle
+    if (!is.null(template_f)){
+        if(verbose) message("Reading template file")
+        
+        template.df  <- as.data.frame(read.delim(template_f, sep = "\t", header = TRUE, row.names = samples_column))
+        
+        if(!any(names(template.df) == "Class")){
+            stop("Template file does not contain a grouping column named 'Class'")
+        }
+        
+        if (length(names(exp.df)) > length(row.names(template.df))){
+            stop("Expression file contains more samples than template file")
+        }else if (length(names(exp.df)) < length(row.names(template.df))){
+            template.df <- template.df[colnames(exp.df),]
+            warning("Template file contains more samples than expression file; cutting template file")
+            #exp.df  <- exp.df[,rownames(template.df)]
+        }
+        
+        if(!all((sort(names(exp.df)) == sort(rownames(template.df))))){
+            rownames(template.df) <- make.names(rownames(template.df))
+            if(!all((sort(names(exp.df)) == sort(rownames(template.df))))){
+                stop("Template sample names different from expression file sample names")
+            }else{
+                message("Sample names started with numbers. Added syntactically valid names.")
+            }
+        }
+        
+        z.and.rects2 <- createRects2(exp.df, template.df)
+        Zmeans <- z.and.rects2[[1]]
+        rects2 <- z.and.rects2[[2]]
+        
+    }else{
+        ###Caso contrario (nao tenha template):
+        z.and.rects2 <- createRects2(exp.df)
+        rects2 <- z.and.rects2[[1]]
+    }
+    
+    gset <- NA
+    if (!is.null(gmt_f)){
+        gmt <- read.gmt(gmt_f)
+        genesets <- gmt[['genes']]
+        names.universe <- row.names(exp.df)
+        universe <- length(names.universe)
+        
+        # filter genes not in microarray
+        genesets.filt <- lapply(genesets, function(x){x[x %in% names.universe]})
+        if(all(sapply(genesets.filt, length)==0)){
+            warning("There is no intersection between GMT and genes on expression file.")
+        }
+        
+        # filter geneset with less than 5 genes
+        gset <- genesets.filt[which(sapply(genesets.filt, length)>5)]
+    }
+    
+    sample.names <- colnames(exp.df)
+    
+    # Run WGCNA
+    if(verbose) message("WGCNA")
+    wgcna_data_params <- goWGCNA(exp.df, name_out, corr.method = corr.method)
+    if(verbose) message("WGCNA done")
+    wgcna_results  <- wgcna_data_params[[1]][["data"]]
+    out_wgcna <- data.frame(wgcna_results)
+    out_wgcna[, "NewColor"] <- "NA"
+    out_wgcna[, "NewModule"] <- "NA"
+    all_ppi <- data.frame()
+    all_enrich <- data.frame() # enrichment results
+    modNumbers <- table(wgcna_results[, ncol(wgcna_results)] )
+    modNames   <- rownames(modNumbers)
+    if (modNames[1] == "0"){
+        if(modNumbers['0'] == nrow(exp.df)){
+            writeLines("Error! We could not specify the parameter Beta. No modules found", con = paste0(name_out, "_error.txt"), sep = "\n", useBytes = FALSE)
+            warning("We could not specify the parameter Beta. No modules found! Exiting ...")
+            quit()
+        }
+        modNumbers <- as.table(modNumbers[-1 , drop=FALSE])
+        modNames   <- rownames(modNumbers)
+    }
+    finalBeta <- wgcna_data_params[[1]][['parameters']]['ourBeta']
+    finalPhi <- round(wgcna_data_params[[1]][['parameters']]['phi'], digits = 3)
+    parameter.names <- c("Directory", "Exprs.File", "Output.Name", "Cutoff.Pvalue", "No.Permutations", "Min.Genes", "Corr.Method", "Interaction.File", "Template.File", "Gmt.File", "Filter", "Num.Filt", "Beta", "Phi") 
+    inputs <- c("set_dir", "exprs_f", "name_out", "cutPvalue", "nPerm", "MinSize", "corr.method", "interact", "template_f", "gmt_f", "filt", "genenum", "finalBeta", "finalPhi")
+    
+    rm.rows <- which(sapply(inputs, exists) & sapply(inputs, function(x) is.null(get(x))))
+    if(length(rm.rows) > 0){
+        inputs <- inputs[-rm.rows]
+        parameter.names <- parameter.names[-rm.rows]
+    }
+    
+    # For some reason, just doing sapply(inputs, get) doesn't work...
+    parameters <- sapply(inputs, function(x){
+        print(environment())
+        get(x)
+    })
+    #parameters <- sapply(inputs, get)
+    
+    if(verbose) message("Creating modules pdf")
+    # Create modules pdf
+    modules.pdf <- paste0(name_out, "_Modules_tmp.pdf")
+    
+    if(verbose) message("Creating modules")
+    pdf(file = modules.pdf) #, onefile = TRUE)
+    
+    results.table <- data.frame("Names" = parameter.names,  "Values" = parameters, row.names=NULL)
+    
+    if (!is.null(interact)){
+        # Read interaction file
+        interact.df  <- as.data.frame(read.table(interact, sep = "\t", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA"))
+        interact.df[, "module"] <- NA 
+        names(interact.df)[1:2] <- c("Gene1", "Gene2")
+        interact.df$origin <- "Interact"
+    }else{
+        interact.df <- NULL
+    }
+    
+    eigen.list <- data.frame()
+    mean.list <- data.frame()
+    
+    for (mod in 1:length(modNames)){
+        if(verbose) message(paste("Creating module", mod, "of", length(modNames)))
+        
+        geneS <- wgcna_results[which(wgcna_results[, ncol(wgcna_results)] == modNames[mod], arr.ind = TRUE), sample.names]
+        C <- cor(t(geneS), use = "everything", method = corr.method)
+        signs <- sign(range(C))
+        if((signs[1] != signs[2]) && split==TRUE ){	# somente se houver correlacoes pos e neg
+            DM <- as.dist(1 - C)
+            H <- hclust(DM)
+            k <- cutree(H, 2)
+            Gpos <- rownames(C)[which(k == 1)] 
+            Gneg <- rownames(C)[which(k == 2)]
+            
+            colorSeq <- c(paste0("M", mod, ".A"), paste0("M", mod, ".B"))
+            dynamicColors <- labels2colors(k, colorSeq=colorSeq)
+            
+        }else{
+            Gpos <- rownames(C) 
+            Gneg <- c()
+            
+            if(split==TRUE){
+                colorSeq <- paste0("M", mod, ".A")
+            }else{
+                colorSeq <- paste0("M.", mod)
+            }
+            
+            dynamicColors <- rep(colorSeq, length(rownames(C)))
+        }
+        MEs <- moduleEigengenes(t(geneS), colors=dynamicColors)$eigengenes
+        eigen.list <- rbind(eigen.list, t(MEs))
+        
+        if(verbose) message("Splitting module")
+        if (length(Gpos) >= MinSize) {
+            AorB <- 2
+            saida <- SplitModules(C, Gpos, cutPvalue, AorB, mod, geneS = geneS, corr.method = corr.method, label = name_out, all_colors=all_colors, out_wgcna=out_wgcna)
+            out_wgcna <- saida$out_wgcna
+            out_wgcna[saida$g,"NewColor"]  <- saida$newC
+            out_wgcna[saida$g,"NewModule"] <- saida$newM
+            out_wgcna[saida$g, "Membership"] <- rank(RankE(t(exp.df[saida$g, ])))
+            all_ppi <- rbind(all_ppi,saida$ppi)
+            ExpX   <- out_wgcna[saida$g, ]
+            
+            only.exp <- ExpX[, colnames(ExpX) %in% names(exp.df)]
+            mean.exp <- t(apply(only.exp, 2, mean))
+            
+            if(split==TRUE){
+                rownames(mean.exp) <- paste0("M", mod, ".A")
+            }else{
+                rownames(mean.exp) <- paste0("M.", mod)
+            }
+            mean.list <- rbind(mean.list, mean.exp)
+            
+            if(verbose) message("Plotting expression profile")
+            plot1 <- PlotLines(ExpX,rects2, saida)
+            if(verbose) message("Plotting network graph")
+            plot2 <- CreateGGplot2Graph(saida$ppi, ExpX, plot.text=plot.text, interact.df=interact.df)
+            print(plot_grid(plot1, plot2, labels = c("a", "b"), ncol = 1, nrow = 2))
+        } 
+        if (length(Gneg) >= MinSize) {
+            AorB <- 1
+            saida <- SplitModules(C, Gneg, cutPvalue, AorB, mod, geneS = geneS, corr.method = corr.method, label = name_out, all_colors=all_colors, out_wgcna=out_wgcna)
+            out_wgcna <- saida$out_wgcna
+            out_wgcna[saida$g,"NewColor"]  <- saida$newC
+            out_wgcna[saida$g,"NewModule"] <- saida$newM
+            out_wgcna[saida$g, "Membership"] <- rank(RankE(t(exp.df[saida$g, ])))
+            all_ppi <- rbind(all_ppi,saida$ppi)
+            ExpX   <- out_wgcna[saida$g, ]
+            
+            only.exp <- ExpX[, colnames(ExpX) %in% names(exp.df)]
+            mean.exp <- t(apply(only.exp, 2, mean))
+            
+            if(split==TRUE){
+                rownames(mean.exp) <- paste0("M", mod, ".B")
+            }
+            mean.list <- rbind(mean.list, mean.exp)
+            
+            if(verbose) message("Plotting expression profile")
+            plot1 <- PlotLines(ExpX,rects2, saida)
+            if(verbose) message("Plotting network graph")
+            plot2 <- CreateGGplot2Graph(saida$ppi, ExpX, plot.text=plot.text, interact.df=interact.df)
+            print(plot_grid(plot1, plot2, labels = c("a", "b"), ncol = 1, nrow = 2))
+        }
+    }
+    
+    names(eigen.list) <- names(exp.df)
+    rownames(eigen.list) <- unlist(lapply(rownames(eigen.list), function(x){strsplit(x, "E")[[1]][2]}))
+    eigen.list <- eigen.list[rownames(mean.list),]
+    
+    write.table(eigen.list, file = paste(name_out, "_eigenlist.txt", sep = ""), sep = "\t", row.names = T, quote = FALSE)
+    write.table(mean.list, file = paste(name_out, "_meanlist.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
+    #plot3 <- CreateGGplot2GraphFULL(all_ppi, out_wgcna)
+    #print(plot3)
+    
+    dev.off()
+    
+    if (!is.null(interact)){
+        if(verbose) message("Creating interactions file")
+        #interact.df  <- as.data.frame(read.table(interact, sep = "\t", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA"))
+        #interact.df[, "Module"] <- NA 
+        same.mod <- which(out_wgcna[interact.df[, 1], "NewModule"] == out_wgcna[interact.df[, 2], "NewModule"])
+        interact.df[same.mod, "module"] <- out_wgcna[interact.df[same.mod, 1], "NewModule"]
+        interact.df <- interact.df[!(is.na(interact.df[,"module"]) | interact.df[,"module"]=="NA"),]
+        all_ppi <- interact.df
+    }
+    
+    write.table(all_ppi, file = paste(name_out, "_PPIs.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
+    
+    
+    # Rename "GenesInModules" table column names and write it
+    new.names <- c(paste0("WGCNA_", name_out), 'module',#paste0("CEMiTool_", name_out), 
+                   paste0("CEMiTool_", name_out, "_membership"), paste0("WGCNA_", name_out, "_colors"))
+    names(new.names) <- c("ourMods", "NewModule", "Membership", "ourColors")
+    mtch <- match(colnames(out_wgcna), names(new.names))
+    colnames(out_wgcna)[colnames(out_wgcna) %in% names(new.names)] <- na.exclude(new.names[mtch])
+    out_wgcna <- drop.col(out_wgcna, sample.names)
+    write.table(out_wgcna, file = paste(name_out, "_GenesInModules.txt", sep = ""), sep="\t", col.names = NA, quote=FALSE)
+    
+    ###Transform each submodule into gene sets
+    subMs   <- rownames(table(out_wgcna[,'module'])) #paste0("CEMiTool_", name_out)])) 
+    
+    GS <- list()
+    
+    for (mX in 1:length(subMs)){
+        Mgenes <- rownames(out_wgcna[which(out_wgcna[,'module']==subMs[mX]),]) 
+        GS[[subMs[mX]]] <- as.character(Mgenes)
+    }
+    
+    # Create gmt file with gene modules 
+    write.gmt(GS, name_out)
+    
+    #################################fastGSEA#########################################
+    if(!is.null(template_f)){
+        gsea.res <- doFastGSEA(exp.gsea, template.df, GS, ranks = F)  
+        doCorrplot(gsea.res)
+    }
+    #################################fastGSEA#########################################
+    
+    # Enrichment Analysis (ORA)
+    sig_count_total <- NA
+    if(!is.null(gmt_f) & length(gset) > 0){
+        if(verbose) message("Doing ORA")
+        
+        gmt.genes <- character()
+        for(i in seq(1:length(gset))){
+            gmt.genes <- as.character(c(gmt.genes, gset[[i]]))
+        }
+        gmt.genes <- unique(gmt.genes)
+        
+        if(sum(rownames(exp.df) %in% gmt.genes) > 0){
+            
+            pdf(paste(name_out, "_ORA.pdf", sep = ""))
+            mod2genes <- split(rownames(out_wgcna), out_wgcna[, 'module'])#paste0("CEMiTool_", name_out)])
+            
+            if("NA" %in% names(mod2genes)){
+                mod2genes <- mod2genes[-which(names(mod2genes) == "NA")]
+            }
+            mod2genes <- mod2genes[order(as.numeric(str_extract(names(mod2genes), "\\d+")))]
+            
+            res.gmt <- list()
+            res.gmt$sig_count <- 0
+            
+            res.gmt <- lapply(names(mod2genes), function(name){
+                x <- mod2genes[[name]]
+                res.gmt <- as.data.frame(c(res.gmt, do.gmt(x, gset, universe, adjust.method="fdr")))
+                res.gmt <- res.gmt[order(res.gmt[, "fisher"]), ]
+                graphColor <- as.character(out_wgcna[match(name, out_wgcna[, 'module']), 'NewColor']) #paste0("CEMiTool_", name_out)]), "NewColor"])
+                plot.res <- plot.ora(res.gmt[1:10, ], graphColor=graphColor, title=name)
+                if(plot.res[["numsig"]] > 0){
+                    print(plot.res[['pl']])
+                    res.gmt$sig_count <- res.gmt$sig_count + 1
+                }
+                return(cbind(NewModule=name, res.gmt))
+            })
+            
+            sig_count_total <- lapply(res.gmt, function(x){
+                unique(x$sig_count)
+            })
+            sig_count_total <- sum(unlist(sig_count_total))
+            
+            names(res.gmt) <- names(mod2genes)
+            dev.off()
+            
+            res.gmt <- do.call(rbind, res.gmt)
+            write.table(res.gmt, file = paste(name_out, "_ORA.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE, col.names=TRUE)
+            
+            #Create module x pathway table
+            new.res.gmt <- res.gmt[, c("NewModule", "id", "hyper.adj")]
+            new.res.gmt <- dcast(res.gmt, NewModule ~ id, value.var = "hyper.adj")  #Define NewModule as identifier, id as columns and hyper.adj as values
+            write.table(new.res.gmt, file = paste(name_out, "_ORA_PathsInModules.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE, col.names=TRUE)
+        }else{
+            message("Expression file gene symbols not in gmt file. Skipping ORA.")
+            sig_count_total <- NA
+        }
+    }
+    
+    
+    # Create analysis.res parameter table
+    analysis.res <- wgcna_data_params[[2]]
+    col <- 'module'#paste("CEMiTool_", name_out, sep="")
+    analysis.res$ourNGzero <- sum(out_wgcna[, col] == "NA")
+    analysis.res$ourNMods  <- length(unique(out_wgcna[,col][which(out_wgcna[, col] != "NA")]))
+    analysis.res$ourGM <- mean(table(out_wgcna[,col][which(out_wgcna[, col] != "NA")]))
+    analysis.res$sig_count <- sig_count_total
+    
+    if(verbose) message("Outputting parameters")
+    write.table(analysis.res, file = paste(name_out, "_analysis_res.txt", sep = ""), sep="\t", col.names = NA, quote=FALSE)
+    
+    # parameters
+    #parameters <- data.frame(name = c("Label: ", "p-value cutoff: ", "number of permutations: ", 
+    #				   		 			"minimum module size: ", "correlation method: "), value = args[-c(1,2)] )
+    
+    #write.table(parameters, file = paste(name_out, "_params.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
+    
+    #render(file.path(base.path, "template_modules.Rmd"), envir = globalenv(), output_file = paste0(name_out, "_params.pdf"), output_dir = getwd())
+    render(file.path(base.path, "template_modules.Rmd"), envir = environment(), output_file = paste0(name_out, "_params.pdf"), output_dir = getwd())
+    
+    #save(file="saves.RData", list=ls())
+    
+    gowgcna_plot_fname <- paste(name_out, "_", wgcna_data_params[[1]][["parameters"]]["phi"], "_", wgcna_data_params[[1]][["parameters"]]["ourBeta"], ".pdf", sep = "")
+    system(paste0("pdftk A=", name_out, "_params.pdf"," B=", modules.pdf, " C=", gowgcna_plot_fname, " cat A1 C B2-end output ", name_out, "_Modules.pdf"))
+    
+    if(verbose) message("Finished CEMiTool")
+    #load(file="saves.RData") 
+    
+}
+
 goWGCNA <- function(data, file_name, corr.method = "spearman"){
     # This function takes the expression data,
     # determines the soft-threshold, merges based on eigengene similarity
@@ -239,11 +604,11 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
         st[2] <- set_beta
         print("Using set beta:")
         print(st[2])
-    }else if(!as.logical(beta_bool)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    }else if(as.logical(beta_bool)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         st[2] <- beta$powerEstimate 
         print("Using WGCNA beta:")
         print(st[2])
-    }else{
+    }else if(!as.logical(beta_bool)){
         print("Using CEMiTool beta:")
         print(st[2])
     }
@@ -297,6 +662,7 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     
     # Merging similar modules
     if(merge_bool){
+        if(verbose) message("Merging modules based on eigengene similarity")
         # Calculating eigengenes
         MEList <- moduleEigengenes(D, colors = ourColors)
         MEs <- MEList$eigengenes
@@ -354,7 +720,7 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     names(params) <- c("phi", "ourBeta")
     res <- list(data=data2, parameters=params)
     
-    params <- list(exprs_f, set_dir, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, ourBeta, phi, ourR2, ourK, ncol(exp.df))
+    params <- list(exprs_f, set_dir, name_out, cutPvalue, nPerm, MinSize, corr.method, interact, template_f, gmt_f, filt, genenum, ourBeta, phi, ourR2, ourK, ncol(data))
     params <- unlist(lapply(params, function(x) ifelse(is.null(x), NA, x)))
     
     analysis.res <- data.frame(t(params))
@@ -364,7 +730,7 @@ goWGCNA <- function(data, file_name, corr.method = "spearman"){
     return(list(res, analysis.res))
 }
 
-SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.method = "spearman", label) {
+SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.method = "spearman", label, all_colors, out_wgcna) {
     # This function takes the expression data for a single module and refines it. The steps are:
     # - Separating into 2 submodules
     # - Evaluating edges through a permutation test
@@ -378,15 +744,10 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     posL[,2] <- as.character(posL[,2])
     posL <- posL[!is.na(posL$value), ]
     
-    #posL[1:2] <- t( apply(posL[1:2], 1, sort))
-    #posL[1:2]
-    
-    #posL      <- posL[!duplicated(posL[1:2]),]
     posL <- posL[order(posL[, 3], decreasing = TRUE), ]
     posL <- posL[which(posL[, 3] > 0), ]
     Gpos2 <- unique(c(posL[, 1], posL[, 2]))
     PPI_wanted_pos <- posL[, c(1,2)]
-    
     
     if(split){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
         NewM_M <- ifelse(AorB == 2, paste0("M", mod, ".A"), paste0("M", mod, ".B"))
@@ -402,18 +763,7 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     results_pos <- PPI_wanted_pos
     results_pos[, "Correlation"] <- CorMatrix[as.matrix(PPI_wanted_pos)]
     
-    #no_cores <- detectCores() - 1
-    #registerDoParallel(no_cores)
-    
-    
     tgeneSGpos2 <- t(geneS[as.character(Gpos2),])
-    # for (i in 1:nPerm) {
-    #     if(i %% 25 == 0) print(i)
-    #     random_pos <- geneS[as.character(Gpos2), sample(ncol(geneS), ncol(geneS))]
-    #     CorMatrixB_pos <- cor(t(random_pos), tgeneSGpos2, use = "everything", method = corr.method)
-    #     results_pos <- cbind(results_pos, CorMatrixB_pos[as.matrix(PPI_wanted_pos)])
-    # }
-    # colnames(results_pos) <- append(colnames(results_pos)[1:3], 1:nPerm)
     
     if(verbose) message("Doing permutations") # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     
@@ -428,10 +778,6 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     colnames(results_pos) <- append(colnames(results_pos)[1:3], 1:nPerm) # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
     stopImplicitCluster()
     
-    #times <- results_pos[,4:ncol(results_pos)] < results_pos[,3]
-    
-    #times2 <- ff(results_pos[,4:ncol(results_pos)] - results_pos[,3] < 0)
-    
     times <- list()
     corrcol <- results_pos[,3]
     
@@ -443,35 +789,21 @@ SplitModules <- function(CorMatrix, Gpos, cutPvalue, AorB, mod, geneS, corr.meth
     
     times.df <- as.data.frame(times)
     
-    #t <- list()
-    #for(cl in 1:ncol(m3)){
-    #    print(cl)
-    #    comparacao <- as.ff(m3[, cl] - x < 0)
-    #    t[[as.character(cl)]] <- as.data.frame(as.ffdf(as.matrix(comparacao)))
-    #}
-    
-    
-    #save(file="saves.RData", list=ls())
-    
-    #message("Counting number of TRUEs...")
     times_bool <- rowCounts(as.matrix(times.df))
-    #message("Finished counting")
     
     PPI_wanted_pos[, "Correlation"] <- CorMatrix[as.matrix(PPI_wanted_pos)]
     PPI_wanted_pos[, "P.value"] <- 1-times_bool/nPerm # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
-    #	message("Function SplitModules:: rows with p-value above ", cutPvalue, " : ", sum(PPI_wanted_pos[, "P.value"] >= cutPvalue), " (", sum(PPI_wanted_pos[, "P.value"] >= cutPvalue)/nrow(PPI_wanted_pos), ")")
-    #	message("Function SplitModules:: rows with p-value below ", cutPvalue, " : ", sum(PPI_wanted_pos[, "P.value"] < cutPvalue), " (", sum(PPI_wanted_pos[, "P.value"] < cutPvalue)/nrow(PPI_wanted_pos), ")")
     PPI_wanted_pos <- PPI_wanted_pos[which(PPI_wanted_pos[, "P.value"] < cutPvalue), ]
     PPI_wanted_pos <- PPI_wanted_pos[order(PPI_wanted_pos[, "Correlation"], decreasing = TRUE), ]
     Gpos3 <- unique(c(PPI_wanted_pos[, 1], PPI_wanted_pos[, 2])) 
     
     PPI_wanted_final <- GetPPIs(PPI_wanted_pos, Gpos3) 
     
-    column.name <- 'module' #paste0("CEMiTool_", label)
+    column.name <- 'module' 
     
     PPI_wanted_final[, column.name] <- NewM_M
     colnames(PPI_wanted_final)[1:2] <- c("Gene1", "Gene2")
-    return(list(g = Gpos2, newC = NewM_color, newM = NewM_M, ppi = PPI_wanted_final))
+    return(list(g = Gpos2, newC = NewM_color, newM = NewM_M, ppi = PPI_wanted_final, out_wgcna = out_wgcna))
 }
 
 GetPPIs <- function (PPI_wanted_pos, Gpos3) {
@@ -486,7 +818,7 @@ GetPPIs <- function (PPI_wanted_pos, Gpos3) {
     return (ppiX)
 }
 
-PlotLines <- function(ExpX, rects) {
+PlotLines <- function(ExpX, rects, saida) {
     # This function creates the expression profile line graphs
     notExp <- c((ncol(ExpX) - 4):ncol(ExpX))
     corX   <- paste("#", ExpX[,"NewColor"], "66", sep = "") 
@@ -530,8 +862,8 @@ PlotLines <- function(ExpX, rects) {
         guides(fill=guide_legend(ncol=2,byrow=TRUE)) #Determine column breaks for the legend
     return(Lineplot)
 }
-
-CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
+#plot2 <- CreateGGplot2Graph(saida$ppi, ExpX, plot.text=plot.text, interact.df=interact.df)
+CreateGGplot2Graph <- function (dataX, geneX, plot.text = TRUE, interact.df=NULL) {
     # This function creates the ggplot2 network graph
     dataX$compare <- apply(dataX, 1, function(x){paste(sort(c(x[1], x[2])), collapse="_")} )
     dataX$origin <- "Corr"    
@@ -541,7 +873,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
     E(g)$weights <- 1- dataX[,"Correlation"]
     
     
-    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    if(!is.null(interact.df)){ 
         interactions.1  <- paste0(interact.df[, "Gene1"], "_", interact.df[, "Gene2"])
         interactions.1 <- interactions.1[which(interactions.1 %in% dataX$compare)]
         interactions.2 <- paste0(interact.df[, "Gene2"], "_", interact.df[, "Gene1"])
@@ -551,8 +883,6 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
         dataX$origin[dataX$compare %in% interactions] <- "Interact"
         
         intersection.df <- subset(dataX, dataX$compare %in% interactions)
-        
-        
         
         #linhas que estão no arquivo de interação mas que não estão no dataX (mas são ambos genes do msm módulo)
         interactions.1  <- paste0(interact.df[, "Gene1"], "_", interact.df[, "Gene2"])
@@ -566,7 +896,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
         not.interactions$Gene2 <- lapply(not.interactions$compare, function(x) strsplit(x, "_")[[1]][2])
         not.interactions$Correlation <- 1
         not.interactions$P.value <- 0
-        not.interactions[, 6] <- unique(saida$ppi[, 5])
+        not.interactions[, 6] <- unique(dataX[, "module"])
         names(not.interactions)[6] <- paste("CEMiTool", name_out, sep="_")
         not.interactions$origin <- "Interact_not_Corr"
         not.interactions <- not.interactions[, c(2, 3, 4, 5, 6, 1, 7)]
@@ -600,7 +930,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
     dataX$to.y   <- my.df[, "y"][match(dataX[,2], my.df$nodes)]
     
     
-    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    if(!is.null(interact.df)){ 
         int.not.int$from.x <- my.df[, "x"][match(int.not.int[,1], my.df$nodes)] 
         int.not.int$from.y <- my.df[, "y"][match(int.not.int[,1], my.df$nodes)]
         int.not.int$to.x   <- my.df[, "x"][match(int.not.int[,2], my.df$nodes)] 
@@ -611,11 +941,11 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
     
     colnames(dataX)[1:2] <- c("X", "Y")
     
-    if(!is.null(interact)){
+    if(!is.null(interact.df)){
         colnames(int.not.int)[1:2] <- c("X", "Y")
     }
     
-    dataX$weights      <- ifelse(is.null(interact), Edge_width, dataX$weights) # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    dataX$weights      <- ifelse(is.null(interact.df), Edge_width, dataX$weights) 
     Numbers <- table(my.df$group)
     Names   <- rownames(Numbers)
     rects   <- data.frame()
@@ -682,7 +1012,7 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
                                        width = 0.5), color = "black", alpha = 0.5)
     
     
-    if(!is.null(interact)){ # THIS IS BAD AND YOU SHOULD FEEL BAD: reference to global variable
+    if(!is.null(interact.df)){ 
         if(nrow(int.not.int) > 0){
             graphplot <- graphplot + geom_segment(data = int.not.int, aes(x = from.x, xend = to.x, y = from.y, yend = to.y, 
                                                                           width = 0.5), color = mod.col, alpha = 0.5)
@@ -714,7 +1044,6 @@ CreateGGplot2Graph <- function (dataX, geneX, sampleNames, plot.text = TRUE) {
               plot.background  = element_blank())
     
     return(graphplot)
-    
 }
 
 RankE <- function(D){
@@ -771,74 +1100,6 @@ createRects2 <- function(exp.df, template.df=NULL){
                               xend = seq(1.5,ncol(exp.df)+0.5,1), col = "no_class")
     }
     return(list(rects2))
-}
-
-########################################################################
-
-all_colors <- rep(rainbow(16, s = 1, v = 0.7 ), 20)
-
-#Remove "#"
-all_colors <- substr(all_colors, 2, 7)
-plot.text <- TRUE
-
-
-setwd(set_dir)
-
-if(verbose) message("Reading expression file")
-
-
-exp.df <- read.delim(exprs_f, sep = "\t", header = TRUE, row.names = gene_column)
-exp.gsea <- exp.df
-#Remove ".CEL" from sample names
-# sampleNames <- toupper(names(exp.df))
-# sampleNames <- gsub("[_,.,;,-,,|,/,\\].*", "", sampleNames) 
-# names(exp.df) <- sampleNames
-
-################################
-
-#Filter 70% most expressed genes and <genenum> most variant
-if (filt == TRUE){
-    if(verbose) message("Filtering")
-    exp.df <- just.filter(exp.df, genenum)
-}
-
-
-if (!is.null(template_f)){
-    if(verbose) message("Reading template file")
-    
-    template.df  <- as.data.frame(read.delim(template_f, sep = "\t", header = TRUE, row.names = samples_column))
-    
-    if(!any(names(template.df) == "Class")){
-        stop("Template file does not contain a grouping column named 'Class'")
-    }
-    
-    if (length(names(exp.df)) > length(row.names(template.df))){
-        stop("Expression file contains more samples than template file")
-    }else if (length(names(exp.df)) < length(row.names(template.df))){
-        template.df <- template.df[colnames(exp.df),]
-        warning("Template file contains more samples than expression file; cutting template file")
-        #exp.df  <- exp.df[,rownames(template.df)]
-    }
-    
-    if(!all((sort(names(exp.df)) == sort(rownames(template.df))))){
-        rownames(template.df) <- make.names(rownames(template.df))
-        if(!all((sort(names(exp.df)) == sort(rownames(template.df))))){
-            stop("Template sample names different from expression file sample names")
-        }else{
-            message("Sample names started with numbers. Added syntactically valid names.")
-        }
-    }
-    
-    z.and.rects2 <- createRects2(exp.df, template.df)
-    Zmeans <- z.and.rects2[[1]]
-    rects2 <- z.and.rects2[[2]]
-    
-}else{
-    ###Caso contrario (nao tenha template):
-    # rects2  <- data.frame(xstart = seq(0.5,ncol(exp.df)-0.5,1), 
-    #                       xend = seq(1.5,ncol(exp.df)+0.5,1), col = "no_class") 
-    z.and.rects2 <- createRects2(exp.df)
-    rects2 <- z.and.rects2[[1]]
 }
 
 write.gmt <- function(all.gmts, fname){
@@ -1137,311 +1398,4 @@ plot.ora <- function(es, ordr.by='hyper.adj', maxlength=50, pv.cut=0.01, graphCo
     return(res)
 }
 
-gset <- NA
-if (!is.null(gmt_f)){
-    
-    gmt <- read.gmt(gmt_f)
-    genesets <- gmt[['genes']]
-    names.universe <- row.names(exp.df)
-    universe <- length(names.universe)
-    
-    # filter genes not in microarray
-    genesets.filt <- lapply(genesets, function(x){x[x %in% names.universe]})
-    
-    if(all(sapply(genesets.filt, length)==0)){
-        warning("There is no intersection between GMT and genes on expression file.")
-    }
-    
-    # filter geneset with less than 5 genes
-    gset <- genesets.filt[which(sapply(genesets.filt, length)>5)]
-}
-
-sample.names <- colnames(exp.df)
-
-# Run WGCNA
-if(verbose) message("WGCNA")
-wgcna_data_params <- goWGCNA(exp.df, name_out, corr.method = corr.method)
-wgcna_results  <- wgcna_data_params[[1]][["data"]]
-out_wgcna <- data.frame(wgcna_results)
-out_wgcna[, "NewColor"] <- "NA"
-out_wgcna[, "NewModule"] <- "NA"
-all_ppi <- data.frame()
-all_enrich <- data.frame() # enrichment results
-modNumbers <- table(wgcna_results[, ncol(wgcna_results)] )
-modNames   <- rownames(modNumbers)
-if (modNames[1] == "0"){
-    if(modNumbers['0'] == nrow(exp.df)){
-        writeLines("Error! We could not specify the parameter Beta. No modules found", con = paste0(name_out, "_error.txt"), sep = "\n", useBytes = FALSE)
-        warning("We could not specify the parameter Beta. No modules found! Exiting ...")
-        quit()
-    }
-    modNumbers <- as.table(modNumbers[-1 , drop=FALSE])
-    modNames   <- rownames(modNumbers)
-}
-
-finalBeta <- wgcna_data_params[[1]][['parameters']]['ourBeta']
-finalPhi <- round(wgcna_data_params[[1]][['parameters']]['phi'], digits = 3)
-parameter.names <- c("Directory", "Exprs.File", "Output.Name", "Cutoff.Pvalue", "No.Permutations", "Min.Genes", "Corr.Method", "Interaction.File", "Template.File", "Gmt.File", "Filter", "Num.Filt", "Beta", "Phi") 
-inputs <- c("set_dir", "exprs_f", "name_out", "cutPvalue", "nPerm", "MinSize", "corr.method", "interact", "template_f", "gmt_f", "filt", "genenum", "finalBeta", "finalPhi")
-
-rm.rows <- which(sapply(inputs, exists) & sapply(inputs, function(x) is.null(get(x))))
-if(length(rm.rows) > 0){
-    inputs <- inputs[-rm.rows]
-    parameter.names <- parameter.names[-rm.rows]
-}
-
-parameters <- sapply(inputs, get)
-
-# Create modules pdf
-modules.pdf <- paste0(name_out, "_Modules_tmp.pdf")
-
-if(verbose) message("Creating modules")
-pdf(file = modules.pdf) #, onefile = TRUE)
-
-results.table <- data.frame("Names" = parameter.names,  "Values" = parameters, row.names=NULL)
-
-if (!is.null(interact)){
-    # Read interaction file
-    interact.df  <- as.data.frame(read.table(interact, sep = "\t", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA"))
-    interact.df[, "module"] <- NA 
-    names(interact.df)[1:2] <- c("Gene1", "Gene2")
-    interact.df$origin <- "Interact"
-}
-
-eigen.list <- data.frame()
-mean.list <- data.frame()
-
-for (mod in 1:length(modNames)){
-    if(verbose) message(paste("Creating module", mod, "of", length(modNames)))
-    
-    geneS <- wgcna_results[which(wgcna_results[, ncol(wgcna_results)] == modNames[mod], arr.ind = TRUE), sample.names]
-    C <- cor(t(geneS), use = "everything", method = corr.method)
-    signs <- sign(range(C))
-    if((signs[1] != signs[2]) && split==TRUE ){	# somente se houver correlacoes pos e neg
-        DM <- as.dist(1 - C)
-        H <- hclust(DM)
-        k <- cutree(H, 2)
-        Gpos <- rownames(C)[which(k == 1)] 
-        Gneg <- rownames(C)[which(k == 2)]
-        
-        colorSeq <- c(paste0("M", mod, ".A"), paste0("M", mod, ".B"))
-        dynamicColors <- labels2colors(k, colorSeq=colorSeq)
-        
-    }else{
-        Gpos <- rownames(C) 
-        Gneg <- c()
-        
-        if(split==TRUE){
-            colorSeq <- paste0("M", mod, ".A")
-        }else{
-            colorSeq <- paste0("M.", mod)
-        }
-        
-        dynamicColors <- rep(colorSeq, length(rownames(C)))
-    }
-    MEs <- moduleEigengenes(t(geneS), colors=dynamicColors)$eigengenes
-    eigen.list <- rbind(eigen.list, t(MEs))
-    
-    if(verbose) message("Splitting module")
-    if (length(Gpos) >= MinSize) {
-        AorB <- 2
-        saida <- SplitModules(C, Gpos, cutPvalue, AorB, mod, geneS = geneS, corr.method = corr.method, label = name_out)
-        out_wgcna[saida$g,"NewColor"]  <- saida$newC
-        out_wgcna[saida$g,"NewModule"] <- saida$newM
-        out_wgcna[saida$g, "Membership"] <- rank(RankE(t(exp.df[saida$g, ])))
-        all_ppi <- rbind(all_ppi,saida$ppi)
-        ExpX   <- out_wgcna[saida$g, ]
-        
-        only.exp <- ExpX[, colnames(ExpX) %in% names(exp.df)]
-        mean.exp <- t(apply(only.exp, 2, mean))
-        
-        if(split==TRUE){
-            rownames(mean.exp) <- paste0("M", mod, ".A")
-        }else{
-            rownames(mean.exp) <- paste0("M.", mod)
-        }
-        mean.list <- rbind(mean.list, mean.exp)
-        
-        if(verbose) message("Plotting expression profile")
-        plot1 <- PlotLines(ExpX,rects2)
-        if(verbose) message("Plotting network graph")
-        plot2 <- CreateGGplot2Graph(saida$ppi, ExpX, sampleNames, plot.text = plot.text)
-        print(plot_grid(plot1, plot2, labels = c("a", "b"), ncol = 1, nrow = 2))
-    } 
-    if (length(Gneg) >= MinSize) {
-        AorB <- 1
-        saida <- SplitModules(C, Gneg, cutPvalue, AorB, mod, geneS = geneS, corr.method = corr.method, label = name_out)
-        out_wgcna[saida$g,"NewColor"]  <- saida$newC
-        out_wgcna[saida$g,"NewModule"] <- saida$newM
-        out_wgcna[saida$g, "Membership"] <- rank(RankE(t(exp.df[saida$g, ])))
-        all_ppi <- rbind(all_ppi,saida$ppi)
-        ExpX   <- out_wgcna[saida$g, ]
-        
-        only.exp <- ExpX[, colnames(ExpX) %in% names(exp.df)]
-        mean.exp <- t(apply(only.exp, 2, mean))
-        
-        if(split==TRUE){
-            rownames(mean.exp) <- paste0("M", mod, ".B")
-        }
-        mean.list <- rbind(mean.list, mean.exp)
-        
-        if(verbose) message("Plotting expression profile")
-        plot1 <- PlotLines(ExpX,rects2)
-        if(verbose) message("Plotting network graph")
-        plot2 <- CreateGGplot2Graph(saida$ppi, ExpX, sampleNames, plot.text = plot.text)
-        print(plot_grid(plot1, plot2, labels = c("a", "b"), ncol = 1, nrow = 2))
-    }
-}
-
-names(eigen.list) <- names(exp.df)
-rownames(eigen.list) <- unlist(lapply(rownames(eigen.list), function(x){strsplit(x, "E")[[1]][2]}))
-eigen.list <- eigen.list[rownames(mean.list),]
-
-write.table(eigen.list, file = paste(name_out, "_eigenlist.txt", sep = ""), sep = "\t", row.names = T, quote = FALSE)
-write.table(mean.list, file = paste(name_out, "_meanlist.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
-#plot3 <- CreateGGplot2GraphFULL(all_ppi, out_wgcna)
-#print(plot3)
-
-dev.off()
-
-if (!is.null(interact)){
-    if(verbose) message("Creating interactions file")
-    #interact.df  <- as.data.frame(read.table(interact, sep = "\t", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA"))
-    #interact.df[, "Module"] <- NA 
-    same.mod <- which(out_wgcna[interact.df[, 1], "NewModule"] == out_wgcna[interact.df[, 2], "NewModule"])
-    interact.df[same.mod, "module"] <- out_wgcna[interact.df[same.mod, 1], "NewModule"]
-    interact.df <- interact.df[!(is.na(interact.df[,"module"]) | interact.df[,"module"]=="NA"),]
-    all_ppi <- interact.df
-}
-
-write.table(all_ppi, file = paste(name_out, "_PPIs.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
-
-
-# Rename "GenesInModules" table column names and write it
-new.names <- c(paste0("WGCNA_", name_out), 'module',#paste0("CEMiTool_", name_out), 
-               paste0("CEMiTool_", name_out, "_membership"), paste0("WGCNA_", name_out, "_colors"))
-names(new.names) <- c("ourMods", "NewModule", "Membership", "ourColors")
-mtch <- match(colnames(out_wgcna), names(new.names))
-colnames(out_wgcna)[colnames(out_wgcna) %in% names(new.names)] <- na.exclude(new.names[mtch])
-out_wgcna <- drop.col(out_wgcna, sample.names)
-write.table(out_wgcna, file = paste(name_out, "_GenesInModules.txt", sep = ""), sep="\t", col.names = NA, quote=FALSE)
-
-###Transform each submodule into gene sets
-subMs   <- rownames(table(out_wgcna[,'module'])) #paste0("CEMiTool_", name_out)])) 
-
-GS <- list()
-
-for (mX in 1:length(subMs)){
-    Mgenes <- rownames(out_wgcna[which(out_wgcna[,'module']==subMs[mX]),]) 
-    GS[[subMs[mX]]] <- as.character(Mgenes)
-}
-
-# Create gmt file with gene modules 
-write.gmt(GS, name_out)
-
-#################################fastGSEA#########################################
-if(!is.null(template_f)){
-    gsea.res <- doFastGSEA(exp.gsea, template.df, GS, ranks = F)  
-    doCorrplot(gsea.res)
-}
-#################################fastGSEA#########################################
-
-####################################mGSZ###########################################
-#Vamos usar o Zmeans como ranks para o mGSZ ou o weighted Kolmogorov Smirnov
-##http://ekhidna.biocenter.helsinki.fi/downloads/pashupati/mGSZ.html
-##weighted Kolmogorov Smirnov
-##Os submodulos serao os gene.sets que serao testados contra o Zmeans
-##saida eh um corrplot com os gene.sets nas linhas e os ranks nas colunas
-
-# if(!is.null(template_f)){
-#     library(mGSZ)
-#     doGSZ(GS)
-# }
-
-####################################mGSZ###########################################
-
-# Enrichment Analysis (ORA)
-sig_count_total <- NA
-if(!is.null(gmt_f) & length(gset) > 0){
-    if(verbose) message("Doing ORA")
-    
-    gmt.genes <- character()
-    for(i in seq(1:length(gset))){
-        gmt.genes <- as.character(c(gmt.genes, gset[[i]]))
-    }
-    gmt.genes <- unique(gmt.genes)
-    
-    if(sum(rownames(exp.df) %in% gmt.genes) > 0){
-        
-        pdf(paste(name_out, "_ORA.pdf", sep = ""))
-        mod2genes <- split(rownames(out_wgcna), out_wgcna[, 'module'])#paste0("CEMiTool_", name_out)])
-        
-        if("NA" %in% names(mod2genes)){
-            mod2genes <- mod2genes[-which(names(mod2genes) == "NA")]
-        }
-        mod2genes <- mod2genes[order(as.numeric(str_extract(names(mod2genes), "\\d+")))]
-        
-        res.gmt <- list()
-        res.gmt$sig_count <- 0
-        
-        res.gmt <- lapply(names(mod2genes), function(name){
-            x <- mod2genes[[name]]
-            res.gmt <- as.data.frame(c(res.gmt, do.gmt(x, gset, universe, adjust.method="fdr")))
-            res.gmt <- res.gmt[order(res.gmt[, "fisher"]), ]
-            graphColor <- as.character(out_wgcna[match(name, out_wgcna[, 'module']), 'NewColor']) #paste0("CEMiTool_", name_out)]), "NewColor"])
-            plot.res <- plot.ora(res.gmt[1:10, ], graphColor=graphColor, title=name)
-            if(plot.res[["numsig"]] > 0){
-                print(plot.res[['pl']])
-                res.gmt$sig_count <- res.gmt$sig_count + 1
-            }
-            return(cbind(NewModule=name, res.gmt))
-        })
-        
-        sig_count_total <- lapply(res.gmt, function(x){
-            unique(x$sig_count)
-        })
-        sig_count_total <- sum(unlist(sig_count_total))
-        
-        names(res.gmt) <- names(mod2genes)
-        dev.off()
-        
-        res.gmt <- do.call(rbind, res.gmt)
-        write.table(res.gmt, file = paste(name_out, "_ORA.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE, col.names=TRUE)
-        
-        #Create module x pathway table
-        new.res.gmt <- res.gmt[, c("NewModule", "id", "hyper.adj")]
-        new.res.gmt <- dcast(res.gmt, NewModule ~ id, value.var = "hyper.adj")  #Define NewModule as identifier, id as columns and hyper.adj as values
-        write.table(new.res.gmt, file = paste(name_out, "_ORA_PathsInModules.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE, col.names=TRUE)
-    }else{
-        message("Expression file gene symbols not in gmt file. Skipping ORA.")
-        sig_count_total <- NA
-    }
-}
-
-
-# Create analysis.res parameter table
-analysis.res <- wgcna_data_params[[2]]
-col <- 'module'#paste("CEMiTool_", name_out, sep="")
-analysis.res$ourNGzero <- sum(out_wgcna[, col] == "NA")
-analysis.res$ourNMods  <- length(unique(out_wgcna[,col][which(out_wgcna[, col] != "NA")]))
-analysis.res$ourGM <- mean(table(out_wgcna[,col][which(out_wgcna[, col] != "NA")]))
-analysis.res$sig_count <- sig_count_total
-
-if(verbose) message("Outputting parameters")
-write.table(analysis.res, file = paste(name_out, "_analysis_res.txt", sep = ""), sep="\t", col.names = NA, quote=FALSE)
-
-# parameters
-#parameters <- data.frame(name = c("Label: ", "p-value cutoff: ", "number of permutations: ", 
-#				   		 			"minimum module size: ", "correlation method: "), value = args[-c(1,2)] )
-
-#write.table(parameters, file = paste(name_out, "_params.txt", sep = ""), sep = "\t", row.names = F, quote = FALSE)
-
-render(file.path(base.path, "template_modules.Rmd"), envir = globalenv(), output_file = paste0(name_out, "_params.pdf"), output_dir = getwd())
-
-#save(file="saves.RData", list=ls())
-
-gowgcna_plot_fname <- paste(name_out, "_", wgcna_data_params[[1]][["parameters"]]["phi"], "_", wgcna_data_params[[1]][["parameters"]]["ourBeta"], ".pdf", sep = "")
-system(paste0("pdftk A=", name_out, "_params.pdf"," B=", modules.pdf, " C=", gowgcna_plot_fname, " cat A1 C B2-end output ", name_out, "_Modules.pdf"))
-
-if(verbose) message("Finished CEMiTool")
-#load(file="saves.RData") 
+main()
