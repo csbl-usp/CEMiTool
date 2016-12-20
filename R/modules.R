@@ -4,7 +4,7 @@ library(WGCNA)
 #'
 #' Defines co-expression modules
 #'
-#' @param exprs gene expression \code{"data.frame"}
+#' @param exprs gene expression \code{data.frame}
 #' @param cor_method a character string indicating which correlation coefficient is to be computed
 #' @param verbose logical. Report analysis steps
 #'
@@ -114,7 +114,13 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         me_diss <- 1 - cor(me_eigen)
 
         # Clustering module eigengenes
-        me_tree <- hclust(as.dist(me_dis), method='average')
+        me_tree <- hclust(as.dist(me_diss), method='average')
+
+        # Cutting tree to determine modules
+        our_mods <- cutreeDynamic(dendro = me_tree, distM = me_diss,
+                              deepSplit = 2,
+                              pamRespectsDendro = FALSE,
+                              minClusterSize = min_mod_size)
 
         # Setting cut height
         me_diss_thresh <- 1 - diss_thresh 
@@ -130,7 +136,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         merged_mods <- merged_mods$newMEs
     }
 
-    out <- cbind(rownames(exprs), our_colors)
+    out <- cbind(rownames(exprs), our_mods)
     return(out)
 }
 
