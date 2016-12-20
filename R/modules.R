@@ -166,6 +166,9 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #' @export
 split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
 
+    if (verbose) {
+        message('Splitting modules')
+    }
     modules <- unique(gene_module[, 'modules'])
     submods <- lapply(modules, function(mod){
 
