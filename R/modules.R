@@ -1,9 +1,11 @@
+library(WGCNA)
+
 #' Co-expression modules definition
 #'
 #' Defines co-expression modules
 #'
 #' @param exprs gene expression \code{"data.frame"}
-#' @param cor.method a character string indicating which correlation coefficient is to be computed
+#' @param cor_method a character string indicating which correlation coefficient is to be computed
 #' @param verbose logical. Report analysis steps
 #'
 #' @return just god knows 
@@ -13,8 +15,8 @@
 #'
 #' @export
 find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
-                         min_mod_size=30, merge_similar=T,
-                         diss_thresh=0.8, verbose=F)
+                             min_mod_size=30, merge_similar=T,
+                             diss_thresh=0.8, verbose=F)
 {
     
     if (is.null(exprs)){
