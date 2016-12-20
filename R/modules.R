@@ -107,6 +107,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 
     n_mods <- length(unique(our_colors))
 
+    # checks number of modules found
     if (n_mods <= 1) {
         stop('Could not specify the parameter Beta. No modules found.')
     }
