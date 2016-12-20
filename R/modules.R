@@ -152,9 +152,10 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #'
 #' Refines modules by splitting them into submodules based on correlation sign.
 #'
-#' @param exprs gene expression \code{data.frame}
-#' @param gene_module two column \code{data.frame}. First column with
+#' @param exprs gene Expression \code{data.frame}
+#' @param gene_module Two column \code{data.frame}. First column with
 #'        gene identifiers and second column with module information
+#' @param min_mod_size Minimum number of genes per submodule
 #' @param verbose logical. Report analysis steps
 #'
 #' @return A \code{data.frame} with gene identifier and module information.
@@ -163,7 +164,57 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #' splitted_mods <- split_modules(exprs=expression.df, gene_module=coex)
 #'
 #' @export
-split_modules <- function(exprs, gene_module, verbose=F) {}
+split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
+
+    modules <- unique(gene_module[, 'modules'])
+    submods <- lapply(modules, function(mod){
+
+        # subsets from exprs all genes inside module mod
+        genes <- gene_module[gene_module[,'modules']==mod, 'genes']
+        mod_exprs <- exprs[genes,]
+
+        # recalculates the correlation matrix for genes in module mod
+        gene_cors <- cor(t(mod_exprs), use='everything', method='pearson')
+
+        # checks if there are positive and negative correlations
+        # inside module mod
+        signs <- sign(range(gene_cors))
+        if (signs[1] != signs[2]) {
+            # there are negative correlations inside module mod
+            gene_dists <- as.dist(1 - gene_cors)
+            gene_clust <- hclust(gene_dists)
+            k <- cutree(gene_clust, 2)
+            pos_cors <- rownames(gene_cors)[which(k==1)]
+            neg_cors <- rownames(gene_cors)[which(k==2)]
+
+            # checks for the minimum module size of positive correlated genes
+            if (length(pos_cors) >= min_mod_size) {
+                pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'))
+            } else {
+                pos_mod <- data.frame()
+            }
+
+            # checks for the minimum module size of negative correlated genes
+            if (length(neg_cors) >= min_mod_size) {
+                neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'))
+            } else {
+                neg_mod <- data.frame()
+            }
+
+            splitted_mods <- rbind(pos_mod, neg_mod)
+
+            return(splitted_mods)
+
+        } else {
+            # no negative correlations inside module mod
+            same_mod <- data.frame(genes=genes, modules=mod)
+
+            return(same_mod)
+        }
+    }) # end of lapply
+
+    return(do.call(rbind, submods))
+}
 
 
 
