@@ -8,11 +8,11 @@ find_modules(exprs, cor_method = c("pearson", "spearman"),
   min_mod_size = 30, merge_similar = T, diss_thresh = 0.8, verbose = F)
 }
 \arguments{
-\item{exprs}{gene expression \code{"data.frame"}}
+\item{exprs}{gene expression \code{data.frame}}
+
+\item{cor_method}{a character string indicating which correlation coefficient is to be computed}
 
 \item{verbose}{logical. Report analysis steps}
-
-\item{cor.method}{a character string indicating which correlation coefficient is to be computed}
 }
 \value{
 just god knows
