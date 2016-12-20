@@ -101,6 +101,10 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
                               minClusterSize = min_mod_size)
     our_table <- table(our_mods)
 
+    our_colors <- labels2colors(our_mods)
+
+    out <- data.frame(genes=rownames(exprs), modules=our_colors)
+
     # if merge_similar=TRUE, merges similar modules
     if (merge_similar) {
         if (verbose) {
@@ -116,12 +120,6 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         # Clustering module eigengenes
         me_tree <- hclust(as.dist(me_diss), method='average')
 
-        # Cutting tree to determine modules
-        our_mods <- cutreeDynamic(dendro = me_tree, distM = me_diss,
-                              deepSplit = 2,
-                              pamRespectsDendro = FALSE,
-                              minClusterSize = min_mod_size)
-
         # Setting cut height
         me_diss_thresh <- 1 - diss_thresh 
 
@@ -134,10 +132,58 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 
         # Eigengenes of the new merged modules
         merged_mods <- merged_mods$newMEs
+
+        out[, 'modules'] <- our_colors
     }
 
-    out <- cbind(rownames(exprs), our_mods)
     return(out)
 }
+
+
+
+#' Co-expression module refinement 
+#'
+#' Refines modules by splitting them into submodules based on correlation sign.
+#'
+#' @param exprs gene expression \code{data.frame}
+#' @param gene_module two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information
+#' @param verbose logical. Report analysis steps
+#'
+#' @return A \code{data.frame} with gene identifier and module information.
+#'
+#' @examples
+#' splitted_mods <- split_modules(exprs=expression.df, gene_module=coex)
+#'
+#' @export
+split_modules <- function(exprs, gene_module, verbose=F) {}
+
+
+
+#' Co-expression module refinement 
+#'
+#' Refines modules by excluding non-significant edges. 
+#'
+#' @param exprs gene expression \code{data.frame}
+#' @param gene_module two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information
+#' @param nperm numeric. Number of permutations for edge significance test
+#' @param use_lpc logical. If TRUE uses Local Partial Correlation method for
+#'        module refinement
+#' @param verbose logical. Report analysis steps
+#'
+#' @return A list of with the following components:
+#'
+#'gene_module: \code{data.frame} with gene identifier and module information
+#'edge_list: \code{data.frame} with the genes which consist of each edge in 
+#'            a module.
+#'
+#'
+#' @examples
+#' refined_mods <- refine_modules(exprs=expression.df, gene_module=coex)
+#'
+#' @export
+refine_modules <- function(exprs, gene_module, nperm=1000,
+                         use_lpc=F, verbose=F){}
 
 
