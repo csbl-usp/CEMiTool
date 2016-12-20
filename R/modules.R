@@ -105,6 +105,12 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 
     out <- data.frame(genes=rownames(exprs), modules=our_colors)
 
+    n_mods <- length(unique(our_colors))
+
+    if (n_mods <= 1) {
+        stop('Could not specify the parameter Beta. No modules found.')
+    }
+
     # if merge_similar=TRUE, merges similar modules
     if (merge_similar) {
         if (verbose) {
