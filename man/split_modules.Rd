@@ -4,13 +4,15 @@
 \alias{split_modules}
 \title{Co-expression module refinement}
 \usage{
-split_modules(exprs, gene_module, verbose = F)
+split_modules(exprs, gene_module, min_mod_size = 30, verbose = F)
 }
 \arguments{
-\item{exprs}{gene expression \code{data.frame}}
+\item{exprs}{gene Expression \code{data.frame}}
 
-\item{gene_module}{two column \code{data.frame}. First column with
+\item{gene_module}{Two column \code{data.frame}. First column with
 gene identifiers and second column with module information}
+
+\item{min_mod_size}{Minimum number of genes per submodule}
 
 \item{verbose}{logical. Report analysis steps}
 }

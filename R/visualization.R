@@ -79,7 +79,7 @@ plot_ora <- function(test){}
 #' @return None
 #'
 #' @examples
-#' gseaplot(test)
+#' plot_gsea(test)
 #'
 #' @export
-gseaplot <- function(test){}
+plot_gsea <- function(test){}
