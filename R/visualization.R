@@ -2,15 +2,39 @@
 #'
 #' Creates a line plot of each gene inside the module through the samples
 #'
-#' @param exprs expression data frame or list of expression data frames of each module
+#' @param exprs Expression data frame or list of expression data frames of each module
+#' @param gene_module Two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information
+#' @param annot optional. Two column \code{data.frame}. Fist column with
+#'        sample identifiers and second column with group/class information
 #'
 #' @return None
 #'
 #' @examples
-#' profileplot(exprs)
+#' plot_profile(exprs)
 #'
 #' @export
-profileplot <- function(exprs){}
+plot_profile <- function(exprs, gene_module, annot, save=FALSE,
+                         filename='profile.pdf'){
+    modules <- unique(gene_module[, 'modules'])
+    plots <- lapply(modules, function(mod){
+        # subsets from exprs all genes inside module mod
+        genes <- gene_module[gene_module[,'modules']==mod, 'genes']
+        mod_exprs <- melt(exprs[genes,])
+
+        g <- ggplot(mod_exprs, aes(x=, y=))
+
+        if (!is.missing(annot)) {
+            g <- g + geom_rect()
+        }
+
+        g <- g + geom_line(aes(group=genes)) +
+                 stat_summary(fun.y=mean, geom='line')
+
+        return(g)
+    })
+    return(plots)
+}
 
 
 
@@ -23,10 +47,10 @@ profileplot <- function(exprs){}
 #' @return None
 #'
 #' @examples
-#' graphplot(test)
+#' plot_graph(test)
 #'
 #' @export
-graphplot <- function(test){}
+plot_graph <- function(test){}
 
 
 
@@ -39,10 +63,10 @@ graphplot <- function(test){}
 #' @return None
 #'
 #' @examples
-#' oraplot(test)
+#' plot_ora(test)
 #'
 #' @export
-oraplot <- function(test){}
+plot_ora <- function(test){}
 
 
 
