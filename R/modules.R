@@ -258,24 +258,22 @@ refine_modules <- function(exprs, gene_module, nperm=1000,
     refmods <- lapply(modules, function(mod){
         # subsets from exprs all genes inside module mod
         genes <- gene_module[gene_module[,'modules']==mod, 'genes']
-		
-		edges <- t(combn(genes,2))
-		
-		# some black magic happening here
-		results_perm <-  foreach(icount(nperm)) %do% {
-			sampled_cols <- sample(ncol(exprs), ncol(exprs))
-			sampled_exprs <- exprs[genes, sampled_cols]
-			cor_matrix <- cor(t(sampled_exprs), 
-								  t(exprs[genes,]), 
-								  use = 'everything', 
-								  method = 'pearson')
-			cor_matrix <- cor_matrix[edges]
-		}
-		results_perm <- as.data.frame(results_perm)
-		colnames(results_perm) <- seq(1:nperm)
-		return(results_perm)
-	})
-	return(refmods)
+        edges <- t(combn(genes,2))
+        # some black magic happening here
+        results_perm <-  foreach(icount(nperm)) %do% {
+            sampled_cols <- sample(ncol(exprs), ncol(exprs))
+            sampled_exprs <- exprs[genes, sampled_cols]
+            cor_matrix <- cor(t(sampled_exprs), 
+                              t(exprs[genes,]), 
+                              use = 'everything', 
+                              method = 'pearson')
+            cor_matrix <- cor_matrix[edges]
+        }
+        results_perm <- as.data.frame(results_perm)
+        colnames(results_perm) <- seq(1:nperm)
+        return(results_perm)
+    })
+    return(refmods)
 }
 
 
