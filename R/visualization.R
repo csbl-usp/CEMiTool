@@ -12,7 +12,7 @@
 #' @param class_col character string with the name of classes column in the
 #'        annotation data.frame
 #'
-#' @return None
+#' @return List with one profile plot per module in gene_module
 #'
 #' @examples
 #' plot_profile(exprs, coex)

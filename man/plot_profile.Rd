@@ -4,8 +4,8 @@
 \alias{plot_profile}
 \title{Expression profile visualization}
 \usage{
-plot_profile(exprs, gene_module, annot, save = FALSE,
-  filename = "profile.pdf")
+plot_profile(exprs, gene_module, annot = NULL, sample_col = NULL,
+  class_col = NULL, filename = "profile.pdf")
 }
 \arguments{
 \item{exprs}{Expression data frame or list of expression data frames of each module}
@@ -15,15 +15,21 @@ gene identifiers and second column with module information}
 
 \item{annot}{optional. Two column \code{data.frame}. Fist column with
 sample identifiers and second column with group/class information}
+
+\item{sample_col}{character string with the name of samples column in the
+annotation data.frame}
+
+\item{class_col}{character string with the name of classes column in the
+annotation data.frame}
 }
 \value{
-None
+List with one profile plot per module in gene_module
 }
 \description{
 Creates a line plot of each gene inside the module through the samples
 }
 \examples{
-plot_profile(exprs)
+plot_profile(exprs, coex)
 
 }
 
