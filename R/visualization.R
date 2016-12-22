@@ -7,32 +7,90 @@
 #'        gene identifiers and second column with module information
 #' @param annot optional. Two column \code{data.frame}. Fist column with
 #'        sample identifiers and second column with group/class information
+#' @param sample_col character string with the name of samples column in the
+#'        annotation data.frame
+#' @param class_col character string with the name of classes column in the
+#'        annotation data.frame
 #'
 #' @return None
 #'
 #' @examples
-#' plot_profile(exprs)
+#' plot_profile(exprs, coex)
 #'
 #' @export
-plot_profile <- function(exprs, gene_module, annot, save=FALSE,
-                         filename='profile.pdf'){
+plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
+                         class_col=NULL, filename='profile.pdf')
+{
     modules <- unique(gene_module[, 'modules'])
     plots <- lapply(modules, function(mod){
         # subsets from exprs all genes inside module mod
         genes <- gene_module[gene_module[,'modules']==mod, 'genes']
-        mod_exprs <- melt(exprs[genes,])
+        exprs[, 'id'] <- rownames(exprs)
+        mod_exprs <- melt(exprs[genes,], 'id',
+                          variable.name='sample',
+                          value.name='expression')
 
-        g <- ggplot(mod_exprs, aes(x=, y=))
+        # initialize plot base layer
+        g <- ggplot(mod_exprs, aes(x=sample, y=expression))
 
-        if (!is.missing(annot)) {
-            g <- g + geom_rect()
+        # adds different background colours if annot is provided
+        if (!is.null(annot)) {
+            if (is.null(sample_col)) {
+                stop('Must provide sample column name')
+            }
+            if (is.null(class_col)) {
+                stop('Must provide class column name')
+            }
+
+            # sorts data.frame by class name
+            annot <- annot[order(annot[, class_col]),]
+            annot[, sample_col] <- factor(annot[, sample_col],
+                                          levels=annot[, sample_col])
+            mod_exprs[, 'sample'] <- factor(mod_exprs[, 'sample'],
+                                            levels=annot[, sample_col])
+
+            # y positioning of background tiles
+            y_pos <- mean(mod_exprs[, 'expression'])
+
+            # reinitialize base layer adding background tiles
+            g <- ggplot(mod_exprs, aes(x=sample, y=expression)) +
+                        geom_tile(data=annot, alpha=0.3, height=Inf,
+                                  aes(x=get(sample_col), y=y_pos,
+                                      fill=get(class_col)))
         }
 
-        g <- g + geom_line(aes(group=genes)) +
-                 stat_summary(fun.y=mean, geom='line')
+        # adding lines
+        g <- g + geom_line(aes(group=id), alpha=0.2) +
+                 stat_summary(aes(group=1),size=1, fun.y=mean, geom='line')
+
+        # custom theme
+        g <- g + theme(plot.title=element_text(lineheight=0.8,
+                                               face='bold',
+                                               colour='black',
+                                               size=15),
+                       axis.title=element_text(face='bold',
+                                               colour='black',
+                                               size=15),
+                       axis.text.y=element_text(angle=0,
+                                                vjust=0.5,
+                                                size=8),
+                       axis.text.x=element_text(angle=90,
+                                                vjust=0.5,
+                                                size=6),
+                       panel.grid=element_blank(),
+                       legend.title=element_blank(),
+                       legend.text=element_text(size = 8),
+                       legend.background=element_rect(fill='gray90',
+                                                      size=0.5,
+                                                      linetype='dotted'),
+                       legend.position='bottom'
+                       )
+        # title
+        g <- g + ggtitle(mod)
 
         return(g)
     })
+    names(plots) <- modules
     return(plots)
 }
 
