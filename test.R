@@ -27,4 +27,6 @@ list_of_profiles <- plot_profile(exprs, splitted_modules)
 # at the enrichment of those modules in your experimental classes
 enrich <- mod_gsea(exprs, splitted_modules, annot)
 
+# Heatmap of gene set enrichment analysis
+plot_gsea(enrich)
 
