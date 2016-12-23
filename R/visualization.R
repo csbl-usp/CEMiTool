@@ -1,3 +1,9 @@
+suppressPackageStartupMessages({
+    require(igraph)
+    require(ggplot2)
+    require(ggnetwork)
+})
+
 #' Expression profile visualization
 #'
 #' Creates a line plot of each gene inside the module through the samples
@@ -100,15 +106,15 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
 #'
 #' Creates a line plot of each gene inside the module through the samples
 #'
-#' @param test
+#' @param edgelist Two column \code{data.frame} with genes interaction data
 #'
-#' @return None
+#' @return List with one network plot per module in gene_module
 #'
 #' @examples
-#' plot_graph(test)
+#' plot_graph(edgelist)
 #'
 #' @export
-plot_graph <- function(test){}
+plot_graph <- function(edgelist){}
 
 
 
