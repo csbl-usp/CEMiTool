@@ -2,6 +2,7 @@ suppressPackageStartupMessages({
     require(igraph)
     require(ggplot2)
     require(ggnetwork)
+    require(corrplot)
 })
 
 #' Expression profile visualization
@@ -138,12 +139,51 @@ plot_ora <- function(test){}
 #'
 #' Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules
 #'
-#' @param test
+#' @param enrichment
+#' @param pv_cut
 #'
 #' @return None
 #'
 #' @examples
-#' plot_gsea(test)
+#' plot_gsea(enrichment)
 #'
 #' @export
-plot_gsea <- function(test){}
+plot_gsea <- function(enrichment, pv_cut=0.05)
+{
+    stats <- names(enrichment)
+    enrichment <- lapply(enrichment, function(stat){
+        stat[is.na(stat)] <- 0
+        rownames(stat) <- stat[,1]
+        stat[,1] <- NULL
+        return(stat)
+    })
+    names(enrichment) <- stats
+
+    pval <- enrichment[['pval']]
+    nes <- enrichment[['nes']]
+
+    pval <- pval[rowSums(pval < pv_cut) >= 1,]
+    nes <- nes[rownames(pval),]
+
+    # check if there is any signif. module
+    if(nrow(nes) < 0){
+        stop("No significant modules found!")
+    }
+
+    custom_pal <- c("#053061", "#2166AC", "#4393C3", "#92C5DE",
+                    "#D1E5F0", "#FFFFFF", "#FDDBC7", "#F4A582",
+                    "#D6604D", "#B2182B", "#67001F")
+    custom_pal <- colorRampPalette(custom_pal)(200)
+
+    nes <- as.matrix(nes)
+    pval <- as.matrix(pval)
+    nes[which(pval > pv_cut, arr.ind=T)] <- 0
+
+    order <- rownames(nes)[hclust(dist(nes))$order]
+
+    corrplot(nes[order, ], p.mat=pval[order, ], col=custom_pal,
+             is.corr=FALSE, addgrid.col="white", insig="blank",
+             pch.cex=0.5, pch.col="black", tl.col="black", tl.cex=0.5,
+             cl.cex=0.4, cl.ratio=0.5, cl.pos="r", cl.align.text="l",
+             mar=c(0,0,0,0), sig.level=pv_cut)
+}
