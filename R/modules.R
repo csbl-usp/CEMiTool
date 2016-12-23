@@ -1,8 +1,10 @@
-library(WGCNA)
-library(ff)
-library(foreach)
-library(doParallel)
-library(iterators)
+suppressPackageStartupMessages({
+    require(WGCNA)
+    require(ff)
+    require(foreach)
+    require(doParallel)
+    require(iterators)
+})
 
 #' Co-expression modules definition
 #'
