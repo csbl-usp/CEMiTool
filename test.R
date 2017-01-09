@@ -3,6 +3,8 @@ library(data.table)
 
 load_all()
 
+registerDoParallel(cores=8)
+
 # Read your expression table
 exprs <- fread('data/expression.txt', data.table=F)
 rownames(exprs) <- exprs[,1]
@@ -11,7 +13,7 @@ exprs <- head(exprs[order(apply(exprs, 1, var),
                           decreasing=T),],4000)
 
 # Read your sample annotation table
-annot <- fread('data/annotation.txt', data.table=F)
+annot <- fread('data/sample_annotation.txt', data.table=F)
 
 # Find the modules
 gene_module <- find_modules(exprs) 
