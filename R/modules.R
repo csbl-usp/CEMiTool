@@ -24,7 +24,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
                              min_mod_size=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
-    
+
     if (is.null(exprs)){
         stop('Must provide expression data')
     }
@@ -46,7 +46,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
                               networkType='signed', moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
                                               method=match.arg(cor_method)))
-    
+
     fit <- -sign(beta$fitIndices[, 3])*beta$fitIndices[, 2]
     k <- beta$fitIndices[, 5]
     At  <- powers[length(powers)] - powers[1]
@@ -190,6 +190,11 @@ split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
         signs <- sign(range(gene_cors))
         if (signs[1] != signs[2]) {
             # there are negative correlations inside module mod
+
+            if (verbose) {
+                message(paste0('Splitting module '), mod)
+            }
+
             gene_dists <- as.dist(1 - gene_cors)
             gene_clust <- hclust(gene_dists)
             k <- cutree(gene_clust, 2)
@@ -217,6 +222,10 @@ split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
         } else {
             # no negative correlations inside module mod
             same_mod <- data.frame(genes=genes, modules=mod)
+
+            if (verbose) {
+                message(paste0('Module ', mod, ' will not be splitted'))
+            }
 
             return(same_mod)
         }
