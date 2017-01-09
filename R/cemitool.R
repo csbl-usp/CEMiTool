@@ -23,10 +23,10 @@
 #' @export
 cemitool <- function(exprs, 
                      annot,
-                     ppi,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
                      cor_pval=0.05,
+                     split_mods=F,
                      ora_pval=0.05,
                      nperm=1000,
                      min_ngen=30,
@@ -34,28 +34,40 @@ cemitool <- function(exprs,
                      plot=F,
                      verbose=F)
 {
-    coex_mods <- find_modules(exprs,
+    gene_module <- find_modules(exprs,
                               cor_method=match.arg(cor_method),
                               verbose=verbose)
+    
+    # if user wants splitted modules
+    if (split_mods) {
+        gene_module <- split_modules(exprs, gene_module)
+    }
 
     # if user provides annot file
     if (!is.null(annot)) {
         #run mod_gsea
+        gsea <- mod_gsea(exprs, gene_module, annot, verbose=verbose)
     }
 
     # if user provides .gmt file
     if (!is.null(gmt)) {
         #run mod_ora
-    }
-    
-    # if user provides ppi file
-    if (!is.null(ppi)) {
-        
+        ora <- mod_ora(gene_module, gmt, verbose=verbose)
     }
 
     # plots all desired charts
     if (plot) {
-    
+        profiles <- plot_profile(exprs, gene_module)
+        if (exists('gsea')) {
+            pdf('modules_enrichment.pdf')
+            print(plot_gsea(gsea))
+        }
+
+        if (exists('ora')) {
+            
+        }
+
+
     }
 
 }

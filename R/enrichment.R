@@ -27,8 +27,12 @@ mod_ora <- function(test){}
 #'
 #' @export
 mod_gsea <- function(exprs, gene_module, annot, sample_col=1,
-                     class_col=2)
+                     class_col=2, verbose=F)
 {
+    if (verbose) {
+        message('Running GSEA')
+    }
+    
     # creates gene sets from modules
     modules <- unique(gene_module[, 'modules'])
     gene_sets <- lapply(modules, function(mod){
@@ -44,13 +48,21 @@ mod_gsea <- function(exprs, gene_module, annot, sample_col=1,
     # calculates enrichment for each module for each class in annot
     classes <- unique(annot[, class_col])
     gsea_list <- lapply(classes, function(class_group){
+        
+        if (verbose) {
+            message(paste0('Calculating modules enrichment analysis for class ',
+                           class_group))
+        }
         # samples of class == class_group
         class_samples <- annot[annot[, class_col]==class_group, sample_col]
         
         # genes ranked by mean
         genes_ranked <- apply(z_exprs[, class_samples], 1, mean)
         genes_ranked <- sort(genes_ranked, decreasing=TRUE)
-        #register(SerialParam())
+        
+        # BiocParallel setting up
+        register(SerialParam())
+        
         gsea_results <- fgsea(pathways=gene_sets,
                               stats=genes_ranked,
                               minSize=15,
