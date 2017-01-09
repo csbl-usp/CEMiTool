@@ -29,6 +29,10 @@ mod_ora <- function(test){}
 mod_gsea <- function(exprs, gene_module, annot, sample_col=1,
                      class_col=2, verbose=F)
 {
+    if (verbose) {
+        message('Running GSEA')
+    }
+    
     # creates gene sets from modules
     modules <- unique(gene_module[, 'modules'])
     gene_sets <- lapply(modules, function(mod){
