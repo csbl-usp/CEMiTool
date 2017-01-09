@@ -23,7 +23,6 @@
 #' @export
 cemitool <- function(exprs, 
                      annot,
-                     ppi,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
                      cor_pval=0.05,
