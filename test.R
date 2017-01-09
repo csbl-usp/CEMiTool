@@ -32,3 +32,5 @@ enrich <- mod_gsea(exprs, splitted_modules, annot)
 # Heatmap of gene set enrichment analysis
 plot_gsea(enrich)
 
+# Performs over representation analysis
+ora_res <- mod_ora(splitted_modules, "data/pathways.gmt")
