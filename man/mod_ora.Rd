@@ -8,17 +8,17 @@ mod_ora(gene_module, gmt, verbose = FALSE)
 }
 \arguments{
 \item{gene_module}{Two column \code{data.frame}. First column with
-gene identifiers and second column with module information}
+gene identifiers and second column with module information.}
 
-\item{gmt}{GMT file name}
+\item{gmt}{GMT file name.}
 
-\item{verbose}{logical. Report analysis steps}
+\item{verbose}{logical. Report analysis steps.}
 }
 \value{
 None
 }
 \description{
-Perfoms overrepresentation analysis for each co-expression module found
+Perfoms overrepresentation analysis for each co-expression module found.
 }
 \examples{
 mod_ora(gene_module, gmt)

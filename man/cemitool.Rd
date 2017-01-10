@@ -9,9 +9,9 @@ cemitool(exprs, annot, gmt, cor_method = c("pearson", "spearman"),
   min_ngen = 30, diss_thresh = 0.8, plot = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{exprs}{Gene expression \code{"data.frame"}.}
+\item{exprs}{Gene expression \code{data.frame}.}
 
-\item{annot}{Sample annotation \code{"data.frame"}.}
+\item{annot}{Sample annotation \code{data.frame}.}
 
 \item{gmt}{A character string with name of the Gene set file in GMT format.}
 
