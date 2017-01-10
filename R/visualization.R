@@ -26,7 +26,7 @@ suppressPackageStartupMessages({
 #'
 #' @export
 plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
-                         class_col=NULL, filename='profile.pdf')
+                         class_col=NULL, order=TRUE, filename='profile.pdf')
 {
     modules <- unique(gene_module[, 'modules'])
     plots <- lapply(modules, function(mod){
@@ -49,12 +49,14 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
                 stop('Must provide class column name')
             }
 
-            # sorts data.frame by class name
-            annot <- annot[order(annot[, class_col]),]
-            annot[, sample_col] <- factor(annot[, sample_col],
-                                          levels=annot[, sample_col])
-            mod_exprs[, 'sample'] <- factor(mod_exprs[, 'sample'],
+            if (order) {
+                # sorts data.frame by class name
+                annot <- annot[order(annot[, class_col]),]
+                annot[, sample_col] <- factor(annot[, sample_col],
                                             levels=annot[, sample_col])
+                mod_exprs[, 'sample'] <- factor(mod_exprs[, 'sample'],
+                                                levels=annot[, sample_col])
+            }
 
             # y positioning of background tiles
             y_pos <- mean(mod_exprs[, 'expression'])
