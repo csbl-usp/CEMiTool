@@ -5,31 +5,34 @@
 \title{Full gene co-expression analysis}
 \usage{
 cemitool(exprs, annot, gmt, cor_method = c("pearson", "spearman"),
-  cor_pval = 0.05, split_mods = F, ora_pval = 0.05, nperm = 1000,
-  min_ngen = 30, diss_thresh = 0.8, plot = F, verbose = F)
+  merge_similar = TRUE, split_mods = FALSE, ora_pval = 0.05,
+  min_ngen = 30, diss_thresh = 0.8, plot = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{exprs}{gene expression \code{"data.frame"}}
+\item{exprs}{Gene expression \code{"data.frame"}.}
 
-\item{annot}{sample annotation \code{"data.frame"}}
+\item{annot}{Sample annotation \code{"data.frame"}.}
 
-\item{gmt}{gene set file in .gmt format}
+\item{gmt}{A character string with name of the Gene set file in GMT format.}
 
-\item{cor_method}{a character string indicating which correlation coefficient is to be computed}
+\item{cor_method}{A character string indicating which correlation coefficient is
+to be computed. One of \code{"pearson"} or \code{"spearman"}.
+Default \code{"pearson"}.}
 
-\item{cor_pval}{p-value for gene-gene correlation}
+\item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
 
-\item{ora_pval}{p-value for overrepresentation analysis}
+\item{ora_pval}{P-value for overrepresentation analysis. Default \code{0.05}.}
 
-\item{nperm}{number of permutations}
+\item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
-\item{min_ngen}{minimal number of genes per submodule}
+\item{diss_thresh}{Module merging correlation threshold for eigengene similarity.
+Default \code{0.8}.}
 
-\item{diss_thresh}{module merging correlation threshold for eigengene similarity}
+\item{plot}{Logical. If \code{TRUE}, plots all figures.}
 
-\item{verbose}{logical. Report analysis steps}
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 
-\item{ppi}{protein-protein interaction file}
+\item{split_modules}{Logical. If \code{TRUE}, splits modules by correlation sign.}
 }
 \value{
 just god knows

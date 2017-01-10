@@ -8,21 +8,21 @@ mod_summary(exprs, gene_module, method = c("mean", "eigengene"),
   verbose = F)
 }
 \arguments{
-\item{exprs}{gene expression \code{data.frame}}
+\item{exprs}{Gene expression \code{data.frame}.}
 
-\item{gene_module}{two column \code{data.frame}. First column with
-gene identifiers and second column with module information}
+\item{gene_module}{Two column \code{data.frame}. First column with
+gene identifiers and second column with module information.}
 
-\item{verbose}{logical. Report analysis steps}
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-A data.frame with summarized values
+A data.frame with summarized values.
 }
 \description{
 Summarizes modules using some statistics.
 }
 \examples{
-mod_summary <- mod_summary(exprs=expression.df, gene_module=coex)
+mod_summary <- mod_summary(exprs=expression.df, gene_module=gene_module)
 
 }
 

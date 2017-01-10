@@ -4,10 +4,15 @@
 \alias{mod_ora}
 \title{Module Overrepresentation Analysis}
 \usage{
-mod_ora(test)
+mod_ora(gene_module, gmt, verbose = FALSE)
 }
 \arguments{
-\item{test}{}
+\item{gene_module}{Two column \code{data.frame}. First column with
+gene identifiers and second column with module information}
+
+\item{gmt}{GMT file name}
+
+\item{verbose}{logical. Report analysis steps}
 }
 \value{
 None
@@ -16,7 +21,7 @@ None
 Perfoms overrepresentation analysis for each co-expression module found
 }
 \examples{
-mod_ora(test)
+mod_ora(gene_module, gmt)
 
 }
 

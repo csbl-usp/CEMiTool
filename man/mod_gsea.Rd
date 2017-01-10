@@ -8,12 +8,13 @@ mod_gsea(exprs, gene_module, annot, sample_col = 1, class_col = 2,
   verbose = F)
 }
 \arguments{
-\item{exprs}{}
+\item{exprs}{Gene expression \code{data.frame}}
 
-\item{gene_module}{}
+\item{gene_module}{Two column \code{data.frame}. First column with
+gene identifiers and second column with module information}
 }
 \value{
-
+GSEA results
 }
 \description{
 Perfoms gene set enrichment analysis for each co-expression module found

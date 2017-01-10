@@ -7,7 +7,9 @@
 plot_gsea(enrichment, pv_cut = 0.05)
 }
 \arguments{
-\item{pv_cut}{}
+\item{enrichment}{Output of mod_gsea function.}
+
+\item{pv_cut}{P-value cut-off. Default \code{0.05}}
 }
 \value{
 None

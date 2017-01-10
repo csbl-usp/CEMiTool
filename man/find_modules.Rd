@@ -4,15 +4,16 @@
 \alias{find_modules}
 \title{Co-expression modules definition}
 \usage{
-find_modules(exprs, cor_method = c("pearson", "spearman"),
-  min_mod_size = 30, merge_similar = T, diss_thresh = 0.8, verbose = F)
+find_modules(exprs, cor_method = c("pearson", "spearman"), min_ngen = 30,
+  merge_similar = T, diss_thresh = 0.8, verbose = F)
 }
 \arguments{
-\item{exprs}{gene expression \code{data.frame}}
+\item{exprs}{Gene expression \code{data.frame}.}
 
-\item{cor_method}{a character string indicating which correlation coefficient is to be computed}
+\item{cor_method}{A character string indicating which correlation coefficient
+is to be computed.}
 
-\item{verbose}{logical. Report analysis steps}
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
 just god knows

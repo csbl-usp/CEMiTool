@@ -4,17 +4,17 @@
 \alias{split_modules}
 \title{Co-expression module refinement}
 \usage{
-split_modules(exprs, gene_module, min_mod_size = 30, verbose = F)
+split_modules(exprs, gene_module, min_ngen = 30, verbose = F)
 }
 \arguments{
-\item{exprs}{gene Expression \code{data.frame}}
+\item{exprs}{Gene expression \code{data.frame}.}
 
 \item{gene_module}{Two column \code{data.frame}. First column with
-gene identifiers and second column with module information}
+gene identifiers and second column with module information.}
 
-\item{min_mod_size}{Minimum number of genes per submodule}
+\item{min_ngen}{Minimum number of genes per submodule.}
 
-\item{verbose}{logical. Report analysis steps}
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
 A \code{data.frame} with gene identifier and module information.
@@ -23,7 +23,7 @@ A \code{data.frame} with gene identifier and module information.
 Refines modules by splitting them into submodules based on correlation sign.
 }
 \examples{
-splitted_mods <- split_modules(exprs=expression.df, gene_module=coex)
+splitted_mods <- split_modules(exprs=expression.df, gene_module=gene_module)
 
 }
 
