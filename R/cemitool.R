@@ -3,8 +3,8 @@
 #' Defines co-expression modules and functionally characterizes
 #' each one of them.
 #'
-#' @param exprs Gene expression \code{"data.frame"}.
-#' @param annot Sample annotation \code{"data.frame"}.
+#' @param exprs Gene expression \code{data.frame}.
+#' @param annot Sample annotation \code{data.frame}.
 #' @param gmt A character string with name of the Gene set file in GMT format.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
