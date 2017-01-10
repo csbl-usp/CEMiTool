@@ -7,10 +7,10 @@ Authors@R: c(
                     role = c("aut", "cre")),
             person("Gustavo", "Ferreira",
                     email = "gustavo.rodrigues.ferreira@usp.br",
-                    role = c("aut", "cre")),
+                    role = c("aut")),
             person("Helder", "Nakaya",
                     email = "hnakaya@usp.br",
-                    role = c("aut", "cre")),
+                    role = c("aut")),
             person("Matheus", "Bürger",
                     email = "burger@usp.br",
                     role = c("aut")),
@@ -22,7 +22,11 @@ Depends:
     R (>= 3.3.2)
 Imports:
     data.table (>= 1.9.4),
-    WGCNA
+    WGCNA,
+    ggplot2,
+    corrplot,
+    clusterProfiler,
+    fgsea
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
