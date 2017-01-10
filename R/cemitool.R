@@ -28,7 +28,7 @@ cemitool <- function(exprs,
                      annot,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
-                     merge_similar=TRUE
+                     merge_similar=TRUE,
                      split_mods=FALSE,
                      ora_pval=0.05,
                      min_ngen=30,
