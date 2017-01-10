@@ -1,11 +1,13 @@
-#' Reads a GMT file
-#'
-#' @param fname GMT file name 
-#'
-#' @return a list containing genes and description of each pathway 
-#'
-#' @examples
-#'
+# Reads a GMT file
+#
+# @keywords internal
+#
+# @param fname GMT file name 
+#
+# @return a list containing genes and description of each pathway 
+#
+#
+#
 read_gmt <- function(fname){
     res <- list(genes=list(), desc=list())
     gmt <- file(fname)
@@ -20,14 +22,15 @@ read_gmt <- function(fname){
 }
 
 
-#' Transforms a GMT list into inputs for enricher
-#'
-#' @param gmt a GMT list from read.gmt function
-#'
-#' @return a list containing term2gene and term2name
-#'
-#' @examples
-#'
+# Transforms a GMT list into inputs for enricher
+#
+# @keywords internal
+#
+# @param gmt a GMT list from read.gmt function
+#
+# @return a list containing term2gene and term2name
+#
+#
 prepare_gmt <- function(gmt){
     res <- list()
     res[["term2gene"]] <- do.call(rbind, lapply(names(gmt[["genes"]]),
@@ -37,22 +40,23 @@ prepare_gmt <- function(gmt){
     return(res)
 }
 
-#' Performs Over Representation Analysis for a list of genes and a GMT
-#'
-#' @param topgenes a vector of genes
-#' @param gmt.list a gmt from prepare.gmt function
-#' @param allgenes a vector containing all genes to be considered as universe
-#'
-#' @return a data.frame containing the results
-#'
-#' @examples
-#'
+# Performs Over Representation Analysis for a list of genes and a GMT
+#
+# @keywords internal
+#
+# @param topgenes a vector of genes
+# @param gmt.list a gmt from prepare.gmt function
+# @param allgenes a vector containing all genes to be considered as universe
+#
+# @return a data.frame containing the results
+#
+#
 ora <- function(topgenes, gmt_list, allgenes){
     if(missing(allgenes)) {
         message("Using all genes in GMT file as universe.")
         allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
     }
-    enriched <- enricher(gene = topgenes,
+    enriched <- clusterProfiler::enricher(gene = topgenes,
                          pvalueCutoff = 1,
                          qvalueCutoff = 1,
                          universe = allgenes,

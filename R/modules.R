@@ -3,9 +3,10 @@
 #'
 #' Defines co-expression modules
 #'
-#' @param exprs gene expression \code{data.frame}
-#' @param cor_method a character string indicating which correlation coefficient is to be computed
-#' @param verbose logical. Report analysis steps
+#' @param exprs Gene expression \code{data.frame}.
+#' @param cor_method A character string indicating which correlation coefficient
+#'                   is to be computed.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return just god knows 
 #'
@@ -14,7 +15,7 @@
 #'
 #' @export
 find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
-                             min_mod_size=30, merge_similar=T,
+                             min_ngen=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
 
@@ -150,19 +151,19 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #'
 #' Refines modules by splitting them into submodules based on correlation sign.
 #'
-#' @param exprs gene Expression \code{data.frame}
+#' @param exprs Gene expression \code{data.frame}.
 #' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information
-#' @param min_mod_size Minimum number of genes per submodule
-#' @param verbose logical. Report analysis steps
+#'        gene identifiers and second column with module information.
+#' @param min_ngen Minimum number of genes per submodule.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return A \code{data.frame} with gene identifier and module information.
 #'
 #' @examples
-#' splitted_mods <- split_modules(exprs=expression.df, gene_module=coex)
+#' splitted_mods <- split_modules(exprs=expression.df, gene_module=gene_module)
 #'
 #' @export
-split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
+split_modules <- function(exprs, gene_module, min_ngen=30, verbose=F) {
 
     if (verbose) {
         message('Splitting modules')
@@ -194,14 +195,14 @@ split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
             neg_cors <- rownames(gene_cors)[which(k==2)]
 
             # checks for the minimum module size of positive correlated genes
-            if (length(pos_cors) >= min_mod_size) {
+            if (length(pos_cors) >= min_ngen) {
                 pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'))
             } else {
                 pos_mod <- data.frame()
             }
 
             # checks for the minimum module size of negative correlated genes
-            if (length(neg_cors) >= min_mod_size) {
+            if (length(neg_cors) >= min_ngen) {
                 neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'))
             } else {
                 neg_mod <- data.frame()
@@ -232,17 +233,17 @@ split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
 #'
 #' Summarizes modules using some statistics. 
 #'
-#' @param exprs gene expression \code{data.frame}
-#' @param gene_module two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information
-#' @param verbose logical. Report analysis steps
+#' @param exprs Gene expression \code{data.frame}.
+#' @param gene_module Two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return A data.frame with summarized values
+#' @return A data.frame with summarized values.
 #'
 #'
 #'
 #' @examples
-#' mod_summary <- mod_summary(exprs=expression.df, gene_module=coex)
+#' mod_summary <- mod_summary(exprs=expression.df, gene_module=gene_module)
 #'
 #' @export
 mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
