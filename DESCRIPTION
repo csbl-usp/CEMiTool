@@ -1,10 +1,28 @@
 Package: CEMiTool
-Title: What the Package Does (one line, title case)
+Title: Finds Gene Co-expression Modules
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c(
+            person("Pedro", "Russo",
+                    email = "pedro.russo@usp.br",
+                    role = c("aut", "cre")),
+            person("Gustavo", "Ferreira",
+                    email = "gustavo.rodrigues.ferreira@usp.br",
+                    role = c("aut", "cre")),
+            person("Helder", "Nakaya",
+                    email = "hnakaya@usp.br",
+                    role = c("aut", "cre")),
+            person("Matheus", "Bürger",
+                    email = "burger@usp.br",
+                    role = c("aut")),
+            person("Lucas", "Cardozo",
+                    email = "lucas.cardozo@usp.br",
+                    role = c("aut")))
+Description: CEMiTool improves WGCNA gene co-expression module discovery by optimizing network parameter selection. This package also perfoms enrichment analysis with the discovered modules.
 Depends:
     R (>= 3.3.2)
+Imports:
+    data.table (>= 1.9.4),
+    WGCNA
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
