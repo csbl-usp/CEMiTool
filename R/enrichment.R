@@ -69,12 +69,12 @@ ora <- function(topgenes, gmt_list, allgenes){
 
 #' Module Overrepresentation Analysis
 #'
-#' Perfoms overrepresentation analysis for each co-expression module found
+#' Perfoms overrepresentation analysis for each co-expression module found.
 #'
 #' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information
-#' @param gmt GMT file name
-#' @param verbose logical. Report analysis steps
+#'        gene identifiers and second column with module information.
+#' @param gmt GMT file name.
+#' @param verbose logical. Report analysis steps.
 #'
 #' @return None
 #'
@@ -105,13 +105,13 @@ mod_ora <- function(gene_module, gmt, verbose=FALSE)
 
 #' Module Gene Set Enrichment Analysis 
 #'
-#' Perfoms gene set enrichment analysis for each co-expression module found
+#' Perfoms gene set enrichment analysis for each co-expression module found.
 #'
-#' @param exprs Gene expression \code{data.frame} 
+#' @param exprs Gene expression \code{data.frame}.
 #' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information
+#'        gene identifiers and second column with module information.
 #' 
-#' @return GSEA results
+#' @return GSEA results.
 #'
 #' @examples
 #' mod_gsea(test)
