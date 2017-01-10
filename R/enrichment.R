@@ -1,8 +1,3 @@
-suppressPackageStartupMessages({
-	    require("fgsea")
-})
-
-
 #' Reads a GMT file
 #'
 #' @param fname GMT file name 
@@ -34,12 +29,12 @@ read_gmt <- function(fname){
 #' @examples
 #'
 prepare_gmt <- function(gmt){
-	res <- list()
-	res[["term2gene"]] <- do.call(rbind, lapply(names(gmt[["genes"]]), 
-												function(n) cbind(Term=n, Gene=gmt[["genes"]][[n]])))
-	res[["term2name"]] <- do.call(rbind, lapply(names(gmt[["desc"]]), 
-												function(n) cbind(Term=n, Name=gmt[["desc"]][[n]])))
-	return(res)
+    res <- list()
+    res[["term2gene"]] <- do.call(rbind, lapply(names(gmt[["genes"]]),
+                            function(n) cbind(Term=n, Gene=gmt[["genes"]][[n]])))
+    res[["term2name"]] <- do.call(rbind, lapply(names(gmt[["desc"]]),
+                            function(n) cbind(Term=n, Name=gmt[["desc"]][[n]])))
+    return(res)
 }
 
 #' Performs Over Representation Analysis for a list of genes and a GMT
@@ -53,18 +48,18 @@ prepare_gmt <- function(gmt){
 #' @examples
 #'
 ora <- function(topgenes, gmt_list, allgenes){
-	if(missing(allgenes)){
-		message("Using all genes in GMT file as universe.")
-		allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
-	}
-	enriched <- enricher(gene = topgenes,
-						 pvalueCutoff = 1,
-						 qvalueCutoff = 1,
-						 universe = allgenes,
-						 TERM2GENE = gmt_list[['term2gene']],
-						 TERM2NAME = gmt_list[['term2name']])
-	result <- enriched@result
-	return(result)
+    if(missing(allgenes)) {
+        message("Using all genes in GMT file as universe.")
+        allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
+    }
+    enriched <- enricher(gene = topgenes,
+                         pvalueCutoff = 1,
+                         qvalueCutoff = 1,
+                         universe = allgenes,
+                         TERM2GENE = gmt_list[['term2gene']],
+                         TERM2NAME = gmt_list[['term2name']])
+    result <- enriched@result
+    return(result)
 }
 
 
@@ -72,8 +67,10 @@ ora <- function(topgenes, gmt_list, allgenes){
 #'
 #' Perfoms overrepresentation analysis for each co-expression module found
 #'
-#' @param gene_module 
-#' @param  
+#' @param gene_module Two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information
+#' @param gmt GMT file name
+#' @param verbose logical. Report analysis steps
 #'
 #' @return None
 #'
@@ -81,20 +78,24 @@ ora <- function(topgenes, gmt_list, allgenes){
 #' mod_ora(gene_module, gmt)
 #'
 #' @export
-mod_ora <- function(gene_module, gmt, verbose=FALSE){
-	gmt_list <- read_gmt(gmt)
-	gmt_in <- prepare_gmt(gmt_list)
-	message("Using all genes in GMT file as universe.")
-	allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
-	mods <- split(gene_module[, "genes"], gene_module[, "modules"])
+mod_ora <- function(gene_module, gmt, verbose=FALSE)
+{
+    if (verbose) {
+        message('Running ORA')
+    }
+    gmt_list <- read_gmt(gmt)
+    gmt_in <- prepare_gmt(gmt_list)
+    message("Using all genes in GMT file as universe.")
+    allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
+    mods <- split(gene_module[, "genes"], gene_module[, "modules"])
     res_list <- lapply(mods, ora, gmt_in, allgenes)
-	names(res_list) <- names(mods)
-	for(n in names(res_list)){
-		res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]])
-	}
-	res <- do.call(rbind, res_list)
-	rownames(res) <- NULL
-	return(res)
+    names(res_list) <- names(mods)
+    for(n in names(res_list)) {
+        res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]])
+    }
+    res <- do.call(rbind, res_list)
+    rownames(res) <- NULL
+    return(res)
 }
 
 
@@ -102,10 +103,11 @@ mod_ora <- function(gene_module, gmt, verbose=FALSE){
 #'
 #' Perfoms gene set enrichment analysis for each co-expression module found
 #'
-#' @param exprs 
-#' @param gene_module
-#'
-#' @return 
+#' @param exprs Gene expression \code{data.frame} 
+#' @param gene_module Two column \code{data.frame}. First column with
+#'        gene identifiers and second column with module information
+#' 
+#' @return GSEA results
 #'
 #' @examples
 #' mod_gsea(test)
@@ -148,7 +150,7 @@ mod_gsea <- function(exprs, gene_module, annot, sample_col=1,
         # BiocParallel setting up
         register(SerialParam())
         
-        gsea_results <- fgsea(pathways=gene_sets,
+        gsea_results <- fgsea::fgsea(pathways=gene_sets,
                               stats=genes_ranked,
                               minSize=15,
                               maxSize=500,
