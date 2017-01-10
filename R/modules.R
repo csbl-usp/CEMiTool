@@ -1,11 +1,4 @@
-suppressPackageStartupMessages({
-    require(WGCNA)
-    require(ff)
-    require(foreach)
-    require(doParallel)
-    require(iterators)
-})
-
+.datatable.aware=TRUE
 #' Co-expression modules definition
 #'
 #' Defines co-expression modules
@@ -42,7 +35,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
     powers <- c(c(1:10), seq(12, 20, 2))
     
     ## Automatic selection of soft-thresholding power beta ##
-    beta <- pickSoftThreshold(exprs_t, powerVector=powers, verbose=5,
+    beta <- WGCNA::pickSoftThreshold(exprs_t, powerVector=powers, verbose=5,
                               networkType='signed', moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
                                               method=match.arg(cor_method)))
@@ -89,10 +82,10 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
     our_r2 <- st[1]
 
     # Calculating adjacency matrix
-    our_adj <- adjacency(exprs_t, power=our_beta, type='signed')
+    our_adj <- WGCNA::adjacency(exprs_t, power=our_beta, type='signed')
 
     # Calculating Topological Overlap Matrix
-    our_tom <- TOMsimilarity(our_adj)
+    our_tom <- WGCNA::TOMsimilarity(our_adj)
 
     # Determining TOM based distance measure
     our_diss <- 1 - our_tom
@@ -101,14 +94,15 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
     our_tree <- hclust(as.dist(our_diss), method = 'average')
 
     # Cutting tree to determine modules
-    our_mods <- cutreeDynamic(dendro = our_tree, distM = our_diss,
+    our_mods <- dynamicTreeCut::cutreeDynamic(dendro = our_tree, distM = our_diss,
                               deepSplit = 2,
                               pamRespectsDendro = FALSE,
                               minClusterSize = min_mod_size)
     our_table <- table(our_mods)
 
-    our_colors <- labels2colors(our_mods)
-
+    our_colors <- WGCNA::labels2colors(our_mods)
+    print(our_colors)
+    print(class(our_colors))
     out <- data.frame(genes=rownames(exprs), modules=our_colors)
 
     n_mods <- length(unique(our_colors))
@@ -123,8 +117,8 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         if (verbose) {
             message('Merging modules based on eigengene similarity')
         }
-        # Calcultes eigengenes
-        me_list <- moduleEigengenes(exprs_t, colors=our_colors)
+        # Calculates eigengenes
+        me_list <- WGCNA::moduleEigengenes(exprs_t, colors=our_colors)
         me_eigen <- me_list$eigengenes
 
         # Calculates dissimilarity of module eigengenes
@@ -137,7 +131,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         me_diss_thresh <- 1 - diss_thresh 
 
         # Merging modules
-        merged_mods <-  mergeCloseModules(exprs_t, our_colors,
+        merged_mods <-  WGCNA::mergeCloseModules(exprs_t, our_colors,
                                           cutHeight=diss_thresh)
 
         # The merged modules colors
@@ -236,55 +230,52 @@ split_modules <- function(exprs, gene_module, min_mod_size=30, verbose=F) {
 
 
 
-#' Co-expression module refinement 
+#' Co-expression module summarization 
 #'
-#' Refines modules by excluding non-significant edges. 
+#' Summarizes modules using some statistics. 
 #'
 #' @param exprs gene expression \code{data.frame}
 #' @param gene_module two column \code{data.frame}. First column with
 #'        gene identifiers and second column with module information
-#' @param nperm numeric. Number of permutations for edge significance test
-#' @param use_lpc logical. If TRUE uses Local Partial Correlation method for
-#'        module refinement
 #' @param verbose logical. Report analysis steps
 #'
-#' @return A list of with the following components:
+#' @return A data.frame with summarized values
 #'
-#'gene_module: \code{data.frame} with gene identifier and module information
-#'edge_list: \code{data.frame} with the genes which consist of each edge in 
-#'            a module.
 #'
 #'
 #' @examples
-#' refined_mods <- refine_modules(exprs=expression.df, gene_module=coex)
+#' mod_summary <- mod_summary(exprs=expression.df, gene_module=coex)
 #'
 #' @export
-refine_modules <- function(exprs, gene_module, nperm=1000,
-                           use_lpc=F, verbose=F){
+mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
+                        verbose=F)
+{
+    method <- match.arg(method)
+    
     if (verbose) {
-        message('Refining modules')
+        message(paste0('Summarizing modules by ', method))
     }
-
+    
     modules <- unique(gene_module[, 'modules'])
-    refmods <- lapply(modules, function(mod){
-        # subsets from exprs all genes inside module mod
-        genes <- gene_module[gene_module[,'modules']==mod, 'genes']
-        edges <- t(combn(genes,2))
-        # some black magic happening here
-        results_perm <-  foreach(icount(nperm)) %do% {
-            sampled_cols <- sample(ncol(exprs), ncol(exprs))
-            sampled_exprs <- exprs[genes, sampled_cols]
-            cor_matrix <- cor(t(sampled_exprs), 
-                              t(exprs[genes,]), 
-                              use = 'everything', 
-                              method = 'pearson')
-            cor_matrix <- cor_matrix[edges]
-        }
-        results_perm <- as.data.frame(results_perm)
-        colnames(results_perm) <- seq(1:nperm)
-        return(results_perm)
-    })
-    return(refmods)
-}
+    if (method == 'mean') {
+        exprs <- data.table(exprs, keep.rownames=T)
+        exprs_melt <- data.table::melt(exprs, id='rn', variable.name='samples',
+                           value.name='expression')
+        exprs_melt <- merge(exprs_melt, gene_module, by.x='rn', by.y='genes')
+        summarized <- exprs_melt[, .(mean=mean(expression)),by=c('samples', 'modules')]
+        summarized <- dcast(summarized, modules~samples, value.var='mean')
+        
+        return(summarized)
 
+    } else if (method == 'eigengene') {
+        exprs_t <- t(exprs)
+        names(exprs_t) <- rownames(exprs)
+        rownames(exprs_t) <- colnames(exprs)
+        me_list <- WGCNA::moduleEigengenes(exprs_t, colors=our_colors)
+        me_eigen <- me_list$eigengenes
+        
+        return(me_eigen)
+
+    }
+}
 
