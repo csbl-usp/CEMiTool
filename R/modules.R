@@ -101,8 +101,6 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
     our_table <- table(our_mods)
 
     our_colors <- WGCNA::labels2colors(our_mods)
-    print(our_colors)
-    print(class(our_colors))
     out <- data.frame(genes=rownames(exprs), modules=our_colors)
 
     n_mods <- length(unique(our_colors))
@@ -255,25 +253,32 @@ mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
     if (verbose) {
         message(paste0('Summarizing modules by ', method))
     }
-    
+
     modules <- unique(gene_module[, 'modules'])
+
+    # mean expression of genes in modules
     if (method == 'mean') {
         exprs <- data.table(exprs, keep.rownames=T)
         exprs_melt <- data.table::melt(exprs, id='rn', variable.name='samples',
                            value.name='expression')
         exprs_melt <- merge(exprs_melt, gene_module, by.x='rn', by.y='genes')
-        summarized <- exprs_melt[, .(mean=mean(expression)),by=c('samples', 'modules')]
+        summarized <- exprs_melt[, .(mean=mean(expression)),
+                                    by=c('samples', 'modules')]
         summarized <- dcast(summarized, modules~samples, value.var='mean')
-        
-        return(summarized)
+        setDF(summarized)
 
+        return(summarized)
+    # eigengene for each module
     } else if (method == 'eigengene') {
         exprs_t <- t(exprs)
-        names(exprs_t) <- rownames(exprs)
+        colnames(exprs_t) <- rownames(exprs)
         rownames(exprs_t) <- colnames(exprs)
-        me_list <- WGCNA::moduleEigengenes(exprs_t, colors=our_colors)
-        me_eigen <- me_list$eigengenes
-        
+        me_list <- WGCNA::moduleEigengenes(exprs_t, colors=gene_module[,2])
+        me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=T)
+        setnames(me_eigen, c('modules', colnames(exprs)))
+        me_eigen[, modules := gsub('^ME', '', modules)]
+        setDF(me_eigen)
+
         return(me_eigen)
 
     }
