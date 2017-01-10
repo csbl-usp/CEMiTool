@@ -3,17 +3,20 @@
 #' Defines co-expression modules and functionally characterizes
 #' each one of them.
 #'
-#' @param exprs gene expression \code{"data.frame"}
-#' @param annot sample annotation \code{"data.frame"}
-#' @param ppi protein-protein interaction file
-#' @param gmt gene set file in .gmt format
-#' @param cor_method a character string indicating which correlation coefficient is to be computed
-#' @param cor_pval p-value for gene-gene correlation
-#' @param ora_pval p-value for overrepresentation analysis
-#' @param nperm number of permutations 
-#' @param min_ngen minimal number of genes per submodule 
-#' @param diss_thresh module merging correlation threshold for eigengene similarity
-#' @param verbose logical. Report analysis steps
+#' @param exprs Gene expression \code{"data.frame"}.
+#' @param annot Sample annotation \code{"data.frame"}.
+#' @param gmt A character string with name of the Gene set file in GMT format.
+#' @param cor_method A character string indicating which correlation coefficient is
+#'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
+#'        Default \code{"pearson"}.
+#' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
+#' @param split_modules Logical. If \code{TRUE}, splits modules by correlation sign.
+#' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
+#' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
+#' @param diss_thresh Module merging correlation threshold for eigengene similarity.
+#'        Default \code{0.8}.
+#' @param plot Logical. If \code{TRUE}, plots all figures.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return just god knows 
 #'
@@ -25,34 +28,39 @@ cemitool <- function(exprs,
                      annot,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
-                     cor_pval=0.05,
-                     split_mods=F,
+                     merge_similar=TRUE
+                     split_mods=FALSE,
                      ora_pval=0.05,
-                     nperm=1000,
                      min_ngen=30,
                      diss_thresh=0.8,
-                     plot=F,
-                     verbose=F)
+                     plot=FALSE,
+                     verbose=FALSE)
 {
     gene_module <- find_modules(exprs,
-                              cor_method=match.arg(cor_method),
-                              verbose=verbose)
+                                cor_method=match.arg(cor_method),
+                                min_mod_size=min_ngen,
+                                merge_similar=merge_similar,
+                                diss_thresh=diss_thresh,
+                                verbose=verbose)
     
     # if user wants splitted modules
     if (split_mods) {
-        gene_module <- split_modules(exprs, gene_module)
+        gene_module <- split_modules(exprs=exprs, gene_module=gene_module,
+                                     min_ngen=min_ngen,
+                                     verbose=verbose)
     }
 
     # if user provides annot file
     if (!is.null(annot)) {
         #run mod_gsea
-        gsea <- mod_gsea(exprs, gene_module, annot, verbose=verbose)
+        gsea <- mod_gsea(exprs=exprs, gene_module=gene_module,
+                         annot=annot, verbose=verbose)
     }
 
     # if user provides .gmt file
     if (!is.null(gmt)) {
         #run mod_ora
-        ora <- mod_ora(gene_module, gmt, verbose=verbose)
+        ora <- mod_ora(gene_module=gene_module, gmt=gmt, verbose=verbose)
     }
 
     # plots all desired charts
