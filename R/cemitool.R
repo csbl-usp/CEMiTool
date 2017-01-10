@@ -38,7 +38,7 @@ cemitool <- function(exprs,
 {
     gene_module <- find_modules(exprs,
                                 cor_method=match.arg(cor_method),
-                                min_mod_size=min_ngen,
+                                min_ngen=min_ngen,
                                 merge_similar=merge_similar,
                                 diss_thresh=diss_thresh,
                                 verbose=verbose)
