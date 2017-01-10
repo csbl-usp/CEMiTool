@@ -4,16 +4,14 @@
 \alias{cemitool}
 \title{Full gene co-expression analysis}
 \usage{
-cemitool(exprs, annot, ppi, gmt, cor_method = c("pearson", "spearman"),
-  cor_pval = 0.05, ora_pval = 0.05, nperm = 1000, min_ngen = 30,
-  diss_thresh = 0.8, plot = F, verbose = F)
+cemitool(exprs, annot, gmt, cor_method = c("pearson", "spearman"),
+  cor_pval = 0.05, split_mods = F, ora_pval = 0.05, nperm = 1000,
+  min_ngen = 30, diss_thresh = 0.8, plot = F, verbose = F)
 }
 \arguments{
 \item{exprs}{gene expression \code{"data.frame"}}
 
 \item{annot}{sample annotation \code{"data.frame"}}
-
-\item{ppi}{protein-protein interaction file}
 
 \item{gmt}{gene set file in .gmt format}
 
@@ -30,6 +28,8 @@ cemitool(exprs, annot, ppi, gmt, cor_method = c("pearson", "spearman"),
 \item{diss_thresh}{module merging correlation threshold for eigengene similarity}
 
 \item{verbose}{logical. Report analysis steps}
+
+\item{ppi}{protein-protein interaction file}
 }
 \value{
 just god knows

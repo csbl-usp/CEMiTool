@@ -4,10 +4,10 @@
 \alias{plot_gsea}
 \title{GSEA visualization}
 \usage{
-plot_gsea(test)
+plot_gsea(enrichment, pv_cut = 0.05)
 }
 \arguments{
-\item{test}{}
+\item{pv_cut}{}
 }
 \value{
 None
@@ -16,7 +16,7 @@ None
 Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules
 }
 \examples{
-plot_gsea(test)
+plot_gsea(enrichment)
 
 }
 

@@ -4,19 +4,19 @@
 \alias{plot_graph}
 \title{Expression profile visualization}
 \usage{
-plot_graph(test)
+plot_graph(edgelist)
 }
 \arguments{
-\item{test}{}
+\item{edgelist}{Two column \code{data.frame} with genes interaction data}
 }
 \value{
-None
+List with one network plot per module in gene_module
 }
 \description{
 Creates a line plot of each gene inside the module through the samples
 }
 \examples{
-plot_graph(test)
+plot_graph(edgelist)
 
 }
 

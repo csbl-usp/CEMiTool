@@ -4,13 +4,16 @@
 \alias{mod_gsea}
 \title{Module Gene Set Enrichment Analysis}
 \usage{
-mod_gsea(test)
+mod_gsea(exprs, gene_module, annot, sample_col = 1, class_col = 2,
+  verbose = F)
 }
 \arguments{
-\item{test}{}
+\item{exprs}{}
+
+\item{gene_module}{}
 }
 \value{
-None
+
 }
 \description{
 Perfoms gene set enrichment analysis for each co-expression module found
