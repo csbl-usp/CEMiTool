@@ -29,7 +29,7 @@ cemitool <- function(exprs,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
                      merge_similar=TRUE,
-                     split_mods=FALSE,
+                     split_modules=FALSE,
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
@@ -44,7 +44,7 @@ cemitool <- function(exprs,
                                 verbose=verbose)
     
     # if user wants splitted modules
-    if (split_mods) {
+    if (split_modules) {
         gene_module <- split_modules(exprs=exprs, gene_module=gene_module,
                                      min_ngen=min_ngen,
                                      verbose=verbose)
