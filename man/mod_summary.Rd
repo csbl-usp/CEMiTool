@@ -22,7 +22,7 @@ A data.frame with summarized values.
 Summarizes modules using some statistics.
 }
 \examples{
-mod_summary <- mod_summary(exprs=expression.df, gene_module=gene_module)
+mod_summary <- mod_summary(exprs=exprs, gene_module=gene_module)
 
 }
 

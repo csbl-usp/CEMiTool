@@ -13,6 +13,13 @@ find_modules(exprs, cor_method = c("pearson", "spearman"), min_ngen = 30,
 \item{cor_method}{A character string indicating which correlation coefficient
 is to be computed.}
 
+\item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
+
+\item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
+
+\item{diss_thresh}{Module merging correlation threshold for eigengene similarity.
+Default \code{0.8}.}
+
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
@@ -22,7 +29,7 @@ just god knows
 Defines co-expression modules
 }
 \examples{
-coex_mods <- find_modules(exprs=expression.df, cor_method='pearson')
+gene_module <- find_modules(exprs=exprs, cor_method='pearson')
 
 }
 

@@ -12,7 +12,7 @@ split_modules(exprs, gene_module, min_ngen = 30, verbose = F)
 \item{gene_module}{Two column \code{data.frame}. First column with
 gene identifiers and second column with module information.}
 
-\item{min_ngen}{Minimum number of genes per submodule.}
+\item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
@@ -23,7 +23,7 @@ A \code{data.frame} with gene identifier and module information.
 Refines modules by splitting them into submodules based on correlation sign.
 }
 \examples{
-splitted_mods <- split_modules(exprs=expression.df, gene_module=gene_module)
+splitted_mods <- split_modules(exprs=exprs, gene_module=gene_module)
 
 }
 
