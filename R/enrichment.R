@@ -1,3 +1,5 @@
+#' @import data.table
+
 # Reads a GMT file
 #
 # @keywords internal
@@ -152,7 +154,7 @@ mod_gsea <- function(exprs, gene_module, annot, sample_col=1,
         genes_ranked <- sort(genes_ranked, decreasing=TRUE)
         
         # BiocParallel setting up
-        register(SerialParam())
+        BiocParallel::register(BiocParallel::SerialParam())
         
         gsea_results <- fgsea::fgsea(pathways=gene_sets,
                               stats=genes_ranked,

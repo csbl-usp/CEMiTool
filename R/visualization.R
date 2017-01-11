@@ -1,3 +1,5 @@
+#' @import ggplot2
+NULL
 #' Expression profile visualization
 #'
 #' Creates a line plot of each gene inside the module through the samples
@@ -169,3 +171,4 @@ plot_gsea <- function(enrichment, pv_cut=0.05)
              cl.cex=0.4, cl.ratio=0.5, cl.pos="r", cl.align.text="l",
              mar=c(0,0,0,0), sig.level=pv_cut)
 }
+

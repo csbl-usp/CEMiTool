@@ -1,3 +1,8 @@
+#' @importFrom grDevices pdf
+#' @importFrom grDevices colorRampPalette
+#' @import stats
+#' @import data.table
+
 .datatable.aware=TRUE
 #' Co-expression modules definition
 #'
@@ -6,12 +11,16 @@
 #' @param exprs Gene expression \code{data.frame}.
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed.
+#' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
+#' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
+#' @param diss_thresh Module merging correlation threshold for eigengene similarity.
+#'        Default \code{0.8}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return just god knows 
 #'
 #' @examples
-#' coex_mods <- find_modules(exprs=expression.df, cor_method='pearson')
+#' gene_module <- find_modules(exprs=exprs, cor_method='pearson')
 #'
 #' @export
 find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
@@ -98,7 +107,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
     our_mods <- dynamicTreeCut::cutreeDynamic(dendro = our_tree, distM = our_diss,
                               deepSplit = 2,
                               pamRespectsDendro = FALSE,
-                              minClusterSize = min_mod_size)
+                              minClusterSize = min_ngen)
     our_table <- table(our_mods)
 
     our_colors <- WGCNA::labels2colors(our_mods)
@@ -154,13 +163,13 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #' @param exprs Gene expression \code{data.frame}.
 #' @param gene_module Two column \code{data.frame}. First column with
 #'        gene identifiers and second column with module information.
-#' @param min_ngen Minimum number of genes per submodule.
+#' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return A \code{data.frame} with gene identifier and module information.
 #'
 #' @examples
-#' splitted_mods <- split_modules(exprs=expression.df, gene_module=gene_module)
+#' splitted_mods <- split_modules(exprs=exprs, gene_module=gene_module)
 #'
 #' @export
 split_modules <- function(exprs, gene_module, min_ngen=30, verbose=F) {
@@ -243,7 +252,7 @@ split_modules <- function(exprs, gene_module, min_ngen=30, verbose=F) {
 #'
 #'
 #' @examples
-#' mod_summary <- mod_summary(exprs=expression.df, gene_module=gene_module)
+#' mod_summary <- mod_summary(exprs=exprs, gene_module=gene_module)
 #'
 #' @export
 mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
@@ -260,7 +269,7 @@ mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
     # mean expression of genes in modules
     if (method == 'mean') {
         exprs <- data.table(exprs, keep.rownames=T)
-        exprs_melt <- data.table::melt(exprs, id='rn', variable.name='samples',
+        exprs_melt <- melt(exprs, id='rn', variable.name='samples',
                            value.name='expression')
         exprs_melt <- merge(exprs_melt, gene_module, by.x='rn', by.y='genes')
         summarized <- exprs_melt[, .(mean=mean(expression)),
