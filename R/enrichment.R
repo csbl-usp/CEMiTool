@@ -84,13 +84,11 @@ ora <- function(topgenes, gmt_list, allgenes){
 #' mod_ora(gene_module, gmt)
 #'
 #' @export
-mod_ora <- function(gene_module, gmt, verbose=FALSE)
+mod_ora <- function(gene_module, gmt_in, verbose=FALSE)
 {
     if (verbose) {
         message('Running ORA')
     }
-    gmt_list <- read_gmt(gmt)
-    gmt_in <- prepare_gmt(gmt_list)
     message("Using all genes in GMT file as universe.")
     allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
     mods <- split(gene_module[, "genes"], gene_module[, "modules"])
