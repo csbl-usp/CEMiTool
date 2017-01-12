@@ -107,15 +107,79 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
 #'
 #' Creates a bar plot with the results of overenrichment analysis of co-expression modules
 #'
-#' @param test
+#' @param ora_res a data.frame from ora function 
+#' @param n number of modules to show
+#' @param ... paramaters to plot_ora_single
 #'
-#' @return None
+#' @return a list with ggplot2 object and the number of significant gene sets
 #'
 #' @examples
 #' plot_ora(test)
 #'
 #' @export
-plot_ora <- function(test){}
+plot_ora <- function(ora_res, n=10, ...){
+    ora_splitted <- split(ora_res, ora_res$Module)
+	res <- lapply(ora_splitted, function(x){
+	    plot_ora_single(head(x, n=n), 
+						graphColor=sub("\\.\\S$", "", unique(x$Module)),
+						title=unique(x$Module),
+						...)
+	})
+	return(res)
+}
+
+
+#' ORA visualization for one module
+#'
+#' @param es a data.frame from ora function containing only one module
+#' @param ordr_by column to order the data.frame
+#' @param max_length max length of a gene set name
+#' @param pv_cut p-value cuttoff
+#' @param graph_color color of bars
+#' @param title title of the graph
+#'
+#' @return a list with ggplot2 object and the number of significant gene sets
+#'
+#' @examples
+#' plot_ora_single(test)
+#'
+#' @export
+plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
+							graph_color="#4169E1", title="Over Representation Analysis"){
+    
+    es[, "GeneSet"] <- es[, "ID"]
+    
+    # limits name length
+	ovf_rows <- which(nchar(es[, "GeneSet"]) > max_length) # overflow
+    es[ovf_rows, "GeneSet"] <-	paste0(strtrim(es[ovf_rows, "GeneSet"], max_length), "...")
+    es[, "GeneSet"] <- stringr::str_wrap(es[, "GeneSet"], width = 20)
+    
+    # order bars
+    lvls <- es[order(es[, ordr_by], decreasing=TRUE), "GeneSet"]
+    es[, "GeneSet"] <- factor(es[, "GeneSet"], levels=lvls)
+    
+    es[, "alpha"] <- 1
+    es[es[, ordr_by] > pv_cut, "alpha"] <- 0
+    
+    # Avoid 0's
+    es[es[, ordr_by] > 0.8, ordr_by] <- 0.8
+	my_squish <- function(...){
+		return(scales::squish(..., only.finite=FALSE))
+	}
+    
+    # plot
+	y_axis <- paste('-log10(', ordr_by, ')')
+    pl <- ggplot(es, aes_string(x="GeneSet", y=y_axis, alpha="alpha", fill=y_axis)) + 
+        geom_bar(stat="identity") +
+        theme(axis.text=element_text(size=8), legend.title=element_blank()) +
+        coord_flip() + 
+		scale_alpha(range=c(0.4, 1), guide="none") +
+        labs(y="-log10(adjusted p-value)", title=title, x="") +
+        geom_hline(yintercept=-log10(pv_cut), colour="grey", linetype="longdash") + 
+        scale_fill_gradient(low="gray", high=graph_color, limits=c(2, 5), oob=my_squish)
+    res <- list('pl'=pl, numsig=sum(es[, ordr_by] < pv_cut, na.rm=TRUE))
+    return(res)
+}
 
 
 
