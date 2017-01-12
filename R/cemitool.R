@@ -72,7 +72,7 @@ cemitool <- function(exprs,
         }
 
         if (exists('ora')) {
-            
+            barplot_ora <- plot_ora(ora)
         }
 
 
