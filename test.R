@@ -3,7 +3,7 @@ library(data.table)
 
 load_all()
 
-registerDoParallel(cores=8)
+doParallel::registerDoParallel(cores=8)
 
 # Load expression data
 data(exprs)
@@ -20,13 +20,20 @@ splitted_modules <- split_modules(exprs, gene_module)
 # Take a look at the expression patterns of those modules.
 # You can also use the gene_module variable here.
 list_of_profiles <- plot_profile(exprs, splitted_modules)
+print(list_of_profiles[[2]])
 
 # Now that you got the modules, why don't you just give a look
 # at the enrichment of those modules in your experimental classes
-enrich <- mod_gsea(exprs, splitted_modules, annot)
+enrich <- mod_gsea(exprs, splitted_modules, sample_annotation)
 
 # Heatmap of gene set enrichment analysis
 plot_gsea(enrich)
 
 # Performs over representation analysis
-ora_res <- mod_ora(splitted_modules, "data/pathways.gmt")
+gmt_list <- read_gmt("data/pathways.gmt")
+gmt_in <- prepare_gmt(gmt_list)
+ora_res <- mod_ora(splitted_modules, gmt_in)
+
+# plot ora results
+list_of_ora_results <- plot_ora(ora_res)
+print(list_of_ora_results[[2]]$pl)
