@@ -39,3 +39,5 @@ ora_res <- mod_ora(splitted_modules, gmt_in)
 list_of_ora_results <- plot_ora(ora_res)
 print(list_of_ora_results[[2]]$pl)
 
+# running cemitool
+res <- cemitool(exprs, sample_annotation, gmt_in)
