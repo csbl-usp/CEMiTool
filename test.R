@@ -30,10 +30,12 @@ enrich <- mod_gsea(exprs, splitted_modules, sample_annotation)
 plot_gsea(enrich)
 
 # Performs over representation analysis
-gmt_list <- read_gmt("data/pathways.gmt")
+gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+gmt_list <- read_gmt(gmt_fname)
 gmt_in <- prepare_gmt(gmt_list)
 ora_res <- mod_ora(splitted_modules, gmt_in)
 
 # plot ora results
 list_of_ora_results <- plot_ora(ora_res)
 print(list_of_ora_results[[2]]$pl)
+
