@@ -80,11 +80,9 @@ cemitool <- function(exprs,
             results$enrichment_plot <- plot_gsea(results$enrichment)
         }
 
-        if (!is.null()) {
+        if (!is.null(results$ora)) {
             results$barplot_ora <- plot_ora(results$ora)
         }
-
-
     }
     return(results)
 }
