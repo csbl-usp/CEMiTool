@@ -42,3 +42,6 @@ print(list_of_ora_results[[2]]$pl)
 
 # running cemitool
 res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T)
+
+# generate report
+generate_report(res)
