@@ -94,8 +94,16 @@ cemitool <- function(exprs,
 #' 
 #' @return number of modules
 #'
+#' @export
 number_modules <- function(x) UseMethod("number_modules")
 
+#' Get the number of modules on a cemitool object
+#'
+#' @param x cemitool object
+#' 
+#' @return number of modules
+#'
+#' @export
 number_modules.cemitool <- function(x) {
     n <- 0
     if(!is.null(res$module)){
@@ -106,6 +114,13 @@ number_modules.cemitool <- function(x) {
     return(n)
 }
 
+#' Print a cemitool object
+#'
+#' @param x cemitool object
+#' 
+#' @return nothing
+#'
+#' @export
 print.cemitool <- function(x) {
     cat("CEMiTool Object\n")
     cat("- Number of modules:", number_modules(x), "\n")
