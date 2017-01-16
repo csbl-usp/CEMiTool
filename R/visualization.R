@@ -227,12 +227,22 @@ plot_gsea <- function(enrichment, pv_cut=0.05)
     pval <- as.matrix(pval)
     nes[which(pval > pv_cut, arr.ind=T)] <- 0
 
-    order <- rownames(nes)[hclust(dist(nes))$order]
+    row_order <- rownames(nes)[hclust(dist(nes))$order]
 
-    corrplot::corrplot(nes[order, ], p.mat=pval[order, ], col=custom_pal,
-             is.corr=FALSE, addgrid.col="white", insig="blank",
-             pch.cex=0.5, pch.col="black", tl.col="black", tl.cex=0.5,
-             cl.cex=0.4, cl.ratio=0.5, cl.pos="r", cl.align.text="l",
-             mar=c(0,0,0,0), sig.level=pv_cut)
+    nes_melted <- reshape2::melt(nes)
+    colnames(nes_melted) <- c("Module", "Class", "NES")
+    nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
+    max_abs_nes <- max(abs(nes_melted$NES))
+    res <- ggplot2::ggplot(nes_melted, ggplot2::aes(x=Class, y=Module, size=abs(NES), fill=NES)) + 
+        ggplot2::geom_point(color = "white", shape=21) +
+        ggplot2::scale_fill_gradientn(colours=custom_pal, space = "Lab", 
+                                      limits=c(-max_abs_nes, max_abs_nes)) +
+        ggplot2::scale_size(range=c(0,40)) +
+        ggplot2::guides(size="none") +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(panel.grid.major = ggplot2::element_blank()) +
+        ggplot2::scale_x_discrete(position = "top")
+
+    return(res)
 }
 

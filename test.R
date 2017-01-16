@@ -27,7 +27,8 @@ print(list_of_profiles[[2]])
 enrich <- mod_gsea(exprs, splitted_modules, sample_annotation)
 
 # Heatmap of gene set enrichment analysis
-plot_gsea(enrich)
+pl <- plot_gsea(enrich)
+print(pl)
 
 # Performs over representation analysis
 gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")

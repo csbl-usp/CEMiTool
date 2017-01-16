@@ -24,7 +24,6 @@ Imports:
     data.table (>= 1.9.4),
     WGCNA,
     ggplot2,
-    corrplot,
     clusterProfiler,
     fgsea,
     stringr
