@@ -36,7 +36,7 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
                           value.name='expression')
 
         # initialize plot base layer
-        g <- ggplot2::ggplot(mod_exprs, aes(x=sample, y=expression))
+        g <- ggplot2::ggplot(mod_exprs, ggplot2::aes(x=sample, y=expression))
 
         # adds different background colours if annot is provided
         if (!is.null(annot)) {
@@ -60,15 +60,15 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
             y_pos <- mean(mod_exprs[, 'expression'])
 
             # reinitialize base layer adding background tiles
-            g <- ggplot2::ggplot(mod_exprs, aes(x=sample, y=expression)) +
+            g <- ggplot2::ggplot(mod_exprs, ggplot2::aes(x=sample, y=expression)) +
                         geom_tile(data=annot, alpha=0.3, height=Inf,
-                                  aes(x=get(sample_col), y=y_pos,
+                                  ggplot2::aes(x=get(sample_col), y=y_pos,
                                       fill=get(class_col)))
         }
 
         # adding lines
-        g <- g + ggplot2::geom_line(aes(group=id), alpha=0.2) +
-                 ggplot2::stat_summary(aes(group=1),size=1,fun.y=mean,geom='line')
+        g <- g + ggplot2::geom_line(ggplot2::aes(group=id), alpha=0.2) +
+                 ggplot2::stat_summary(ggplot2::aes(group=1),size=1,fun.y=mean,geom='line')
 
         # custom theme
         g <- g + ggplot2::theme(plot.title=ggplot2::element_text(lineheight=0.8,
