@@ -1,4 +1,14 @@
-# creates a CEMiTool object
+#' An S4 class to represent the CEMiTool analysis.
+#'
+#' @slot expression Gene expression \code{data.frame}.
+#' @slot sample_annotation Sample annotation \code{data.frame}.
+#' @slot module Genes in modules information \code{data.frame}.
+#' @slot enrichment \code{list} with modules enrichment results for sample classes.
+#' @slot ora Over-representation analysis results \code{data.frame}.
+#' @slot profile_plot list of ggplot graphs with gene expression profile per module.
+#' @slot enrichment_plot ggplot graph for enrichment analysis results
+#' @slot barplot_ora list of ggplot graphs with over-representation analysis resultsper module
+
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
                                 module='data.frame',
