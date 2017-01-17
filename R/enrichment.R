@@ -6,7 +6,7 @@
 #
 # @param fname GMT file name 
 #
-# @return a list containing genes and description of each pathway 
+# @return a list containing genes and description of each pathway
 #
 #
 #
@@ -20,27 +20,15 @@ read_gmt <- function(fname){
     gmt_desc <- lapply(gmt_list, '[', 2)
     gmt_genes <- lapply(gmt_list, function(x){x[3:length(x)]})
     names(gmt_desc) <- names(gmt_genes) <- gmt_names
-    return(list(genes=gmt_genes, desc=gmt_desc))
-}
-
-
-# Transforms a GMT list into inputs for enricher
-#
-# @keywords internal
-#
-# @param gmt a GMT list from read.gmt function
-#
-# @return a list containing term2gene and term2name
-#
-#
-prepare_gmt <- function(gmt){
     res <- list()
-    res[["term2gene"]] <- do.call(rbind, lapply(names(gmt[["genes"]]),
-                            function(n) cbind(Term=n, Gene=gmt[["genes"]][[n]])))
-    res[["term2name"]] <- do.call(rbind, lapply(names(gmt[["desc"]]),
-                            function(n) cbind(Term=n, Name=gmt[["desc"]][[n]])))
+    res[["term2gene"]] <- do.call(rbind, lapply(names(gmt_genes),
+                            function(n) cbind(Term=n, Gene=gmt_genes[[n]])))
+    res[["term2name"]] <- do.call(rbind, lapply(names(gmt_desc),
+                            function(n) cbind(Term=n, Name=gmt_desc[[n]])))
     return(res)
 }
+
+
 
 # Performs Over Representation Analysis for a list of genes and a GMT
 #
@@ -73,25 +61,25 @@ ora <- function(topgenes, gmt_list, allgenes){
 #'
 #' Perfoms overrepresentation analysis for each co-expression module found.
 #'
-#' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information.
-#' @param gmt GMT file name.
+#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param gmt_in Output of CEMiTool::read_gmt function.
 #' @param verbose logical. Report analysis steps.
 #'
-#' @return None
+#' @return Object of class \code{CEMiTool}
 #'
 #' @examples
-#' mod_ora(gene_module, gmt)
+#' mod_ora(cem_obj, read_gmt(system.file('extdata','pathways.gmt',
+#'         package='CEMiTool')))
 #'
 #' @export
-mod_ora <- function(gene_module, gmt_in, verbose=FALSE)
+mod_ora <- function(cem_obj, gmt_in, verbose=FALSE)
 {
     if (verbose) {
         message('Running ORA')
     }
     message("Using all genes in GMT file as universe.")
     allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
-    mods <- split(gene_module[, "genes"], gene_module[, "modules"])
+    mods <- split(cem_obj@module[, "genes"], cem_obj@module[, "modules"])
     res_list <- lapply(mods, ora, gmt_in, allgenes)
     names(res_list) <- names(mods)
     for(n in names(res_list)) {
@@ -99,7 +87,8 @@ mod_ora <- function(gene_module, gmt_in, verbose=FALSE)
     }
     res <- do.call(rbind, res_list)
     rownames(res) <- NULL
-    return(res)
+    cem_obj@module <- res
+    return(cem_obj)
 }
 
 
