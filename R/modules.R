@@ -163,7 +163,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return A \code{data.frame} with gene identifier and module information.
+#' @return An object of class \code{CEMiTool}.
 #'
 #' @examples
 #' splitted_mods <- split_modules(cem_obj)
@@ -252,7 +252,7 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
 #'                   is to be used. Default 'mean'. 
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return A data.frame with summarized values.
+#' @return A \code{data.frame} with summarized values.
 #'
 #'
 #'
