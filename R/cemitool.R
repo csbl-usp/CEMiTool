@@ -81,7 +81,7 @@ cemitool <- function(exprs,
     # if user provides .gmt file
     if (!missing(gmt)) {
         #run mod_ora
-        results <- mod_ora(results, gmt=gmt, verbose=verbose)
+        results <- mod_ora(results, gmt_in=gmt, verbose=verbose)
     }
 
     # plots all desired charts
