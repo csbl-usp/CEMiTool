@@ -42,7 +42,8 @@ Defines co-expression modules and functionally characterizes
 each one of them.
 }
 \examples{
-cemitool(exprs=expression.df)
+data(exprs) 
+cemitool(exprs=exprs)
 
 }
 
