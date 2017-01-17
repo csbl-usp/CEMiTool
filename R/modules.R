@@ -155,96 +155,101 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 }
 
 
-
 #' Co-expression module refinement 
 #'
 #' Refines modules by splitting them into submodules based on correlation sign.
 #'
-#' @param exprs Gene expression \code{data.frame}.
-#' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information.
+#' @param cem_obj Object of class \code{CEMiTool}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return A \code{data.frame} with gene identifier and module information.
 #'
 #' @examples
-#' splitted_mods <- split_modules(exprs=exprs, gene_module=gene_module)
-#'
+#' splitted_mods <- split_modules(cem_obj)
+#' 
+#' @rdname split_modules
 #' @export
-split_modules <- function(exprs, gene_module, min_ngen=30, verbose=F) {
+setGeneric('split_modules', function(cem_obj, ...) {
+    standardGeneric('split_modules')
+})
 
-    if (verbose) {
-        message('Splitting modules')
-    }
-    modules <- unique(gene_module[, 'modules'])
-    submods <- lapply(modules, function(mod){
-
-        # subsets from exprs all genes inside module mod
-        genes <- gene_module[gene_module[,'modules']==mod, 'genes']
-        mod_exprs <- exprs[genes,]
-
-        # recalculates the correlation matrix for genes in module mod
-        gene_cors <- cor(t(mod_exprs), use='everything', method='pearson')
-
-        # checks if there are positive and negative correlations
-        # inside module mod
-        signs <- sign(range(gene_cors))
-        if (signs[1] != signs[2]) {
-            # there are negative correlations inside module mod
+#' @rdname split_modules
+setMethod('split_modules', signature(cem_obj='CEMiTool'),
+          function(cem_obj, min_ngen=30, verbose=F) {
 
             if (verbose) {
-                message(paste0('Splitting module '), mod)
+                message('Splitting modules')
             }
-
-            gene_dists <- as.dist(1 - gene_cors)
-            gene_clust <- hclust(gene_dists)
-            k <- cutree(gene_clust, 2)
-            pos_cors <- rownames(gene_cors)[which(k==1)]
-            neg_cors <- rownames(gene_cors)[which(k==2)]
-
-            # checks for the minimum module size of positive correlated genes
-            if (length(pos_cors) >= min_ngen) {
-                pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'))
-            } else {
-                pos_mod <- data.frame()
-            }
-
-            # checks for the minimum module size of negative correlated genes
-            if (length(neg_cors) >= min_ngen) {
-                neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'))
-            } else {
-                neg_mod <- data.frame()
-            }
-
-            splitted_mods <- rbind(pos_mod, neg_mod)
-
-            return(splitted_mods)
-
-        } else {
-            # no negative correlations inside module mod
-            same_mod <- data.frame(genes=genes, modules=mod)
-
-            if (verbose) {
-                message(paste0('Module ', mod, ' will not be splitted'))
-            }
-
-            return(same_mod)
+            modules <- unique(cem_obj@module[, 'modules'])
+            submods <- lapply(modules, function(mod){
+        
+                # subsets from exprs all genes inside module mod
+                genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
+                mod_exprs <- cem_obj@expression[genes,]
+        
+                # recalculates the correlation matrix for genes in module mod
+                gene_cors <- cor(t(mod_exprs), use='everything', method='pearson')
+        
+                # checks if there are positive and negative correlations
+                # inside module mod
+                signs <- sign(range(gene_cors))
+                if (signs[1] != signs[2]) {
+                    # there are negative correlations inside module mod
+        
+                    if (verbose) {
+                        message(paste0('Splitting module '), mod)
+                    }
+        
+                    gene_dists <- as.dist(1 - gene_cors)
+                    gene_clust <- hclust(gene_dists)
+                    k <- cutree(gene_clust, 2)
+                    pos_cors <- rownames(gene_cors)[which(k==1)]
+                    neg_cors <- rownames(gene_cors)[which(k==2)]
+        
+                    # checks for the minimum module size of positive correlated genes
+                    if (length(pos_cors) >= min_ngen) {
+                        pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'))
+                    } else {
+                        pos_mod <- data.frame()
+                    }
+        
+                    # checks for the minimum module size of negative correlated genes
+                    if (length(neg_cors) >= min_ngen) {
+                        neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'))
+                    } else {
+                        neg_mod <- data.frame()
+                    }
+        
+                    splitted_mods <- rbind(pos_mod, neg_mod)
+        
+                    return(splitted_mods)
+        
+                } else {
+                    # no negative correlations inside module mod
+                    same_mod <- data.frame(genes=genes, modules=mod)
+        
+                    if (verbose) {
+                        message(paste0('Module ', mod, ' will not be splitted'))
+                    }
+        
+                    return(same_mod)
+                }
+            }) # end of lapply
+            
+            cem_obj@module <- do.call(rbind, submods)
+            return(cem_obj)
         }
-    }) # end of lapply
-
-    return(do.call(rbind, submods))
-}
-
+)
 
 
 #' Co-expression module summarization 
 #'
 #' Summarizes modules using some statistics. 
 #'
-#' @param exprs Gene expression \code{data.frame}.
-#' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information.
+#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param method A character string indicating which summarization method 
+#'                   is to be used. Default 'mean'. 
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return A data.frame with summarized values.
@@ -252,45 +257,54 @@ split_modules <- function(exprs, gene_module, min_ngen=30, verbose=F) {
 #'
 #'
 #' @examples
-#' mod_summary <- mod_summary(exprs=exprs, gene_module=gene_module)
+#' mod_summary <- mod_summary(cem_obj)
 #'
+#' @rdname mod_summary
 #' @export
-mod_summary <- function(exprs, gene_module, method=c('mean', 'eigengene'),
-                        verbose=F)
-{
-    method <- match.arg(method)
-    
-    if (verbose) {
-        message(paste0('Summarizing modules by ', method))
-    }
+setGeneric('mod_summary', function(cem_obj, ...) {
+    standardGeneric('mod_summary')
+})
 
-    modules <- unique(gene_module[, 'modules'])
+#' @rdname mod_summary
+setMethod('mod_summary', signature(cem_obj='CEMiTool'),
+          function(cem_obj, method=c('mean', 'eigengene'),
+                   verbose=F)
+          {
+              method <- match.arg(method)
 
-    # mean expression of genes in modules
-    if (method == 'mean') {
-        exprs <- data.table(exprs, keep.rownames=T)
-        exprs_melt <- melt(exprs, id='rn', variable.name='samples',
-                           value.name='expression')
-        exprs_melt <- merge(exprs_melt, gene_module, by.x='rn', by.y='genes')
-        summarized <- exprs_melt[, .(mean=mean(expression)),
-                                    by=c('samples', 'modules')]
-        summarized <- dcast(summarized, modules~samples, value.var='mean')
-        setDF(summarized)
+              if (verbose) {
+                  message(paste0('Summarizing modules by ', method))
+              }
 
-        return(summarized)
-    # eigengene for each module
-    } else if (method == 'eigengene') {
-        exprs_t <- t(exprs)
-        colnames(exprs_t) <- rownames(exprs)
-        rownames(exprs_t) <- colnames(exprs)
-        me_list <- WGCNA::moduleEigengenes(exprs_t, colors=gene_module[,2])
-        me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=T)
-        setnames(me_eigen, c('modules', colnames(exprs)))
-        me_eigen[, modules := gsub('^ME', '', modules)]
-        setDF(me_eigen)
+              modules <- unique(cem_obj@module[, 'modules'])
 
-        return(me_eigen)
+              # mean expression of genes in modules
+              if (method == 'mean') {
+                  exprs <- data.table(cem_obj@expression, keep.rownames=T)
+                  exprs_melt <- melt(exprs, id='rn', variable.name='samples',
+                                     value.name='expression')
+                  exprs_melt <- merge(exprs_melt, cem_obj@module, by.x='rn', by.y='genes')
+                  summarized <- exprs_melt[, .(mean=mean(expression)),
+                                           by=c('samples', 'modules')]
+                  summarized <- dcast(summarized, modules~samples, value.var='mean')
+                  setDF(summarized)
 
-    }
-}
+                  return(summarized)
+                  # eigengene for each module
+              } else if (method == 'eigengene') {
+                  exprs_t <- t(cem_obj@expression)
+                  colnames(exprs_t) <- rownames(exprs)
+                  rownames(exprs_t) <- colnames(exprs)
+                  me_list <- WGCNA::moduleEigengenes(exprs_t, 
+                                                     colors=cem_obj@module[,2])
+                  me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=T)
+                  setnames(me_eigen, c('modules', colnames(exprs)))
+                  me_eigen[, modules := gsub('^ME', '', modules)]
+                  setDF(me_eigen)
+
+                  return(me_eigen)
+
+              }
+          }
+)
 
