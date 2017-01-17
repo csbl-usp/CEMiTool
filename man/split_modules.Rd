@@ -18,7 +18,7 @@ split_modules(cem_obj, ...)
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-A \code{data.frame} with gene identifier and module information.
+An object of class \code{CEMiTool}.
 }
 \description{
 Refines modules by splitting them into submodules based on correlation sign.

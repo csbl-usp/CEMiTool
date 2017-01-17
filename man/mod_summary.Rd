@@ -20,7 +20,7 @@ is to be used. Default 'mean'.}
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-A data.frame with summarized values.
+A \code{data.frame} with summarized values.
 }
 \description{
 Summarizes modules using some statistics.
