@@ -16,7 +16,17 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 ora='data.frame',
                                 profile_plot='list',
                                 enrichment_plot='list',
-                                barplot_ora='list'))
+                                barplot_ora='list',
+                                sample_name_column="vector",
+                                class_column="vector"))
+
+setMethod("initialize", signature="CEMiTool",
+          function(.Object, sample_name_column="SampleName", 
+                   class_column="Class", ...){
+              .Object@sample_name_column <- sample_name_column
+              .Object@class_column <- class_column
+              return(.Object)
+          })
 
 #' Full gene co-expression analysis
 #'
