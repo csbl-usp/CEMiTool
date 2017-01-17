@@ -13,7 +13,7 @@ cemitool(exprs, annot, gmt, cor_method = c("pearson", "spearman"),
 
 \item{annot}{Sample annotation \code{data.frame}.}
 
-\item{gmt}{A character string with name of the Gene set file in GMT format.}
+\item{gmt}{a list from function prepare_gmt containing the gene sets.}
 
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
@@ -35,7 +35,7 @@ Default \code{0.8}.}
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-just god knows
+a cemitool object
 }
 \description{
 Defines co-expression modules and functionally characterizes

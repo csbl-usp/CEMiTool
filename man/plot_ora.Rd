@@ -4,13 +4,17 @@
 \alias{plot_ora}
 \title{ORA visualization}
 \usage{
-plot_ora(test)
+plot_ora(ora_res, n = 10, ...)
 }
 \arguments{
-\item{test}{}
+\item{ora_res}{a data.frame from ora function}
+
+\item{n}{number of modules to show}
+
+\item{...}{paramaters to plot_ora_single}
 }
 \value{
-None
+a list with ggplot2 object and the number of significant gene sets
 }
 \description{
 Creates a bar plot with the results of overenrichment analysis of co-expression modules
