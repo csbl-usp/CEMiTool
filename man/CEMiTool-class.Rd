@@ -4,9 +4,6 @@
 \name{CEMiTool-class}
 \alias{CEMiTool-class}
 \title{An S4 class to represent the CEMiTool analysis.}
-\arguments{
-\item{split_modules}{Logical. If \code{TRUE}, splits modules by correlation sign.}
-}
 \description{
 An S4 class to represent the CEMiTool analysis.
 }
@@ -21,6 +18,12 @@ An S4 class to represent the CEMiTool analysis.
 
 \item{\code{enrichment}}{\code{list} with modules enrichment results for sample classes.}
 
-\item{\code{ora}}{Over-representation  If \code{TRUE}, merge similar modules.}
+\item{\code{ora}}{Over-representation analysis results \code{data.frame}.}
+
+\item{\code{profile_plot}}{list of ggplot graphs with gene expression profile per module.}
+
+\item{\code{enrichment_plot}}{ggplot graph for enrichment analysis results}
+
+\item{\code{barplot_ora}}{list of ggplot graphs with over-representation analysis resultsper module}
 }}
 
