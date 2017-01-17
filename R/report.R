@@ -44,21 +44,22 @@ enrichment_report <- function(cemitool_obj, directory) {
 
     # join p-values and nes
     enrich_df <- merge(nes, pv, by.x="pathway")
-    
+
     # reorder columns
     enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
-
     enrich_rep <- ReportingTools::HTMLReport(shortName = "enrich_rep",
                           title="Gene Set Enrichment Analysis",
                           reportDirectory = directory)
+    ReportingTools::publish(cemitool_obj$enrichment_plot, enrich_rep)
     ReportingTools::publish(enrich_df, enrich_rep)
     ReportingTools::finish(enrich_rep)
     return(enrich_rep)
 }
 
-ora_report <- function(cemitool_obj, directory) {
-    ora_list <- split(cemitool_obj$ora, cemitool_obj$ora$Module)
-
+ora_report <- function(cemitool_obj, directory,
+                       columns=c("ID", "Count", "GeneRatio",
+                                 "BgRatio", "p.adjust")) {
+    ora_list <- split(cemitool_obj$ora[, columns], cemitool_obj$ora$Module)
 
     ora_rep <- ReportingTools::HTMLReport(shortName = "ora_rep",
                           title="Over Representation Analysis",
@@ -70,7 +71,9 @@ ora_report <- function(cemitool_obj, directory) {
             ReportingTools::publish(cemitool_obj$barplot_ora[[mod]]$pl, ora_rep)
         }
         ReportingTools::publish(hwriter::hwrite("Table", heading=4), ora_rep)
-        ReportingTools::publish(ora_list[[mod]], ora_rep, name=mod)
+        row_order <- order(ora_list[[mod]][, "p.adjust"], decreasing = F)
+        ReportingTools::publish(ora_list[[mod]][row_order,],
+                                ora_rep, name=mod)
     }
     ReportingTools::finish(ora_rep)
     return(ora_rep)
