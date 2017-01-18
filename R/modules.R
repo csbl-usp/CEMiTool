@@ -123,7 +123,7 @@ setMethod('find_modules', signature('CEMiTool'),
                               pamRespectsDendro = FALSE,
                               minClusterSize = min_ngen)
     
-    our_colors <- paste0(rep('M', length(our_mods)), our_mods)
+    our_colors <- paste0('M',our_mods)
     
     #our_table <- table(our_mods)
 
@@ -161,12 +161,11 @@ setMethod('find_modules', signature('CEMiTool'),
                                           cutHeight=diss_thresh)
         
         # The merged modules colors
-        our_colors <- merged_mods$colors
+        merged_mods <- factor(merged_mods$colors)
 
-        # Eigengenes of the new merged modules
-        merged_mods <- merged_mods$newMEs
+        levels(merged_mods) <- paste0('M', seq(1, length(unique(merged_mods)))) 
 
-        out[, 'modules'] <- our_colors
+        out[, 'modules'] <- as.character(merged_mods)
     }
     
     cem_obj@module <- out
