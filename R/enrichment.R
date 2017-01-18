@@ -94,7 +94,7 @@ setMethod('mod_ora', signature(cem_obj='CEMiTool'),
               }
               res <- do.call(rbind, res_list)
               rownames(res) <- NULL
-              cem_obj@module <- res
+              cem_obj@ora <- res
               return(cem_obj)
           }
 )
