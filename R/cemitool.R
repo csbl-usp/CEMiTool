@@ -8,7 +8,6 @@
 #' @slot profile_plot list of ggplot graphs with gene expression profile per module.
 #' @slot enrichment_plot ggplot graph for enrichment analysis results
 #' @slot barplot_ora list of ggplot graphs with over-representation analysis resultsper module
-
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
                                 module='data.frame',
