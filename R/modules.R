@@ -8,7 +8,7 @@
 #'
 #' Defines co-expression modules
 #'
-#' @param exprs Gene expression \code{data.frame}.
+#' @param cem_obj Object of class \code{CEMiTool}.
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
@@ -17,13 +17,23 @@
 #'        Default \code{0.8}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return just god knows 
+#' @return Object of class \code{CEMiTool} 
 #'
 #' @examples
-#' gene_module <- find_modules(exprs=exprs, cor_method='pearson')
+#' data(exprs)
+#' cem_obj <- new('CEMiTool', expression=exprs)
+#' cem_obj <- find_modules(cem_obj)
 #'
+#' @rdname find_modules
 #' @export
-find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
+setGeneric('find_modules', function(cem_obj, ...) {
+    standardGeneric('find_modules')
+})
+
+#' @rdname find_modules
+#' @export
+setMethod('find_modules', signature('CEMiTool'), 
+          function(cem_obj, cor_method=c('pearson', 'spearman'),
                              min_ngen=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
@@ -32,23 +42,27 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         stop('Must provide expression data')
     }
 
-    exprs_t <- t(exprs)
-    names(exprs_t) <- rownames(exprs)
-    rownames(exprs_t) <- colnames(exprs)
+    exprs_t <- t(cem_obj@expression)
+    names(exprs_t) <- rownames(cem_obj@expression)
+    rownames(exprs_t) <- colnames(cem_obj@expression)
 
 
     if (verbose) {
         message('Selecting Beta')
+        verbosity <- 10
+    } else {
+        verbosity <- 0
     }
 
     # Define a range of soft-thresholding candidates
     powers <- c(c(1:10), seq(12, 20, 2))
     
     ## Automatic selection of soft-thresholding power beta ##
-    beta <- WGCNA::pickSoftThreshold(exprs_t, powerVector=powers, verbose=5,
+    beta <- WGCNA::pickSoftThreshold(exprs_t, powerVector=powers,
                               networkType='signed', moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
-                                              method=match.arg(cor_method)))
+                                              method=match.arg(cor_method)),
+                              verbose=verbosity)
 
     fit <- -sign(beta$fitIndices[, 3])*beta$fitIndices[, 2]
     k <- beta$fitIndices[, 5]
@@ -108,12 +122,16 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
                               deepSplit = 2,
                               pamRespectsDendro = FALSE,
                               minClusterSize = min_ngen)
-    our_table <- table(our_mods)
+    
+    our_colors <- paste0(rep('M', length(our_mods)), our_mods)
+    
+    #our_table <- table(our_mods)
 
-    our_colors <- WGCNA::labels2colors(our_mods)
-    out <- data.frame(genes=rownames(exprs), modules=our_colors)
+    #our_colors <- WGCNA::labels2colors(our_mods)
 
     n_mods <- length(unique(our_colors))
+    
+    out <- data.frame(genes=rownames(exprs), modules=our_colors)
 
     # checks number of modules found
     if (n_mods <= 1) {
@@ -141,7 +159,7 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
         # Merging modules
         merged_mods <-  WGCNA::mergeCloseModules(exprs_t, our_colors,
                                           cutHeight=diss_thresh)
-
+        
         # The merged modules colors
         our_colors <- merged_mods$colors
 
@@ -150,9 +168,10 @@ find_modules <- function(exprs, cor_method=c('pearson', 'spearman'),
 
         out[, 'modules'] <- our_colors
     }
-
-    return(out)
-}
+    
+    cem_obj@module <- out
+    return(cem_obj)
+})
 
 
 #' Co-expression module refinement 
