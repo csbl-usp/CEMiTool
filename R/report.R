@@ -63,7 +63,7 @@ setGeneric('module_report', function(cem_obj, ...) {
 
 
 #' @rdname module_report
-setMethod('module_report', signature(CEMiTool),
+setMethod('module_report', signature('CEMiTool'),
           function(cem_obj, directory)
 {
     mod_rep <- ReportingTools::HTMLReport(shortName = "mod_rep",
