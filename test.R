@@ -12,25 +12,27 @@ data(exprs)
 data(sample_annotation)
 
 # create a new CEMiTool object
-cem_obj <- new("CEMiTool", expression=exprs, sample_annotation=sample_annotation)
+cem_obj <- new("CEMiTool", expression=exprs, 
+			   sample_annotation=sample_annotation,
+			   sample_name_column="Sample")
 
 # Find the modules
-gene_module <- find_modules(exprs) 
+cem_obj@module <- find_modules(cem_obj@expression) 
 
 # If you desire, split the modules by positive and negative correlation
-splitted_modules <- split_modules(exprs, gene_module)
+cem_obj <- split_modules(cem_obj)
 
 # Take a look at the expression patterns of those modules.
 # You can also use the gene_module variable here.
-list_of_profiles <- plot_profile(exprs, splitted_modules)
-print(list_of_profiles[[2]])
+cem_obj <- plot_profile(cem_obj)
+print(cem_obj@profile_plot[[1]])
 
 # Now that you got the modules, why don't you just give a look
 # at the enrichment of those modules in your experimental classes
-enrich <- mod_gsea(exprs, splitted_modules, sample_annotation)
+cem_obj <- mod_gsea(cem_obj)
 
 # Heatmap of gene set enrichment analysis
-pl <- plot_gsea(enrich)
+cem_obj <- plot_gsea(cem_obj)
 print(pl)
 
 # Performs over representation analysis
