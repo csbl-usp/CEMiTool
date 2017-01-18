@@ -5,6 +5,7 @@
 \title{Full gene co-expression analysis}
 \usage{
 cemitool(exprs, annot, gmt, cor_method = c("pearson", "spearman"),
+  sample_name_column = "SampleName", class_column = "Class",
   merge_similar = TRUE, split_modules = FALSE, ora_pval = 0.05,
   min_ngen = 30, diss_thresh = 0.8, plot = FALSE, verbose = FALSE)
 }
