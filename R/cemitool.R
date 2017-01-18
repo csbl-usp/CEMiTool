@@ -14,7 +14,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
                                 profile_plot='list',
-                                enrichment_plot='list',
+                                enrichment_plot='gg',
                                 barplot_ora='list',
                                 sample_name_column="vector",
                                 class_column="vector"))
@@ -72,12 +72,12 @@ cemitool <- function(exprs,
                      verbose=FALSE)
 {
     results <- new('CEMiTool', expression=exprs)
-    results@module <- find_modules(results@expression,
-                                   cor_method=match.arg(cor_method),
-                                   min_ngen=min_ngen,
-                                   merge_similar=merge_similar,
-                                   diss_thresh=diss_thresh,
-                                   verbose=verbose)
+    results <- find_modules(results,
+                            cor_method=match.arg(cor_method),
+                            min_ngen=min_ngen,
+                            merge_similar=merge_similar,
+                            diss_thresh=diss_thresh,
+                            verbose=verbose)
 
     # if user wants splitted modules
     if (split_modules) {
