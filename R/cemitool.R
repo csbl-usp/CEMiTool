@@ -20,8 +20,10 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 class_column="vector"))
 
 setMethod("initialize", signature="CEMiTool",
-          function(.Object, sample_name_column="SampleName", 
+          function(.Object, expression,
+                   sample_name_column="SampleName", 
                    class_column="Class", ...){
+              .Object@expression <- expression
               .Object@sample_name_column <- sample_name_column
               .Object@class_column <- class_column
               return(.Object)
