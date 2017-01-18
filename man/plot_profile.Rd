@@ -2,7 +2,6 @@
 % Please edit documentation in R/visualization.R
 \docType{methods}
 \name{plot_profile}
-\alias{plot_gsea}
 \alias{plot_profile}
 \alias{plot_profile,CEMiTool-method}
 \title{Expression profile visualization}
@@ -10,32 +9,20 @@
 plot_profile(cem_obj, ...)
 
 \S4method{plot_profile}{CEMiTool}(cem_obj, order = TRUE)
-
-plot_gsea(cem_obj, ...)
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
-
-\item{cem_obj}{Object of class \code{CEMiTool}.}
-
-\item{pv_cut}{P-value cut-off. Default \code{0.05}}
 }
 \value{
 List with one profile plot per module in gene_module
-
-None
 }
 \description{
 Creates a line plot of each gene inside the module through the samples
-
-Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules
 }
 \examples{
 plot_profile(cem_obj)
-
-plot_gsea(enrichment)
 
 }
 
