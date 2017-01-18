@@ -110,7 +110,7 @@ setMethod('enrichment_report', signature('CEMiTool'),
     enrich_rep <- ReportingTools::HTMLReport(shortName = "enrich_rep",
                           title="Gene Set Enrichment Analysis",
                           reportDirectory = directory)
-    ReportingTools::publish(cemitool_obj@enrichment_plot, enrich_rep)
+    ReportingTools::publish(cem_obj@enrichment_plot, enrich_rep)
     ReportingTools::publish(enrich_df, enrich_rep)
     ReportingTools::finish(enrich_rep)
     return(enrich_rep)
@@ -138,16 +138,16 @@ setMethod('ora_report', signature('CEMiTool'),
                    columns=c("ID", "Count", "GeneRatio",
                                  "BgRatio", "p.adjust"))
 {
-    ora_list <- split(cem_obj@ora[, columns], cemitool_obj@ora$Module)
+    ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
 
     ora_rep <- ReportingTools::HTMLReport(shortName = "ora_rep",
                           title="Over Representation Analysis",
                           reportDirectory = directory)
     for(mod in names(ora_list)){
         ReportingTools::publish(hwriter::hwrite(paste("Module", mod), heading=3), ora_rep)
-        if(!is.null(cemitool_obj$barplot_ora)) {
+        if(!is.null(cem_obj$barplot_ora)) {
             ReportingTools::publish(hwriter::hwrite("Barplot", heading=4), ora_rep)
-            ReportingTools::publish(cemitool_obj$barplot_ora[[mod]]$pl, ora_rep)
+            ReportingTools::publish(cem_obj$barplot_ora[[mod]]$pl, ora_rep)
         }
         ReportingTools::publish(hwriter::hwrite("Table", heading=4), ora_rep)
         row_order <- order(ora_list[[mod]][, "p.adjust"], decreasing = F)

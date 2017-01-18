@@ -1,3 +1,6 @@
+#' @importFrom grDevices rainbow
+#' @importFrom utils head
+#' @importFrom methods new 'slot<-' show
 
 setOldClass('ggplot')
 #' An S4 class to represent the CEMiTool analysis.

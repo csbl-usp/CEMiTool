@@ -21,6 +21,7 @@ Description: CEMiTool improves WGCNA gene co-expression module discovery by opti
 Depends:
     R (>= 3.3.2)
 Imports:
+    methods,
     data.table (>= 1.9.4),
     WGCNA,
     ggplot2,

@@ -199,7 +199,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' @examples
 #' plot_gsea(enrichment)
 #'
-#' @rdname plot_profile
+#' @rdname plot_gsea
 #' @export
 setGeneric('plot_gsea', function(cem_obj, ...) {
     standardGeneric('plot_gsea')
