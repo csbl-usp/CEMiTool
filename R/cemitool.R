@@ -113,85 +113,81 @@ cemitool <- function(exprs,
 
 #' Get the number of modules on a cemitool object
 #'
-#' @param x cemitool object
+#' @param cem_obj Object of class \code{CEMiTool}
 #' 
 #' @return number of modules
 #'
+#' @rdname nmodules
 #' @export
-number_modules <- function(x) UseMethod("number_modules")
+setGeneric('nmodules', function(cem_obj) {
+    standardGeneric('nmodules')
+})
 
-#' Get the number of modules on a cemitool object
-#'
-#' @param x cemitool object
-#' 
-#' @return number of modules
-#'
-#' @export
-number_modules.cemitool <- function(x) {
-    n <- 0
-    if(!is.null(res@module)){
-        n <- length(unique(res@module$modules))
-    } else {
-        message("Run cemitool function to get modules!") 
-    }
-    return(n)
-}
+#' @rdname nmodules
+setMethod('nmodules', signature(cem_obj='CEMiTool'),
+          function(cem_obj) {
+              n <- 0
+              if(!is.null(cem_obj@module)){
+                  n <- length(unique(cem_obj@module$modules))
+              } else {
+                  message("Run cemitool function to get modules!") 
+              }
+              return(n)
+          }
+)
 
 #' Print a cemitool object
 #'
-#' @param x cemitool object
-#' 
-#' @return nothing
-#'
 #' @export
-print.cemitool <- function(x) {
-    cat("CEMiTool Object\n")
-    cat("- Number of modules:", number_modules(x), "\n")
-    cat("- Modules: ")
-    if(is.null(x@module)){
-        cat("null\n")
-    } else {
-        cat("\b\b (data.frame: ", nrow(x@module), "x", ncol(x@module), "): \n", sep="")
-        print(x@module[1:3, ])
-    }
-    cat("- Gene Set Enrichment Analysis: ")
-    if(is.null(x@enrichment)) {
-        cat("null\n")
-    } else {
-        cat("\n    List containing 3 data.frames:\n")
-        cat("        - $ es   : Enrichment Scores ")
-        cat("(", nrow(x@enrichment$es), "x", ncol(x@enrichment$es), ") \n", sep="")
-        cat("        - $ nes  : Normalized Enrichment Scores ")
-        cat("(", nrow(x@enrichment$nes), "x", ncol(x@enrichment$nes), ") \n", sep="")
-        cat("        - $ pval : p-value ")
-        cat("(", nrow(x@enrichment$pval), "x", ncol(x@enrichment$pval), ") \n", sep="")
-    }
-    cat("- Over Representation Analysis: ")
-    if(is.null(x@ora)) {
-        cat("null\n")
-    } else {
-        cat("\b\b (data.frame: ", nrow(x@ora), "x", ncol(x@ora), "): \n", sep="")
-        print(x@ora[1:3, c('Module', "ID", "p.adjust")])
-    }
-    cat("- Profile plot: ")
-    if(is.null(x@profile_plot)) {
-        cat("null\n")
-    } else {
-        cat("ok\n")
-    }
-    cat("- Enrichment plot: ")
-    if(is.null(x@enrichment_plot)) {
-        cat("null\n")
-    } else {
-        cat("ok\n")
-    }
-    cat("- Barplot of ORA: ")
-    if(is.null(x@barplot_ora)) {
-        cat("null\n")
-    } else {
-        cat("ok\n")
-    }
-}
-
+setMethod('show', signature(object='CEMiTool'),
+          function(object) {
+              cat("CEMiTool Object\n")
+              cat("- Number of modules:", nmodules(object), "\n")
+              cat("- Modules: ")
+              if(is.null(object@module)){
+                  cat("null\n")
+              } else {
+                  cat("\b\b (data.frame: ", nrow(object@module), "x", ncol(object@module), "): \n", sep="")
+                  print(object@module[1:3, ])
+              }
+              cat("- Gene Set Enrichment Analysis: ")
+              if(length(object@enrichment)!=3) {
+                  cat("null\n")
+              } else {
+                  cat("\n    List containing 3 data.frames:\n")
+                  cat("        - $ es   : Enrichment Scores ")
+                  cat("(", nrow(object@enrichment$es), "x", ncol(object@enrichment$es), ") \n", sep="")
+                  cat("        - $ nes  : Normalized Enrichment Scores ")
+                  cat("(", nrow(object@enrichment$nes), "x", ncol(object@enrichment$nes), ") \n", sep="")
+                  cat("        - $ pval : p-value ")
+                  cat("(", nrow(object@enrichment$pval), "x", ncol(object@enrichment$pval), ") \n", sep="")
+              }
+              cat("- Over Representation Analysis: ")
+              if(nrow(object@ora)==0) {
+                  cat("null\n")
+              } else {
+                  cat("\b\b (data.frame: ", nrow(object@ora), "x", ncol(object@ora), "): \n", sep="")
+                  print(object@ora[1:3, c('Module', "ID", "p.adjust")])
+              }
+              cat("- Profile plot: ")
+              if(length(object@profile_plot)==0) {
+                  cat("null\n")
+              } else {
+                  cat("ok\n")
+              }
+              cat("- Enrichment plot: ")
+              if(!is.ggplot(object@enrichment_plot)) {
+                  cat("null\n")
+              } else {
+                  cat("ok\n")
+              }
+              cat("- Barplot of ORA: ")
+              if(length(object@barplot_ora)==0) {
+                  cat("null\n")
+              } else {
+                  cat("ok\n")
+              }
+          }
+)
 
 
