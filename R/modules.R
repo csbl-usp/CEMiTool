@@ -167,7 +167,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
         out[, 'modules'] <- as.character(merged_mods)
     }
-    
+ 
     cem_obj@module <- out
     return(cem_obj)
 })
