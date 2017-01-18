@@ -1,56 +1,49 @@
 #' @import ggplot2
 NULL
+
 #' Expression profile visualization
 #'
 #' Creates a line plot of each gene inside the module through the samples
 #'
-#' @param exprs Expression data frame or list of expression data frames of each 
-#'        module.
-#' @param gene_module Two column \code{data.frame}. First column with
-#'        gene identifiers and second column with module information
-#' @param annot Optional. Two column \code{data.frame}. Fist column with
-#'        sample identifiers and second column with group/class information
-#' @param sample_col character string with the name of samples column in the
-#'        annotation \code{data.frame}. If annot is given, this parameters
-#'        required.
-#' @param class_col character string with the name of classes column in the
-#'        annotation \code{data.frame}. If annot is given, this parameters
-#'        required.
+#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param ... Optional parameters.
 #'
 #' @return List with one profile plot per module in gene_module
 #'
 #' @examples
-#' plot_profile(exprs, gene_module)
+#' plot_profile(cem_obj)
 #'
+#' @rdname plot_profile
 #' @export
-plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
-                         class_col=NULL, order=TRUE, filename='profile.pdf')
-{
-    modules <- unique(gene_module[, 'modules'])
+setGeneric('plot_profile', function(cem_obj, ...) {
+    standardGeneric('plot_profile')
+})
+
+#' @rdname plot_profile
+setMethod('plot_profile', signature('CEMiTool'),
+          function(cem_obj, order=TRUE) {
+    modules <- unique(cem_obj@module[, 'modules'])
+    exprs <- cem_obj@expression
+    annot <- cem_obj@sample_annotation
+    sample_name_column <- cem_obj@sample_name_column
+    class_column <- cem_obj@class_column
     plots <- lapply(modules, function(mod){
         # subsets from exprs all genes inside module mod
-        genes <- gene_module[gene_module[,'modules']==mod, 'genes']
+        genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
         exprs[, 'id'] <- rownames(exprs)
         mod_exprs <- melt(exprs[genes,], 'id',
                           variable.name='sample',
                           value.name='expression')
 
         # initialize plot base layer
-        g <- ggplot2::ggplot(mod_exprs, ggplot2::aes(x=sample, y=expression))
+        g <- ggplot(mod_exprs, aes(x=sample, y=expression))
 
         # adds different background colours if annot is provided
-        if (!is.null(annot)) {
-            if (is.null(sample_col)) {
-                stop('Must provide sample column name')
-            }
-            if (is.null(class_col)) {
-                stop('Must provide class column name')
-            }
-
+        if (nrow(annot)!=0) {
             if (order) {
                 # sorts data.frame by class name
-                annot <- annot[order(annot[, class_col]),]
-                annot[, sample_col] <- factor(annot[, sample_col],
+                annot <- annot[order(annot[, class_column]),]
+                annot[, sample_name_col] <- factor(annot[, sample_name_column],
                                             levels=annot[, sample_col])
                 mod_exprs[, 'sample'] <- factor(mod_exprs[, 'sample'],
                                                 levels=annot[, sample_col])
@@ -60,46 +53,47 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
             y_pos <- mean(mod_exprs[, 'expression'])
 
             # reinitialize base layer adding background tiles
-            g <- ggplot2::ggplot(mod_exprs, ggplot2::aes(x=sample, y=expression)) +
+            g <- ggplot(mod_exprs, aes(x=sample, y=expression)) +
                         geom_tile(data=annot, alpha=0.3, height=Inf,
-                                  ggplot2::aes(x=get(sample_col), y=y_pos,
+                                  aes(x=get(sample_col), y=y_pos,
                                       fill=get(class_col)))
         }
 
         # adding lines
-        g <- g + ggplot2::geom_line(ggplot2::aes(group=id), alpha=0.2) +
-                 ggplot2::stat_summary(ggplot2::aes(group=1),size=1,fun.y=mean,geom='line')
+        g <- g + geom_line(aes(group=id), alpha=0.2) +
+                 stat_summary(aes(group=1),size=1,fun.y=mean,geom='line')
 
         # custom theme
-        g <- g + ggplot2::theme(plot.title=ggplot2::element_text(lineheight=0.8,
-                                                                 face='bold',
-                                                                 colour='black',
-                                                                 size=15),
-                                axis.title=ggplot2::element_text(face='bold',
-                                                                 colour='black',
-                                                                 size=15),
-                                axis.text.y=ggplot2::element_text(angle=0,
-                                                                  vjust=0.5,
-                                                                  size=8),
-                                axis.text.x=ggplot2::element_text(angle=90,
-                                                                  vjust=0.5,
-                                                                  size=6),
-                       panel.grid=ggplot2::element_blank(),
-                       legend.title=ggplot2::element_blank(),
-                       legend.text=ggplot2::element_text(size = 8),
-                       legend.background=ggplot2::element_rect(fill='gray90',
-                                                               size=0.5,
-                                                               linetype='dotted'),
+        g <- g + theme(plot.title=element_text(lineheight=0.8,
+                                               face='bold',
+                                               colour='black',
+                                               size=15),
+                       axis.title=element_text(face='bold',
+                                               colour='black',
+                                               size=15),
+                       axis.text.y=element_text(angle=0,
+                                                vjust=0.5,
+                                                size=8),
+                       axis.text.x=element_text(angle=90,
+                                                vjust=0.5,
+                                                size=6),
+                       panel.grid=element_blank(),
+                       legend.title=element_blank(),
+                       legend.text=element_text(size = 8),
+                       legend.background=element_rect(fill='gray90',
+                                                      size=0.5,
+                                                      linetype='dotted'),
                        legend.position='bottom'
                        )
         # title
-        g <- g + ggplot2::ggtitle(mod)
+        g <- g + ggtitle(mod)
 
         return(g)
     })
     names(plots) <- modules
-    return(plots)
-}
+    cem_obj@profile_plot <- plots
+    return(cem_obj)
+})
 
 
 
@@ -107,7 +101,7 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
 #'
 #' Creates a bar plot with the results of overenrichment analysis of co-expression modules
 #'
-#' @param ora_res a data.frame from ora function 
+#' @param ora_res a data.frame from ora function
 #' @param n number of modules to show
 #' @param ... paramaters to plot_ora_single
 #'
@@ -120,7 +114,7 @@ plot_profile <- function(exprs, gene_module, annot=NULL, sample_col=NULL,
 plot_ora <- function(ora_res, n=10, ...){
     ora_splitted <- split(ora_res, ora_res$Module)
     res <- lapply(ora_splitted, function(x){
-        plot_ora_single(head(x, n=n), 
+        plot_ora_single(head(x, n=n),
                         graph_color=sub("\\.\\S$", "", unique(x$Module)),
                         title=unique(x$Module),
                         ...)
@@ -169,14 +163,14 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
     
     # plot
     y_axis <- paste('-log10(', ordr_by, ')')
-    pl <- ggplot2::ggplot(es, ggplot2::aes_string(x="GeneSet", y=y_axis, alpha="alpha", fill=y_axis)) + 
-        ggplot2::geom_bar(stat="identity") +
-        ggplot2::theme(axis.text=ggplot2::element_text(size=8), legend.title=ggplot2::element_blank()) +
-        ggplot2::coord_flip() + 
-        ggplot2::scale_alpha(range=c(0.4, 1), guide="none") +
-        ggplot2::labs(y="-log10(adjusted p-value)", title=title, x="") +
-        ggplot2::geom_hline(yintercept=-log10(pv_cut), colour="grey", linetype="longdash") + 
-        ggplot2::scale_fill_gradient(low="gray", high=graph_color, limits=c(2, 5), oob=my_squish)
+    pl <- ggplot(es, aes_string(x="GeneSet", y=y_axis, alpha="alpha", fill=y_axis)) + 
+        geom_bar(stat="identity") +
+        theme(axis.text=element_text(size=8), legend.title=element_blank()) +
+        coord_flip() + 
+        scale_alpha(range=c(0.4, 1), guide="none") +
+        labs(y="-log10(adjusted p-value)", title=title, x="") +
+        geom_hline(yintercept=-log10(pv_cut), colour="grey", linetype="longdash") + 
+        scale_fill_gradient(low="gray", high=graph_color, limits=c(2, 5), oob=my_squish)
     res <- list('pl'=pl, numsig=sum(es[, ordr_by] < pv_cut, na.rm=TRUE))
     return(res)
 }
@@ -233,15 +227,15 @@ plot_gsea <- function(enrichment, pv_cut=0.05)
     colnames(nes_melted) <- c("Module", "Class", "NES")
     nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
     max_abs_nes <- max(abs(nes_melted$NES))
-    res <- ggplot2::ggplot(nes_melted, ggplot2::aes(x=Class, y=Module, size=abs(NES), fill=NES)) + 
-        ggplot2::geom_point(color = "white", shape=21) +
-        ggplot2::scale_fill_gradientn(colours=custom_pal, space = "Lab", 
+    res <- ggplot(nes_melted, aes(x=Class, y=Module, size=abs(NES), fill=NES)) + 
+        geom_point(color = "white", shape=21) +
+        scale_fill_gradientn(colours=custom_pal, space = "Lab", 
                                       limits=c(-max_abs_nes, max_abs_nes)) +
-        ggplot2::scale_size(range=c(0,40)) +
-        ggplot2::guides(size="none") +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(panel.grid.major = ggplot2::element_blank()) +
-        ggplot2::scale_x_discrete(position = "top")
+        scale_size(range=c(0,40)) +
+        guides(size="none") +
+        theme_minimal() +
+        theme(panel.grid.major = element_blank()) +
+        scale_x_discrete(position = "top")
 
     return(res)
 }
