@@ -11,6 +11,9 @@ data(exprs)
 # Load your sample annotation data
 data(sample_annotation)
 
+# create a new CEMiTool object
+cem_obj <- new("CEMiTool", expression=exprs, sample_annotation=sample_annotation)
+
 # Find the modules
 gene_module <- find_modules(exprs) 
 

@@ -20,12 +20,15 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 class_column="vector"))
 
 setMethod("initialize", signature="CEMiTool",
-          function(.Object, expression,
+          function(.Object,
                    sample_name_column="SampleName", 
                    class_column="Class", ...){
-              .Object@expression <- expression
               .Object@sample_name_column <- sample_name_column
               .Object@class_column <- class_column
+              arguments <- list(...)
+              for( arg_name in names(arguments) ) {
+                  slot(.Object, arg_name) <- arguments[[arg_name]]
+              }
               return(.Object)
           })
 
@@ -144,7 +147,7 @@ setMethod('show', signature(object='CEMiTool'),
               cat("CEMiTool Object\n")
               cat("- Number of modules:", nmodules(object), "\n")
               cat("- Modules: ")
-              if(is.null(object@module)){
+              if(nrow(object@module) == 0){
                   cat("null\n")
               } else {
                   cat("\b\b (data.frame: ", nrow(object@module), "x", ncol(object@module), "): \n", sep="")
