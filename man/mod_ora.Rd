@@ -24,8 +24,9 @@ Object of class \code{CEMiTool}
 Perfoms overrepresentation analysis for each co-expression module found.
 }
 \examples{
-mod_ora(cem_obj, read_gmt(system.file('extdata','pathways.gmt',
-        package='CEMiTool')))
+gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+                   package='CEMiTool'))
+mod_ora(cem_obj, gmt)
 
 }
 
