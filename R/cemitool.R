@@ -1,3 +1,5 @@
+
+setOldClass('ggplot')
 #' An S4 class to represent the CEMiTool analysis.
 #'
 #' @slot expression Gene expression \code{data.frame}.
@@ -14,10 +16,11 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
                                 profile_plot='list',
-                                enrichment_plot='gg',
+                                enrichment_plot='ggplot',
                                 barplot_ora='list',
                                 sample_name_column="vector",
-                                class_column="vector"))
+                                class_column="vector",
+                                mod_colors="character"))
 
 setMethod("initialize", signature="CEMiTool",
           function(.Object,
@@ -31,6 +34,101 @@ setMethod("initialize", signature="CEMiTool",
               }
               return(.Object)
           })
+
+#' Retrieve and set mod_colors attribute
+#'
+#' @param cem_obj Object of class \code{CEMiTool}
+#' @param value a character vector containing colors for each module
+#'              the names should match with module names
+#' 
+#' @return 
+#'
+#' @rdname mod_colors
+#' @export
+setGeneric("mod_colors", function(cem_obj) {
+            standardGeneric("mod_colors")
+          })
+
+#' @rdname mod_colors
+setMethod("mod_colors", signature("CEMiTool"),
+         function(cem_obj){
+            mod_names <- unique(cem_obj@module$modules)
+            nmod <- length(mod_names)
+            cols <- cem_obj@mod_colors
+            if(nmod != 0) { 
+                if(length(cem_obj@mod_colors) == 0){
+                    if(nmod <= 16) {
+                        cols <- rainbow(16, s = 1, v = 0.7)[1:nmod]
+                    } else {
+                        cols <- rep(rainbow(16, s = 1, v = 0.7), ceiling(nmod/16))[1:nmod]
+                    }
+                    names(cols) <- mod_names
+                } else {
+                    if(!all(sort(names(cem_obj@mod_colors)) == sort(mod_names))){
+                        warning("mod_colors does not match with modules!")
+                    }
+                }
+            }
+            return(cols)
+         } )
+
+#' @rdname mod_colors
+#' @export
+setGeneric("mod_colors<-", function(cem_obj, value) {
+            standardGeneric("mod_colors<-")
+          })
+
+#' @rdname mod_colors
+setReplaceMethod("mod_colors", signature("CEMiTool"),
+         function(cem_obj, value){
+            cem_obj@mod_colors <- value
+            return(cem_obj)
+         } )
+
+
+#' Retrive or set the sample_annotation attribute
+#'
+#' @param cem_obj Object of class \code{CEMiTool}
+#' @param value a data.frame containing the sample annotation, 
+#'              should have at least two columns containing the Class 
+#'              and the Sample Name that should match with samples in 
+#'              expression
+#'
+#' @rdname sample_annotation
+#' @export
+setGeneric("sample_annotation", function(cem_obj) {
+            standardGeneric("sample_annotation")
+          })
+
+#' @rdname sample_annotation
+setMethod("sample_annotation", signature("CEMiTool"),
+         function(cem_obj){
+            return(cem_obj@sample_annotation)
+         } )
+
+#' @rdname sample_annotation
+#' @export
+setGeneric("sample_annotation<-", function(cem_obj, value) {
+            standardGeneric("sample_annotation<-")
+          })
+
+#' @rdname sample_annotation
+setReplaceMethod("sample_annotation", signature("CEMiTool"),
+         function(cem_obj, value){
+            if(!cem_obj@sample_name_column %in% colnames(value)){
+                stop("Please supply a data.frame with a column named ", 
+                     cem_obj@sample_name_column, 
+                     " or change the slot sample_name_column.")
+            }
+            if(!cem_obj@class_column %in% colnames(value)){
+                stop("Please supply a data.frame with a column named ", 
+                     cem_obj@class_column, 
+                     " or change the slot class_column.")
+            }
+            cem_obj@sample_annotation <- value
+            return(cem_obj)
+         } )
+
 
 #' Full gene co-expression analysis
 #'
@@ -63,15 +161,20 @@ cemitool <- function(exprs,
                      annot,
                      gmt,
                      cor_method=c('pearson', 'spearman'),
+                     sample_name_column="SampleName",
+                     class_column="Class",
                      merge_similar=TRUE,
                      split_modules=FALSE,
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=FALSE,
-                     verbose=FALSE)
+                     verbose=FALSE
+                     )
 {
-    results <- new('CEMiTool', expression=exprs)
+    results <- new('CEMiTool', expression=exprs, 
+                   sample_name_column=sample_name_column, 
+                   class_column=class_column)
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
                             min_ngen=min_ngen,
@@ -87,7 +190,7 @@ cemitool <- function(exprs,
 
     # if user provides annot file
     if (!missing(annot)) {
-        results@sample_annotation <- annot
+        sample_annotation(results) <- annot
         #run mod_gsea
         results <- mod_gsea(results, verbose=verbose)
     }
