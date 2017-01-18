@@ -17,7 +17,7 @@ cem_obj <- new("CEMiTool", expression=exprs,
 			   sample_name_column="Sample")
 
 # Find the modules
-cem_obj@module <- find_modules(cem_obj@expression) 
+cem_obj <- find_modules(cem_obj) 
 
 # If you desire, split the modules by positive and negative correlation
 cem_obj <- split_modules(cem_obj)
@@ -33,20 +33,19 @@ cem_obj <- mod_gsea(cem_obj)
 
 # Heatmap of gene set enrichment analysis
 cem_obj <- plot_gsea(cem_obj)
-print(pl)
+print(cem_obj@enrichment_plot)
 
 # Performs over representation analysis
 gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_list <- read_gmt(gmt_fname)
-gmt_in <- prepare_gmt(gmt_list)
-ora_res <- mod_ora(splitted_modules, gmt_in)
+gmt_in <- read_gmt(gmt_fname)
+cem_obj <- mod_ora(cem_obj, gmt_in)
 
 # plot ora results
-list_of_ora_results <- plot_ora(ora_res)
-print(list_of_ora_results[[2]]$pl)
+cem_obj <- plot_ora(cem_obj)
+print(cem_obj@barplot_ora[[1]][["pl"]])
 
 # running cemitool
-res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T)
+res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T, sample_name_column="Sample")
 
 # generate report
 generate_report(res)
