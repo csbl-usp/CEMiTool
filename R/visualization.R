@@ -27,6 +27,7 @@ setMethod('plot_profile', signature('CEMiTool'),
               annot <- cem_obj@sample_annotation
               sample_name_column <- cem_obj@sample_name_column
               class_column <- cem_obj@class_column
+			  mod_cols <- mod_colors(cem_obj)
               plots <- lapply(modules, function(mod){
                                   # subsets from exprs all genes inside module mod
                                   genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
@@ -60,8 +61,8 @@ setMethod('plot_profile', signature('CEMiTool'),
                                   }
 
                                   # adding lines
-                                  g <- g + geom_line(aes(group=id), alpha=0.2) +
-                                      stat_summary(aes(group=1),size=1,fun.y=mean,geom='line')
+                                  g <- g + geom_line(aes(group=id), alpha=0.2, colour=mod_cols[mod]) +
+                                      stat_summary(aes(group=1), size=1, fun.y=mean, geom='line')
 
                                   # custom theme
                                   g <- g + theme(plot.title=element_text(lineheight=0.8,
@@ -116,13 +117,14 @@ setGeneric('plot_ora', function(cem_obj, ...) {
     standardGeneric('plot_ora')
 })
 
-#' @rdname plot_profile
-setMethod('plot_profile', signature('CEMiTool'),
+#' @rdname plot_ora
+setMethod('plot_ora', signature('CEMiTool'),
           function(cem_obj, n=10, ...){
-              ora_splitted <- split(cem_obj$ora, cem_obj$ora$Module)
+              ora_splitted <- split(cem_obj@ora, cem_obj@ora$Module)
+			  mod_cols <- mod_colors(cem_obj)
               res <- lapply(ora_splitted, function(x){
                                 plot_ora_single(head(x, n=n),
-                                                graph_color=sub("\\.\\S$", "", unique(x$Module)),
+                                                graph_color=mod_cols[unique(x$Module)],
                                                 title=unique(x$Module),
                                                 ...)
               })
