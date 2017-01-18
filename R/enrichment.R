@@ -68,8 +68,9 @@ ora <- function(topgenes, gmt_list, allgenes){
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
-#' mod_ora(cem_obj, read_gmt(system.file('extdata','pathways.gmt',
-#'         package='CEMiTool')))
+#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+#'                    package='CEMiTool'))
+#' mod_ora(cem_obj, gmt)
 #'
 #' @rdname mod_ora
 #' @export
@@ -118,6 +119,11 @@ setGeneric('mod_gsea', function(cem_obj, ...) {
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
           function(cem_obj, verbose=F) {
+    if (nrow(cem_obj@sample_annotation)==0) {
+        warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
+        return(cem_obj)
+    }
+
     if (verbose) {
         message('Running GSEA')
     }
@@ -136,8 +142,8 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
 
     # calculates enrichment for each module for each class in annot
     annot <- cem_obj@sample_annotation
-    class_col <- cem_obj@class_col
-    sample_col <- cem_obj@sample_col
+    class_col <- cem_obj@class_column
+    sample_col <- cem_obj@sample_name_column
     classes <- unique(annot[, class_col])
     gsea_list <- lapply(classes, function(class_group){
         
