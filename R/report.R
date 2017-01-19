@@ -145,9 +145,9 @@ setMethod('ora_report', signature('CEMiTool'),
                           reportDirectory = directory)
     for(mod in names(ora_list)){
         ReportingTools::publish(hwriter::hwrite(paste("Module", mod), heading=3), ora_rep)
-        if(!is.null(cem_obj$barplot_ora)) {
+        if(!is.null(cem_obj@barplot_ora)) {
             ReportingTools::publish(hwriter::hwrite("Barplot", heading=4), ora_rep)
-            ReportingTools::publish(cem_obj$barplot_ora[[mod]]$pl, ora_rep)
+            ReportingTools::publish(cem_obj@barplot_ora[[mod]]$pl, ora_rep)
         }
         ReportingTools::publish(hwriter::hwrite("Table", heading=4), ora_rep)
         row_order <- order(ora_list[[mod]][, "p.adjust"], decreasing = F)
