@@ -159,11 +159,11 @@ setMethod('find_modules', signature('CEMiTool'),
         # Merging modules
         merged_mods <-  WGCNA::mergeCloseModules(exprs_t, our_colors,
                                           cutHeight=diss_thresh)
-        
+
         # The merged modules colors
         merged_mods <- factor(merged_mods$colors)
 
-        levels(merged_mods) <- paste0('M', seq(1, length(unique(merged_mods)))) 
+        levels(merged_mods) <- paste0('M', rank(-table(merged_mods)))
 
         out[, 'modules'] <- as.character(merged_mods)
     }
