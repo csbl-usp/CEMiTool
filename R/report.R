@@ -22,6 +22,8 @@ setMethod('generate_report', signature('CEMiTool'),
     index_page <- ReportingTools::HTMLReport(shortName = "index",
                              title = title,
                              reportDirectory = directory)
+
+
     # Create the module page
     mod_rep <- module_report(cem_obj, directory)
     # add a link to module page in index page
@@ -69,6 +71,14 @@ setMethod('module_report', signature('CEMiTool'),
     mod_rep <- ReportingTools::HTMLReport(shortName = "mod_rep",
                           title="Modules",
                           reportDirectory = directory)
+
+    # gets the body element
+    body <- XML::getNodeSet(mod_rep$.reportDOM, "//body")[[1]]
+    # creates a HTML node loading the plotly.js
+    plotly_import <- XML::newXMLNode("script", attrs=c("src"="https://cdn.plot.ly/plotly-latest.min.js"))
+    # adds the node to the body
+    XML::addChildren(body, plotly_import)
+
     mod_df <- as.data.frame(table(cem_obj@module$modules))
     colnames(mod_df) <- c("Module", "No.Genes")
     ReportingTools::publish(mod_df, mod_rep)
@@ -110,7 +120,17 @@ setMethod('enrichment_report', signature('CEMiTool'),
     enrich_rep <- ReportingTools::HTMLReport(shortName = "enrich_rep",
                           title="Gene Set Enrichment Analysis",
                           reportDirectory = directory)
-    ReportingTools::publish(cem_obj@enrichment_plot, enrich_rep)
+
+    # gets the body element
+    body <- XML::getNodeSet(enrich_rep$.reportDOM, "//body")[[1]]
+    # creates a HTML node loading the plotly.js
+    plotly_import <- XML::newXMLNode("script", attrs=c("src"="https://cdn.plot.ly/plotly-latest.min.js"))
+    # adds the node to the body
+    XML::addChildren(body, plotly_import)
+
+    if(!is.null(cem_obj@enrichment_plot)){
+        ReportingTools::publish(cem_obj@enrichment_plot, enrich_rep)
+    }
     ReportingTools::publish(enrich_df, enrich_rep)
     ReportingTools::finish(enrich_rep)
     return(enrich_rep)
@@ -143,9 +163,19 @@ setMethod('ora_report', signature('CEMiTool'),
     ora_rep <- ReportingTools::HTMLReport(shortName = "ora_rep",
                           title="Over Representation Analysis",
                           reportDirectory = directory)
+
+    # gets the body element
+    body <- XML::getNodeSet(ora_rep$.reportDOM, "//body")[[1]]
+    # creates a HTML node loading the plotly.js
+    plotly_import <- XML::newXMLNode("script", attrs=c("src"="https://cdn.plot.ly/plotly-latest.min.js"))
+    # adds the node to the body
+    XML::addChildren(body, plotly_import)
+
     for(mod in names(ora_list)){
         ReportingTools::publish(hwriter::hwrite(paste("Module", mod), heading=3), ora_rep)
         if(!is.null(cem_obj@barplot_ora)) {
+            new_pl <- cem_obj@barplot_ora[[mod]]$pl
+            new_pl$data$alpha <- 1
             ReportingTools::publish(hwriter::hwrite("Barplot", heading=4), ora_rep)
             ReportingTools::publish(cem_obj@barplot_ora[[mod]]$pl, ora_rep)
         }
@@ -157,3 +187,26 @@ setMethod('ora_report', signature('CEMiTool'),
     ReportingTools::finish(ora_rep)
     return(ora_rep)
 })
+
+publish_plotly <- function(pl, report, id="myPlot", width="600px", height="400px"){
+    # gets the body element
+    body <- XML::getNodeSet(report$.reportDOM, "//body")[[1]]
+    # gets the json with data
+    pljs <- plotly::plotly_json(pl, jsonedit=F)
+    # creates a HTML node loading json with data
+    json_import <- XML::newXMLNode("script", XML::newXMLTextNode(paste("var json=", pljs)))
+    XML::addChildren(body, json_import)
+    # adds the node to the body
+    ReportingTools::publish(paste0('<div id="', id,
+                                   '" style="width: ', width,
+                                   '; height: ', height,
+                                   ';"></div>'), 
+                            report)
+
+    # creates a HTML node to generate the graphics
+    node = XML::newXMLNode("script", 
+                           XML::newXMLTextNode(paste0("Plotly.newPlot('", id,
+                                                      "', json['data'], json['layout']);")))
+    # adds the node to the body
+    XML::addChildren(body, node)
+}
