@@ -44,7 +44,7 @@ htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
     columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
     ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
 
-	tl <- htmltools::tagList(dt_list)
+	tl <- htmltools::tagList()
 	for(i in seq(1, length(ora_list)*3, by=3)){
 	    n <- names(ora_list)[ceiling(i/3)]
 		tl[[i]] <- htmltools::tags$h3(n)
