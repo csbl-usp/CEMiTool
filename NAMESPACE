@@ -3,6 +3,7 @@
 export("mod_colors<-")
 export("sample_annotation<-")
 export(cemitool)
+export(cemoverlap)
 export(enrichment_report)
 export(find_modules)
 export(generate_report)
