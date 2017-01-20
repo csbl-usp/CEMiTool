@@ -48,4 +48,7 @@ print(cem_obj@barplot_ora[[1]][["pl"]])
 res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T, sample_name_column="Sample")
 
 # generate report
-generate_report(res)
+rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
+cem_obj <- res
+max_rows_ora <- 100
+rmarkdown::render(rmd)

@@ -1,0 +1,55 @@
+---
+title: "CEMiTool Report"
+output:
+  html_document:
+    code_folding: hide
+---
+
+## Module Statistics ##
+```{r}
+    mod_df <- as.data.frame(table(cem_obj@module$modules))
+    colnames(mod_df) <- c("Module", "No.Genes")
+    DT::datatable(mod_df)
+```
+
+## Modules - ProfilePlot
+```{r}
+htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
+```
+
+## Gene Set Enrichment Analysis ## 
+```{r fig.width=10}
+    if(!is.null(cem_obj@enrichment_plot)){
+		plot(cem_obj@enrichment_plot)
+	}
+```
+
+```{r}
+    nes <- cem_obj@enrichment$nes
+    pv <- cem_obj@enrichment$pval
+
+    colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
+    colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
+
+    # join p-values and nes
+    enrich_df <- merge(nes, pv, by.x="pathway")
+
+    # reorder columns
+    enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
+    DT::datatable(enrich_df)
+```
+
+## Over Representation Analysis - Tables ##
+```{r results="asis"}
+    columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
+    ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
+
+	tl <- htmltools::tagList(dt_list)
+	for(i in seq(1, length(ora_list)*3, by=3)){
+	    n <- names(ora_list)[ceiling(i/3)]
+		tl[[i]] <- htmltools::tags$h3(n)
+		tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
+		tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
+	}
+	tl
+```
