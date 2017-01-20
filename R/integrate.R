@@ -14,11 +14,11 @@ cemoverlap <- function(analyses) {
         cem_obj <- analyses[[index]]
         cem_name <- names(analyses[index])
         # splits by module
-        mods <- split(cem_obj@module, cem_obj@module[, 'modules'])
+        mods <- split(cem_obj@module[,1], cem_obj@module[, 'modules'])
         
         # combines all genes inside each module
         per_mod <- lapply(mods, function(mod) {
-               edges <- as.data.table(t(gRbase::combnPrim(mod[,1],2)))
+               edges <- as.data.table(t(gRbase::combnPrim(mod,2)))
                return(edges)
         })
         edges <- do.call(rbind, per_mod)
