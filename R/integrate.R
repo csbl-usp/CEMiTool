@@ -13,10 +13,21 @@ cemoverlap <- function(analyses) {
     edgelist <- lapply(seq_along(analyses), function(index) {
         cem_obj <- analyses[[index]]
         cem_name <- names(analyses[index])
-        edges <- as.data.table(t(gRbase::combnPrim(cem_obj@module[,1],2)))
+        # splits by module
+        mods <- split(cem_obj@module, cem_obj@module[, 'modules'])
+        
+        # combines all genes inside each module
+        per_mod <- lapply(mods, function(mod) {
+               edges <- as.data.table(t(gRbase::combnPrim(mod[,1],2)))
+               return(edges)
+        })
+        edges <- do.call(rbind, per_mod)
         setnames(edges, c('gene1', 'gene2'))
         edges[, eval(cem_name) := TRUE]
+        return(edges)
     })
+
+    # merges all studies
     out <- Reduce(function(...) { 
                       merge(..., by=c('gene1', 'gene2'),
                                        all=TRUE) },
