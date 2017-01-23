@@ -53,6 +53,6 @@ cem_obj <- include_interactions(cem_obj, int_df)
 generate_report(cem_obj)
 
 # running cemitool
-res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T, sample_name_column="Sample")
+res <- cemitool(exprs, sample_annotation, gmt_in, filter=F, plot=T, split_modules=T, sample_name_column="Sample")
 
 
