@@ -28,7 +28,12 @@ Imports:
     clusterProfiler,
     fgsea,
     stringr,
-    ReportingTools
+    rmarkdown,
+    igraph,
+    networkD3,
+    plotly,
+    DT,
+    htmltools
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
