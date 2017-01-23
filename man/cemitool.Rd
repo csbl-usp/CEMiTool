@@ -4,11 +4,11 @@
 \alias{cemitool}
 \title{Full gene co-expression analysis}
 \usage{
-cemitool(exprs, annot, gmt, filter = TRUE, filter_pval = 0.1,
+cemitool(exprs, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
   cor_method = c("pearson", "spearman"), sample_name_column = "SampleName",
   class_column = "Class", merge_similar = TRUE, split_modules = FALSE,
   ora_pval = 0.05, min_ngen = 30, diss_thresh = 0.8, plot = FALSE,
-  verbose = FALSE)
+  directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{exprs}{Gene expression \code{data.frame}.}
@@ -16,6 +16,8 @@ cemitool(exprs, annot, gmt, filter = TRUE, filter_pval = 0.1,
 \item{annot}{Sample annotation \code{data.frame}.}
 
 \item{gmt}{a list from function prepare_gmt containing the gene sets.}
+
+\item{interactions}{a data.frame containing two columns with gene names.}
 
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
@@ -33,6 +35,8 @@ Default \code{"pearson"}.}
 Default \code{0.8}.}
 
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
+
+\item{directed}{Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
