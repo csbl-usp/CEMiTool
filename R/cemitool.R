@@ -18,6 +18,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 module='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
+								interactions='list',
                                 profile_plot='list',
                                 enrichment_plot='ggplot',
                                 barplot_ora='list',
