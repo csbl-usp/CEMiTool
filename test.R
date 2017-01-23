@@ -49,9 +49,10 @@ int_fname <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 int_df <- read.delim(int_fname)
 cem_obj <- include_interactions(cem_obj, int_df)
 
+# generate report
+generate_report(cem_obj)
+
 # running cemitool
 res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T, sample_name_column="Sample")
 
 
-# generate report
-generate_report(res)
