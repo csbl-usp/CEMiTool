@@ -15,6 +15,7 @@ setOldClass('ggplot')
 #' @slot barplot_ora list of ggplot graphs with over-representation analysis resultsper module
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
+                                selected_genes='vector',
                                 module='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
@@ -38,6 +39,44 @@ setMethod("initialize", signature="CEMiTool",
               }
               return(.Object)
           })
+
+
+#' Retrieve and set expression attribute
+#'
+#' @param cem_obj Object of class \code{CEMiTool}
+#' @param expr Object of class \code{data.frame} with gene
+#'        expression data
+#' 
+#' @return Object of class \code{data.frame} with gene expression data
+#'
+#' @rdname expr_data 
+#' @export
+setGeneric("expr_data", function(cem_obj) {
+            standardGeneric("expr_data")
+          })
+
+#' @rdname expr_data
+setMethod("expr_data", signature("CEMiTool"),
+         function(cem_obj){
+            return(cem_obj@expression)
+         })
+
+
+#' @rdname expr_data
+#' @export
+setGeneric("expr_data<-", function(cem_obj, value) {
+            standardGeneric("expr_data<-")
+          })
+
+#' @rdname expr_data
+setReplaceMethod("expr_data", signature("CEMiTool"),
+         function(cem_obj, value){
+            cem_obj@expression <- value
+            cem_obj@selected_genes <- rownames(cem_obj@expression)
+            return(cem_obj)
+         })
+
+
 
 #' Retrieve and set mod_colors attribute
 #'
