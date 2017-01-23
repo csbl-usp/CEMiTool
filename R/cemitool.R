@@ -230,6 +230,11 @@ cemitool <- function(exprs,
                      verbose=FALSE
                      )
 {
+    if (missing(exprs)) {
+        stop('Must provide, at least, expression data')
+    }
+ 
+    # initialize CEMiTool object to hold data, analysis results and plots
     results <- new('CEMiTool', expression=exprs, 
                    sample_name_column=sample_name_column, 
                    class_column=class_column)
