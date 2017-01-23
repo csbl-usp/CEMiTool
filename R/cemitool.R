@@ -28,7 +28,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 mod_colors="character"))
 
 setMethod("initialize", signature="CEMiTool",
-          function(.Object,
+          function(.Object, expression,
                    sample_name_column="SampleName", 
                    class_column="Class", ...){
               .Object@sample_name_column <- sample_name_column
@@ -36,6 +36,10 @@ setMethod("initialize", signature="CEMiTool",
               arguments <- list(...)
               for( arg_name in names(arguments) ) {
                   slot(.Object, arg_name) <- arguments[[arg_name]]
+              }
+              if (!missing(expression)) {
+                  slot(.Object, 'expression') <- expression
+                  slot(.Object, 'selected_genes') <- rownames(expression) 
               }
               return(.Object)
           })
@@ -68,7 +72,7 @@ setMethod("expr_data", signature("CEMiTool"),
 
 #' @rdname expr_data
 #' @export
-setGeneric("expr_data<-", function(cem_obj, value) {
+setGeneric("expr_data<-", function(cem_obj, expr) {
             standardGeneric("expr_data<-")
           })
 
