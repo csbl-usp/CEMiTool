@@ -22,9 +22,9 @@ read_gmt <- function(fname){
     names(gmt_desc) <- names(gmt_genes) <- gmt_names
     res <- list()
     res[["term2gene"]] <- do.call(rbind, lapply(names(gmt_genes),
-                            function(n) cbind(Term=n, Gene=gmt_genes[[n]])))
+                            function(n) cbind(Term=n, Gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
     res[["term2name"]] <- do.call(rbind, lapply(names(gmt_desc),
-                            function(n) cbind(Term=n, Name=gmt_desc[[n]])))
+                            function(n) cbind(Term=n, Name=gmt_desc[[n]], stringsAsFactors=FALSE)))
     return(res)
 }
 
@@ -90,7 +90,7 @@ setMethod('mod_ora', signature(cem_obj='CEMiTool'),
               res_list <- lapply(mods, ora, gmt_in, allgenes)
               names(res_list) <- names(mods)
               for(n in names(res_list)) {
-                  res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]])
+                  res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]], stringsAsFactors=FALSE)
               }
               res <- do.call(rbind, res_list)
               rownames(res) <- NULL
@@ -138,7 +138,8 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
     # expression to z-score
     z_exprs <- data.frame(t(scale(t(expr_data(cem_obj, filtered=FALSE)), 
                                   center=TRUE, 
-                                  scale=TRUE)))
+                                  scale=TRUE)),
+                          stringsAsFactors=FALSE)
 
     # calculates enrichment for each module for each class in annot
     annot <- cem_obj@sample_annotation

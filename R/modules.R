@@ -132,7 +132,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     n_mods <- length(unique(our_colors))
     
-    out <- data.frame(genes=rownames(exprs), modules=our_colors)
+    out <- data.frame(genes=rownames(exprs), modules=our_colors, stringsAsFactors=FALSE)
 
     # checks number of modules found
     if (n_mods <= 1) {
@@ -228,16 +228,16 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
         
                     # checks for the minimum module size of positive correlated genes
                     if (length(pos_cors) >= min_ngen) {
-                        pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'))
+                        pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'), stringsAsFactors=FALSE)
                     } else {
-                        pos_mod <- data.frame()
+                        pos_mod <- data.frame(stringsAsFactors=FALSE)
                     }
         
                     # checks for the minimum module size of negative correlated genes
                     if (length(neg_cors) >= min_ngen) {
-                        neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'))
+                        neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'), stringsAsFactors=FALSE)
                     } else {
-                        neg_mod <- data.frame()
+                        neg_mod <- data.frame(stringsAsFactors=FALSE)
                     }
         
                     splitted_mods <- rbind(pos_mod, neg_mod)
@@ -246,7 +246,7 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
         
                 } else {
                     # no negative correlations inside module mod
-                    same_mod <- data.frame(genes=genes, modules=mod)
+                    same_mod <- data.frame(genes=genes, modules=mod, stringsAsFactors=FALSE)
         
                     if (verbose) {
                         message(paste0('Module ', mod, ' will not be splitted'))
