@@ -16,7 +16,7 @@ gmt <- system.file('extdata', 'pathways.gmt', package='CEMiTool')
 gmt <- read_gmt(gmt)
 
 cem_filt <- filter_expr(cem_base, 1)
-cem_fm <- find_modules(cem)
+cem_fm <- find_modules(cem_filt)
 
 
 test_that('all methods of signature CEMiTool returns CEMiTool objects', {
@@ -44,4 +44,8 @@ test_that('all methods of signature CEMiTool returns CEMiTool objects', {
     
     cem <- plot_ora(cem)
     expect_equal(class(cem)[1], 'CEMiTool') 
+})
+
+test_that('no expression data throws error', {
+    expect_error(cemitool(), 'Must*')
 })
