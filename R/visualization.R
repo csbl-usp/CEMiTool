@@ -8,7 +8,7 @@ NULL
 #' @param cem_obj Object of class \code{CEMiTool}.
 #' @param ... Optional parameters.
 #'
-#' @return List with one profile plot per module in gene_module
+#' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
 #' plot_profile(cem_obj)
@@ -106,7 +106,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' @param n number of modules to show
 #' @param ... paramaters to plot_ora_single
 #'
-#' @return a list with ggplot2 object and the number of significant gene sets
+#' @return Object of class \code{CEMiTool} with ORA plots
 #'
 #' @examples
 #' plot_ora(test)
@@ -194,7 +194,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' @param cem_obj Object of class \code{CEMiTool}.
 #' @param pv_cut P-value cut-off. Default \code{0.05}
 #'
-#' @return None
+#' @return Object of class \code{CEMiTool} with GSEA plots
 #'
 #' @examples
 #' plot_gsea(enrichment)
