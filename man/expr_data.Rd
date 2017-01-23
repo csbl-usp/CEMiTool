@@ -8,13 +8,13 @@
 \alias{expr_data<-,CEMiTool-method}
 \title{Retrieve and set expression attribute}
 \usage{
-expr_data(cem_obj)
+expr_data(cem_obj, ...)
 
-\S4method{expr_data}{CEMiTool}(cem_obj)
+\S4method{expr_data}{CEMiTool}(cem_obj, filtered = T)
 
-expr_data(cem_obj) <- value
+expr_data(cem_obj, expr) <- value
 
-\S4method{expr_data}{CEMiTool}(cem_obj) <- value
+\S4method{expr_data}{CEMiTool}(cem_obj, expr) <- value
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}}
