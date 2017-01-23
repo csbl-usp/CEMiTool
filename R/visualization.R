@@ -27,7 +27,7 @@ setMethod('plot_profile', signature('CEMiTool'),
               annot <- cem_obj@sample_annotation
               sample_name_column <- cem_obj@sample_name_column
               class_column <- cem_obj@class_column
-			  mod_cols <- mod_colors(cem_obj)
+              mod_cols <- mod_colors(cem_obj)
               plots <- lapply(modules, function(mod){
                                   # subsets from exprs all genes inside module mod
                                   genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
@@ -90,7 +90,7 @@ setMethod('plot_profile', signature('CEMiTool'),
                                   g <- g + ggtitle(mod)
 
                                   return(g)
-})
+              })
               names(plots) <- modules
               cem_obj@profile_plot <- plots
               return(cem_obj)
@@ -121,7 +121,7 @@ setGeneric('plot_ora', function(cem_obj, ...) {
 setMethod('plot_ora', signature('CEMiTool'),
           function(cem_obj, n=10, ...){
               ora_splitted <- split(cem_obj@ora, cem_obj@ora$Module)
-			  mod_cols <- mod_colors(cem_obj)
+              mod_cols <- mod_colors(cem_obj)
               res <- lapply(ora_splitted, function(x){
                                 plot_ora_single(head(x, n=n),
                                                 graph_color=mod_cols[unique(x$Module)],
@@ -245,16 +245,16 @@ setMethod('plot_gsea', signature('CEMiTool'),
               max_abs_nes <- max(abs(nes_melted$NES))
               res <- ggplot(nes_melted, aes(x=Class, y=Module, size=abs(NES), fill=NES)) + 
                   geom_point(color = "white", shape=21) +
-                      scale_fill_gradientn(colours=custom_pal, space = "Lab", 
-                                           limits=c(-max_abs_nes, max_abs_nes)) +
-          scale_size(range=c(0,40)) +
-          guides(size="none") +
-          theme_minimal() +
-          theme(panel.grid.major = element_blank()) +
-          scale_x_discrete(position = "top")
-      cem_obj@enrichment_plot <- as.list(res)
+                  scale_fill_gradientn(colours=custom_pal, space = "Lab", 
+                                       limits=c(-max_abs_nes, max_abs_nes)) +
+                  scale_size(range=c(0,30)) +
+                  guides(size="none") +
+                  theme_minimal() +
+                  theme(panel.grid.major = element_blank()) +
+                  scale_x_discrete(position = "top")
+              cem_obj@enrichment_plot <- res
 
-      return(cem_obj)
+              return(cem_obj)
           }
           )
 

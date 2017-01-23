@@ -12,13 +12,12 @@
 #' @rdname generate_report
 #' @export
 setGeneric('generate_report', function(cem_obj, ...) {
-    standardGeneric('generate_report')
+               standardGeneric('generate_report')
 })
 
 #' @rdname generate_report
 setMethod('generate_report', signature('CEMiTool'),
-          function(cem_obj, max_rows_ora=50, title="CEMiTool Report", directory="./reports", ...)
-{
-	rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
-	rmarkdown::render(rmd, output_dir=directory, ...)
-})
+          function(cem_obj, max_rows_ora=50, title="CEMiTool Report", directory="./reports", ...) {
+              rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
+              rmarkdown::render(rmd, output_dir=directory, ...)
+          })

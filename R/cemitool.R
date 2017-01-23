@@ -2,6 +2,7 @@
 #' @importFrom utils head
 #' @importFrom methods new 'slot<-' show
 
+setOldClass('gg')
 setOldClass('ggplot')
 #' An S4 class to represent the CEMiTool analysis.
 #'
@@ -19,9 +20,9 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 module='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
-								interactions='list',
+                                interactions='list',
                                 profile_plot='list',
-                                enrichment_plot='ggplot',
+                                enrichment_plot='gg',
                                 barplot_ora='list',
                                 sample_name_column="vector",
                                 class_column="vector",
@@ -189,6 +190,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param exprs Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
 #' @param gmt a list from function prepare_gmt containing the gene sets.
+#' @param interactions a data.frame containing two columns with gene names.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default \code{"pearson"}.
@@ -199,6 +201,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param plot Logical. If \code{TRUE}, plots all figures.
+#' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return a cemitool object 
@@ -211,6 +214,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 cemitool <- function(exprs, 
                      annot,
                      gmt,
+                     interactions,
                      filter=TRUE,
                      filter_pval=0.1,
                      cor_method=c('pearson', 'spearman'),
@@ -222,6 +226,7 @@ cemitool <- function(exprs,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=FALSE,
+                     directed=FALSE,
                      verbose=FALSE
                      )
 {
@@ -244,6 +249,11 @@ cemitool <- function(exprs,
     if (split_modules) {
         results <- split_modules(results, min_ngen=min_ngen,
                                  verbose=verbose)
+    }
+
+    if (!missing(interactions)){
+        results <- include_interactions(results, int_df=interactions, 
+                                        directed=directed)
     }
 
     # if user provides annot file

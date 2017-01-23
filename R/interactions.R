@@ -19,11 +19,11 @@ setGeneric('include_interactions', function(cem_obj, ...) {
 #' @export
 setMethod('include_interactions', signature('CEMiTool'), 
           function(cem_obj, int_df, directed=FALSE, ...) {
-    genes_by_module <- split(cem_obj@module$genes, cem_obj@module$modules)
-    cem_obj@interactions <- lapply(genes_by_module, function(x) {
-               rows <- which(int_df[,1] %in% x | int_df[, 2] %in% x)
-               ig <- igraph::graph_from_data_frame(int_df[rows,], directed=FALSE)
-               return(ig)
-    })
-    return(cem_obj)
-})
+              genes_by_module <- split(cem_obj@module$genes, cem_obj@module$modules)
+              cem_obj@interactions <- lapply(genes_by_module, function(x) {
+                                                 rows <- which(int_df[,1] %in% x | int_df[, 2] %in% x)
+                                                 ig <- igraph::graph_from_data_frame(int_df[rows,], directed=FALSE)
+                                                 return(ig)
+              })
+              return(cem_obj)
+          })

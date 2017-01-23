@@ -39,7 +39,7 @@ output:
     DT::datatable(enrich_df)
 ```
 
-## Over Representation Analysis - Tables ##
+## Over Representation Analysis##
 ```{r results="asis"}
     columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
     ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
@@ -56,10 +56,9 @@ output:
 
 ## Interaction Network
 ```{r}
-    net <- networkD3::igraph_to_networkD3(cem_obj@interactions[[7]])
     tl <- htmltools::tagList()
-    for(i in seq(1, length(cem_obj@interactions)*3, by=2)){
-        n <- names(cem_obj@interactions)[ceiling(i/3)]
+    for(i in seq(1, length(cem_obj@interactions)*2, by=2)){
+        n <- names(cem_obj@interactions)[ceiling(i/2)]
         tl[[i]] <- htmltools::tags$h3(n)
         net <- networkD3::igraph_to_networkD3(cem_obj@interactions[[n]])
         net$nodes$group <- ""
