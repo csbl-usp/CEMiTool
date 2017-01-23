@@ -51,14 +51,18 @@ setMethod("initialize", signature="CEMiTool",
 #'
 #' @rdname expr_data 
 #' @export
-setGeneric("expr_data", function(cem_obj) {
+setGeneric("expr_data", function(cem_obj, ...) {
             standardGeneric("expr_data")
           })
 
 #' @rdname expr_data
 setMethod("expr_data", signature("CEMiTool"),
-         function(cem_obj){
-            return(cem_obj@expression)
+         function(cem_obj, filtered=T){
+            if (filtered) {
+                return(cem_obj@expression[cem_obj@selected_genes,])
+            } else {
+                return(cem_obj@expression)
+            }
          })
 
 
@@ -70,8 +74,8 @@ setGeneric("expr_data<-", function(cem_obj, value) {
 
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
-         function(cem_obj, value){
-            cem_obj@expression <- value
+         function(cem_obj, expr){
+            cem_obj@expression <- expr
             cem_obj@selected_genes <- rownames(cem_obj@expression)
             return(cem_obj)
          })
@@ -203,6 +207,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 cemitool <- function(exprs, 
                      annot,
                      gmt,
+                     filter=TRUE,
+                     filter_pval=0.1,
                      cor_method=c('pearson', 'spearman'),
                      sample_name_column="SampleName",
                      class_column="Class",
@@ -218,6 +224,11 @@ cemitool <- function(exprs,
     results <- new('CEMiTool', expression=exprs, 
                    sample_name_column=sample_name_column, 
                    class_column=class_column)
+    
+    if (filter) {
+        results <- filter_expr(results, filter_pval)
+    }
+
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
                             min_ngen=min_ngen,

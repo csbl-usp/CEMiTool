@@ -136,7 +136,7 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
     names(gene_sets) <- modules
         
     # expression to z-score
-    z_exprs <- data.frame(t(scale(t(cem_obj@expression), 
+    z_exprs <- data.frame(t(scale(t(expr_data(cem_obj, filtered=FALSE)), 
                                   center=TRUE, 
                                   scale=TRUE)))
 

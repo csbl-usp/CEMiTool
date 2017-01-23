@@ -23,7 +23,7 @@ setGeneric('plot_profile', function(cem_obj, ...) {
 setMethod('plot_profile', signature('CEMiTool'),
           function(cem_obj, order=TRUE) {
               modules <- unique(cem_obj@module[, 'modules'])
-              exprs <- cem_obj@expression
+              exprs <- expr_data(cem_obj)
               annot <- cem_obj@sample_annotation
               sample_name_column <- cem_obj@sample_name_column
               class_column <- cem_obj@class_column

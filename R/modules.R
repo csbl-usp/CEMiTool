@@ -37,14 +37,15 @@ setMethod('find_modules', signature('CEMiTool'),
                              min_ngen=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
+    exprs <- expr_data(cem_obj)
 
     if (is.null(exprs)){
         stop('Must provide expression data')
     }
 
-    exprs_t <- t(cem_obj@expression)
-    names(exprs_t) <- rownames(cem_obj@expression)
-    rownames(exprs_t) <- colnames(cem_obj@expression)
+    exprs_t <- t(exprs)
+    names(exprs_t) <- rownames(exprs)
+    rownames(exprs_t) <- colnames(exprs)
 
 
     if (verbose) {
@@ -204,7 +205,7 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
         
                 # subsets from exprs all genes inside module mod
                 genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
-                mod_exprs <- cem_obj@expression[genes,]
+                mod_exprs <- expr_data(cem_obj)[genes,]
         
                 # recalculates the correlation matrix for genes in module mod
                 gene_cors <- cor(t(mod_exprs), use='everything', method='pearson')
@@ -298,7 +299,7 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
 
               # mean expression of genes in modules
               if (method == 'mean') {
-                  exprs <- data.table(cem_obj@expression, keep.rownames=T)
+                  exprs <- data.table(expr_data(cem_obj), keep.rownames=T)
                   exprs_melt <- melt(exprs, id='rn', variable.name='samples',
                                      value.name='expression')
                   exprs_melt <- merge(exprs_melt, cem_obj@module, by.x='rn', by.y='genes')
@@ -310,7 +311,7 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
                   return(summarized)
                   # eigengene for each module
               } else if (method == 'eigengene') {
-                  exprs_t <- t(cem_obj@expression)
+                  exprs_t <- t(expr_data(cem_obj))
                   colnames(exprs_t) <- rownames(exprs)
                   rownames(exprs_t) <- colnames(exprs)
                   me_list <- WGCNA::moduleEigengenes(exprs_t, 

@@ -17,7 +17,7 @@ setGeneric('filter_expr', function(cem_obj, ...) {
 setMethod('filter_expr', signature('CEMiTool'),
           function(cem_obj, pval=0.05)
 {
-    expr <- cem_obj@expression
+    expr <- expr_data(cem_obj)
     expr_var <- apply(expr, 1, var)
 
     var_mean <- mean(expr_var)
