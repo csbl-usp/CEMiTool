@@ -39,10 +39,6 @@ setMethod('find_modules', signature('CEMiTool'),
 {
     exprs <- expr_data(cem_obj)
 
-    if (is.null(exprs)){
-        stop('Must provide expression data')
-    }
-
     exprs_t <- t(exprs)
     names(exprs_t) <- rownames(exprs)
     rownames(exprs_t) <- colnames(exprs)

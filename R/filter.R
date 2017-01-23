@@ -39,6 +39,7 @@ setMethod('filter_expr', signature('CEMiTool'),
         cem_obj@selected_genes <- names(selected)
     } else {
         cem_obj@selected_genes <- selected
+        warning('No gene left after the filtering')
     }
     
     return(cem_obj)

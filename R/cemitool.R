@@ -236,6 +236,9 @@ cemitool <- function(exprs,
     
     if (filter) {
         results <- filter_expr(results, filter_pval)
+        if (length(results@selected_genes) >= 0) {
+            stop('Stopping analysis')
+        }
     }
 
     results <- find_modules(results,
