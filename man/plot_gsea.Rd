@@ -16,7 +16,7 @@ plot_gsea(cem_obj, ...)
 \item{pv_cut}{P-value cut-off. Default \code{0.05}}
 }
 \value{
-None
+Object of class \code{CEMiTool} with GSEA plots
 }
 \description{
 Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules

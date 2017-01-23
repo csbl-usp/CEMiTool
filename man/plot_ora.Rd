@@ -18,7 +18,7 @@ plot_ora(cem_obj, ...)
 \item{n}{number of modules to show}
 }
 \value{
-a list with ggplot2 object and the number of significant gene sets
+Object of class \code{CEMiTool} with ORA plots
 }
 \description{
 Creates a bar plot with the results of overenrichment analysis of co-expression modules

@@ -8,13 +8,15 @@
 \usage{
 generate_report(cem_obj, ...)
 
-\S4method{generate_report}{CEMiTool}(cem_obj, title = "CEMiTool Report",
-  directory = "./reports")
+\S4method{generate_report}{CEMiTool}(cem_obj, max_rows_ora = 50,
+  title = "CEMiTool Report", directory = "./reports", ...)
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
-\item{title}{Report title.}
+\item{...}{parameters to rmarkdown::render}
+
+\item{max_rows_ora}{maximum number of rows in Over Representation Analysis table results}
 
 \item{directory}{Directory name for results.}
 }

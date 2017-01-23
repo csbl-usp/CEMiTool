@@ -16,7 +16,7 @@ plot_profile(cem_obj, ...)
 \item{...}{Optional parameters.}
 }
 \value{
-List with one profile plot per module in gene_module
+Object of class \code{CEMiTool} with profile plots
 }
 \description{
 Creates a line plot of each gene inside the module through the samples
