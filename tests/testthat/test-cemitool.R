@@ -1,12 +1,13 @@
 context('Cemitool methods')
 
 data(exprs)
-data(sample_annotation)
+data(sample_annotation_data)
 
 cem_base <- new('CEMiTool',
            expression=exprs,
-           sample_annotation=sample_annotation,
            sample_name_column='Sample')
+
+sample_annotation(cem_base) <- sample_annotation_data
 
 ppi <- system.file('extdata', 'interactions.tsv', package='CEMiTool')
 ppi <- fread(ppi, data.table=F)
@@ -14,31 +15,33 @@ ppi <- fread(ppi, data.table=F)
 gmt <- system.file('extdata', 'pathways.gmt', package='CEMiTool')
 gmt <- read_gmt(gmt)
 
+cem_filt <- filter_expr(cem_base, 1)
+cem_fm <- find_modules(cem)
+
+
 test_that('all methods of signature CEMiTool returns CEMiTool objects', {
-    cem <- filter_expr(cem_base)
-    expect_equals(class(cem), 'CEMiTool') 
+    expect_equal(class(cem_filt)[1], 'CEMiTool') 
     
-    cem <- find_modules(cem)
-    expect_equals(class(cem), 'CEMiTool') 
+    expect_equal(class(cem_fm)[1], 'CEMiTool') 
     
-    cem <- split_modules(cem)
-    expect_equals(class(cem), 'CEMiTool')
+    cem <- split_modules(cem_fm)
+    expect_equal(class(cem)[1], 'CEMiTool') 
 
     cem <- include_interactions(cem, ppi)
-    expect_equals(class(cem), 'CEMiTool')
+    expect_equal(class(cem)[1], 'CEMiTool') 
 
     cem <- mod_gsea(cem)
-    expect_equals(class(cem), 'CEMiTool')
+    expect_equal(class(cem)[1], 'CEMiTool') 
 
-    cem <- mod_ora(cem) 
-    expect_equals(class(cem), 'CEMiTool')
+    cem <- mod_ora(cem, gmt) 
+    expect_equal(class(cem)[1], 'CEMiTool') 
 
     cem <- plot_profile(cem)
-    expect_equals(class(cem), 'CEMiTool')
+    expect_equal(class(cem)[1], 'CEMiTool') 
 
     cem <- plot_gsea(cem)
-    expect_equals(class(cem), 'CEMiTool')
+    expect_equal(class(cem)[1], 'CEMiTool') 
     
     cem <- plot_ora(cem)
-    expect_equals(class(cem), 'CEMiTool')
+    expect_equal(class(cem)[1], 'CEMiTool') 
 })
