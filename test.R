@@ -44,8 +44,14 @@ cem_obj <- mod_ora(cem_obj, gmt_in)
 cem_obj <- plot_ora(cem_obj)
 print(cem_obj@barplot_ora[[1]][["pl"]])
 
+# adds interaction
+int_fname <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
+int_df <- read.delim(int_fname)
+cem_obj <- include_interactions(cem_obj, int_df)
+
 # running cemitool
 res <- cemitool(exprs, sample_annotation, gmt_in, plot=T, split_modules=T, sample_name_column="Sample")
+
 
 # generate report
 generate_report(res)

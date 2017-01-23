@@ -20,6 +20,5 @@ setMethod('generate_report', signature('CEMiTool'),
           function(cem_obj, max_rows_ora=50, title="CEMiTool Report", directory="./reports", ...)
 {
 	rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
-	cem_obj <- res
 	rmarkdown::render(rmd, output_dir=directory, ...)
 })

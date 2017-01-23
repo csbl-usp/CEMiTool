@@ -12,16 +12,16 @@ output:
     DT::datatable(mod_df)
 ```
 
-## Modules - ProfilePlot
+## Modules - Profile Plot
 ```{r}
-htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
+    htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
 ```
 
 ## Gene Set Enrichment Analysis ## 
 ```{r fig.width=10}
     if(!is.null(cem_obj@enrichment_plot)){
-		plot(cem_obj@enrichment_plot)
-	}
+        plot(cem_obj@enrichment_plot)
+    }
 ```
 
 ```{r}
@@ -44,12 +44,28 @@ htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
     columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
     ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
 
-	tl <- htmltools::tagList()
-	for(i in seq(1, length(ora_list)*3, by=3)){
-	    n <- names(ora_list)[ceiling(i/3)]
-		tl[[i]] <- htmltools::tags$h3(n)
-		tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
-		tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
-	}
-	tl
+    tl <- htmltools::tagList()
+    for(i in seq(1, length(ora_list)*3, by=3)){
+        n <- names(ora_list)[ceiling(i/3)]
+        tl[[i]] <- htmltools::tags$h3(n)
+        tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
+        tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
+    }
+    tl
+```
+
+## Interaction Network
+```{r}
+    net <- networkD3::igraph_to_networkD3(cem_obj@interactions[[7]])
+    tl <- htmltools::tagList()
+    for(i in seq(1, length(cem_obj@interactions)*3, by=2)){
+        n <- names(cem_obj@interactions)[ceiling(i/3)]
+        tl[[i]] <- htmltools::tags$h3(n)
+        net <- networkD3::igraph_to_networkD3(cem_obj@interactions[[n]])
+        net$nodes$group <- ""
+        tl[[i+1]] <- networkD3::forceNetwork(Links = net$links, Nodes = net$nodes, 
+                                Source = 'source', Target = 'target', 
+                                NodeID = 'name', Group="group", zoom=T)
+    }
+    tl
 ```
