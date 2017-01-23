@@ -23,4 +23,4 @@ setMethod('include_interaction', signature('CEMiTool'),
     int <- igraph::graph_from_data_frame(int_df[which(int_df[,1] %in% x | int_df[, 2] %in% x), ])
     lapply(genes_by_module)
     return(cem_obj)
-}
+})
