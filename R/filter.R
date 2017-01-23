@@ -3,7 +3,7 @@
 #' @param cem_obj Object of class \code{CEMiTool} 
 #' @param pval P-value cutoff for gene selection
 #'
-#' @return list of selected genes
+#' @return Object of class \code{CEMiTool} with selected genes 
 #'
 #' @rdname filter_expr
 #' @export
@@ -15,7 +15,7 @@ setGeneric('filter_expr', function(cem_obj, ...) {
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-          function(cem_obj, pval)
+          function(cem_obj, pval=0.05)
 {
     expr <- cem_obj@expression
     expr_var <- apply(expr, 1, var)
@@ -27,15 +27,19 @@ setMethod('filter_expr', signature('CEMiTool'),
     bh <- (ah-1)*(ah-2)*(var_mean_sqr - var_mean^2)/var_mean
 
     p <- sapply(expr_var, function(x) {
-        ig <- gammainc(bh/x, ah)['uppinc']
+        ig <- pracma::gammainc(bh/x, ah)['uppinc']
         g <- gamma(ah)
         return(1 - ig/g)
     })
 
-    names(p) <- gsub('.uppinc', '', names(P))
+    names(p) <- gsub('.uppinc', '', names(p))
     selected <- which(p < pval)
     
-    cem_obj@selected_genes <- selected
+    if (length(selected) > 0) {
+        cem_obj@selected_genes <- names(selected)
+    } else {
+        cem_obj@selected_genes <- selected
+    }
     
     return(cem_obj)
-}
+})
