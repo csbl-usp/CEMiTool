@@ -2,6 +2,7 @@
 % Please edit documentation in R/visualization.R
 \docType{methods}
 \name{plot_profile}
+\alias{plot_interactions,CEMiTool-method}
 \alias{plot_profile}
 \alias{plot_profile,CEMiTool-method}
 \title{Expression profile visualization}
@@ -9,6 +10,8 @@
 plot_profile(cem_obj, ...)
 
 \S4method{plot_profile}{CEMiTool}(cem_obj, order = TRUE)
+
+\S4method{plot_interactions}{CEMiTool}(cem_obj, n = 10, ...)
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}

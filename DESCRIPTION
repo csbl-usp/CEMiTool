@@ -30,10 +30,13 @@ Imports:
     stringr,
     rmarkdown,
     igraph,
-    networkD3,
+    ggnetwork,
     plotly,
     DT,
-    htmltools
+    htmltools,
+    pracma
+Suggests:
+    testthat
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

@@ -13,16 +13,16 @@ output:
 ```
 
 ## Modules - Profile Plot
-```{r}
+```{r fig.align="center"}
     if(length(cem_obj@profile_plot) > 0){
-        htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
+        .null <- lapply(cem_obj@profile_plot, print)
     } else {
         htmltools::h4("Please create profile plots!")
     }
 ```
 
 ## Gene Set Enrichment Analysis ## 
-```{r fig.width=10}
+```{r fig.width=10, fig.align="center"}
     if(!is.null(names(cem_obj@enrichment_plot))){
         plot(cem_obj@enrichment_plot)
     } else {
@@ -33,7 +33,9 @@ output:
 ```{r}
     if(length(cem_obj@enrichment) > 0){
         nes <- cem_obj@enrichment$nes
+        nes[, -1] <- round(nes[, -1], digits=2)
         pv <- cem_obj@enrichment$pval
+        pv[, -1] <- round(pv[, -1], digits=5)
 
         colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
         colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
@@ -54,7 +56,9 @@ output:
 ```{r results="asis"}
     if(nrow(cem_obj@ora) > 0){
         columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
-        ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
+        ora_df <- cem_obj@ora[, columns]
+        ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
+        ora_list <- split(ora_df, cem_obj@ora$Module)
 
         tl <- htmltools::tagList()
         there_is_barplot <- length(cem_obj@barplot_ora) > 0

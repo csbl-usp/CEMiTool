@@ -13,7 +13,7 @@ data(sample_annotation)
 
 # create a new CEMiTool object
 cem_obj <- new("CEMiTool", expression=exprs, 
-               sample_annotation=sample_annotation,
+               sample_annotation=sample_annotation_data,
                sample_name_column="Sample")
 
 # Find the modules

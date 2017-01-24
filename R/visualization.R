@@ -1,4 +1,5 @@
 #' @import ggplot2
+#' @import ggnetwork
 NULL
 
 #' Expression profile visualization
@@ -22,7 +23,7 @@ setGeneric('plot_profile', function(cem_obj, ...) {
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
           function(cem_obj, order=TRUE) {
-              modules <- unique(cem_obj@module[, 'modules'])
+              modules <- sort(unique(cem_obj@module[, 'modules']))
               exprs <- expr_data(cem_obj)
               annot <- cem_obj@sample_annotation
               sample_name_column <- cem_obj@sample_name_column
