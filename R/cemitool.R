@@ -21,6 +21,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 enrichment='list', # gene set enrichment analysis
                                 ora='data.frame',
                                 interactions='list',
+                                interaction_plot='list',
                                 profile_plot='list',
                                 enrichment_plot='gg',
                                 barplot_ora='list',
@@ -287,6 +288,10 @@ cemitool <- function(exprs,
 
         if (!is.null(results@ora)) {
             results <- plot_ora(results)
+        }
+
+        if (!is.null(results@interactions)) {
+            results <- plot_interactions(results)
         }
     }
     return(results)
