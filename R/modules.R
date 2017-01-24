@@ -228,14 +228,14 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
                     if (length(pos_cors) >= min_ngen) {
                         pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'), stringsAsFactors=FALSE)
                     } else {
-                        pos_mod <- data.frame(stringsAsFactors=FALSE)
+                        pos_mod <- data.frame(genes=pos_cors, modules=mod, stringsAsFactors=FALSE)
                     }
         
                     # checks for the minimum module size of negative correlated genes
                     if (length(neg_cors) >= min_ngen) {
                         neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'), stringsAsFactors=FALSE)
                     } else {
-                        neg_mod <- data.frame(stringsAsFactors=FALSE)
+                        neg_mod <- data.frame(genes=neg_cors, modules=mod, stringsAsFactors=FALSE)
                     }
         
                     splitted_mods <- rbind(pos_mod, neg_mod)
