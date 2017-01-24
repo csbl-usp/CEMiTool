@@ -25,9 +25,10 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 profile_plot='list',
                                 enrichment_plot='gg',
                                 barplot_ora='list',
-                                sample_name_column="vector",
-                                class_column="vector",
-                                mod_colors="character"))
+                                sample_name_column='vector',
+                                class_column='vector',
+                                mod_colors='character',
+                                parameters='list'))
 
 setMethod("initialize", signature="CEMiTool",
           function(.Object, expression,
