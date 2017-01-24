@@ -83,7 +83,7 @@ setMethod('find_modules', signature('CEMiTool'),
                    abs(fit[count] - fit[count+2]),
                    abs(fit[count+1] - fit[count+2]))
             if(max(d) < eps) {
-                j <- which.max(k[count:count+2]) + count - 1
+                j <- which.max(k[count:(count+2)]) + count - 1
                 st <- c(fit[j], powers[j])
                 break
             }
