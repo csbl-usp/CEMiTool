@@ -258,3 +258,55 @@ setMethod('plot_gsea', signature('CEMiTool'),
           }
           )
 
+
+#' Network visualization
+#'
+#' Creates a graph based on interactions provided
+#'
+#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param n number of nodes to label
+#' @param ... Optional parameters.
+#'
+#' @return Object of class \code{CEMiTool} with profile plots 
+#'
+#' @examples
+#' plot_profile(cem_obj)
+#'
+#' @rdname plot_interactions
+#' @export
+setGeneric('plot_interactions', function(cem_obj, ...) {
+    standardGeneric('plot_interactions')
+})
+
+#' @rdname plot_profile
+setMethod('plot_interactions', signature('CEMiTool'),
+          function(cem_obj, n=10, ...) {
+              mod_cols <- mod_colors(cem_obj)
+              mod_names <- names(cem_obj@interactions)
+              res <- lapply(mod_names, function(name){
+                                plot_interaction(ig_obj=cem_obj@interactions[[name]], 
+                                                 n=n, color=mod_cols[name], title=name, ...)
+                                       })
+              names(res) <- mod_names
+              cem_obj@interaction_plot <- res
+              return(cem_obj)
+          })
+
+plot_interaction <- function(ig_obj, n, color, title){
+    degrees <- igraph::degree(ig_obj, normalized=T)
+    max_n <- min(n, length(degrees))
+    ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
+    net <- ggnetwork(ig_obj)
+    net[, "shouldLabel"] <- FALSE
+    sel_vertex <- names(sort(degrees, decreasing=T))[1:max_n]
+    net[which(net[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
+    pl <- ggplot(net, aes(x = x, y = y, xend = xend, yend = yend)) +
+        geom_edges(color = "#DDDDDD", alpha=0.5) +
+        geom_nodes(aes(alpha=degree, size=degree), color=color) +
+        geom_nodelabel_repel(aes(label = vertex.names),
+                             box.padding = unit(1, "lines"),
+                             data = function(x) { x[ x$shouldLabel, ]}) + 
+        labs(title=title) +
+        theme_blank()
+    return(pl)
+}
