@@ -52,6 +52,7 @@ setMethod("initialize", signature="CEMiTool",
 #' @param cem_obj Object of class \code{CEMiTool}
 #' @param expr Object of class \code{data.frame} with gene
 #'        expression data
+#' @param filtered logical. If TRUE retrieves filtered expression data
 #' 
 #' @return Object of class \code{data.frame} with gene expression data
 #'
@@ -192,9 +193,15 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param annot Sample annotation \code{data.frame}.
 #' @param gmt a list from function prepare_gmt containing the gene sets.
 #' @param interactions a data.frame containing two columns with gene names.
+#' @param filter logical. If TRUE, will filter expression data.
+#' @param filter_pval P-value threshold for filtering.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default \code{"pearson"}.
+#' @param sample_name_column A character string indicating the sample column 
+#'        name of the annotation table.
+#' @param class_column A character string indicating the class column name of the 
+#'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
 #' @param split_modules Logical. If \code{TRUE}, splits modules by correlation sign.
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
@@ -324,6 +331,8 @@ setMethod('nmodules', signature(cem_obj='CEMiTool'),
 )
 
 #' Print a cemitool object
+#'
+#' @param object Object of class CEMiTool
 #'
 #' @export
 setMethod('show', signature(object='CEMiTool'),

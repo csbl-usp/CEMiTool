@@ -13,6 +13,8 @@ plot_gsea(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
+\item{...}{Optional parameters.}
+
 \item{pv_cut}{P-value cut-off. Default \code{0.05}}
 }
 \value{

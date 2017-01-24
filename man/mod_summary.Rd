@@ -14,6 +14,8 @@ mod_summary(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
+\item{...}{other optional parameters}
+
 \item{method}{A character string indicating which summarization method 
 is to be used. Default 'mean'.}
 

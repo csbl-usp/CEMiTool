@@ -7,6 +7,9 @@
 \usage{
 \S4method{show}{CEMiTool}(object)
 }
+\arguments{
+\item{object}{Object of class CEMiTool}
+}
 \description{
 Print a cemitool object
 }

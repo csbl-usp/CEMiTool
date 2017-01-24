@@ -18,6 +18,8 @@ generate_report(cem_obj, ...)
 
 \item{max_rows_ora}{maximum number of rows in Over Representation Analysis table results}
 
+\item{title}{Character string with the title of the report.}
+
 \item{directory}{Directory name for results.}
 }
 \description{

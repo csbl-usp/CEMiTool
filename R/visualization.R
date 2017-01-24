@@ -7,6 +7,7 @@ NULL
 #' Creates a line plot of each gene inside the module through the samples
 #'
 #' @param cem_obj Object of class \code{CEMiTool}.
+#' @param order Logical. If TRUE, sorts samples by class.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots 
@@ -194,6 +195,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #'
 #' @param cem_obj Object of class \code{CEMiTool}.
 #' @param pv_cut P-value cut-off. Default \code{0.05}
+#' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with GSEA plots
 #'

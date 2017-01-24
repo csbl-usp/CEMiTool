@@ -13,6 +13,8 @@ mod_ora(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
+\item{...}{other optional parameters}
+
 \item{gmt_in}{Output of CEMiTool::read_gmt function.}
 
 \item{verbose}{logical. Report analysis steps.}

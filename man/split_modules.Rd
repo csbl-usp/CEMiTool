@@ -13,6 +13,8 @@ split_modules(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
+\item{...}{other optional parameters}
+
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}

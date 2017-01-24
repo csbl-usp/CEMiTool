@@ -64,6 +64,7 @@ ora <- function(topgenes, gmt_list, allgenes){
 #' @param cem_obj Object of class \code{CEMiTool}.
 #' @param gmt_in Output of CEMiTool::read_gmt function.
 #' @param verbose logical. Report analysis steps.
+#' @param ... other optional parameters
 #'
 #' @return Object of class \code{CEMiTool}
 #'
@@ -104,6 +105,8 @@ setMethod('mod_ora', signature(cem_obj='CEMiTool'),
 #' Perfoms gene set enrichment analysis for each co-expression module found.
 #'
 #' @param cem_obj Object of class \code{CEMiTool}.
+#' @param verbose logical. Report analysis steps.
+#' @param ... other optional parameters
 #' 
 #' @return GSEA results.
 #'

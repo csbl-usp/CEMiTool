@@ -15,6 +15,8 @@ find_modules(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
+\item{...}{other optional parameters}
+
 \item{cor_method}{A character string indicating which correlation coefficient
 is to be computed.}
 
@@ -34,8 +36,8 @@ Object of class \code{CEMiTool}
 Defines co-expression modules
 }
 \examples{
-data(exprs)
-cem_obj <- new('CEMiTool', expression=exprs)
+data(expr)
+cem_obj <- new('CEMiTool', expression=expr)
 cem_obj <- find_modules(cem_obj)
 
 }

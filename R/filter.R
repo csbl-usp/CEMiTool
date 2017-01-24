@@ -2,6 +2,7 @@
 #'
 #' @param cem_obj Object of class \code{CEMiTool} 
 #' @param pval P-value cutoff for gene selection
+#' @param ... other optional parameters
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
 #'

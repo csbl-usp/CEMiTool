@@ -37,6 +37,8 @@ Imports:
     pracma
 Suggests:
     testthat
+Remotes:
+    ctlab/fgsea
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

@@ -19,9 +19,19 @@ cemitool(exprs, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 
 \item{interactions}{a data.frame containing two columns with gene names.}
 
+\item{filter}{logical. If TRUE, will filter expression data.}
+
+\item{filter_pval}{P-value threshold for filtering.}
+
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
 Default \code{"pearson"}.}
+
+\item{sample_name_column}{A character string indicating the sample column 
+name of the annotation table.}
+
+\item{class_column}{A character string indicating the class column name of the 
+annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
 

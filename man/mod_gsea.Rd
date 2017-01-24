@@ -12,6 +12,10 @@ mod_gsea(cem_obj, ...)
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}.}
+
+\item{...}{other optional parameters}
+
+\item{verbose}{logical. Report analysis steps.}
 }
 \value{
 GSEA results.

@@ -5,6 +5,7 @@
 #' @param cem_obj Object of class \code{CEMiTool}.
 #' @param directory Directory name for results.
 #' @param max_rows_ora maximum number of rows in Over Representation Analysis table results
+#' @param title Character string with the title of the report.
 #' @param ... parameters to rmarkdown::render
 #'
 #' @example

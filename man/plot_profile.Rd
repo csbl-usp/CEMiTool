@@ -17,6 +17,8 @@ plot_profile(cem_obj, ...)
 \item{cem_obj}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
+
+\item{order}{Logical. If TRUE, sorts samples by class.}
 }
 \value{
 Object of class \code{CEMiTool} with profile plots

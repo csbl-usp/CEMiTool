@@ -13,6 +13,8 @@ filter_expr(cem_obj, ...)
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}}
 
+\item{...}{other optional parameters}
+
 \item{pval}{P-value cutoff for gene selection}
 }
 \value{
