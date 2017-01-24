@@ -50,7 +50,7 @@ setMethod("initialize", signature="CEMiTool",
 #' Retrieve and set expression attribute
 #'
 #' @param cem_obj Object of class \code{CEMiTool}
-#' @param expr Object of class \code{data.frame} with gene
+#' @param value Object of class \code{data.frame} with gene
 #'        expression data
 #' @param filtered logical. If TRUE retrieves filtered expression data
 #' 
@@ -75,14 +75,14 @@ setMethod("expr_data", signature("CEMiTool"),
 
 #' @rdname expr_data
 #' @export
-setGeneric("expr_data<-", function(cem_obj, expr) {
+setGeneric("expr_data<-", function(cem_obj, value) {
             standardGeneric("expr_data<-")
           })
 
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
-         function(cem_obj, expr){
-            cem_obj@expression <- expr
+         function(cem_obj, value){
+            cem_obj@expression <- value
             cem_obj@selected_genes <- rownames(cem_obj@expression)
             return(cem_obj)
          })
