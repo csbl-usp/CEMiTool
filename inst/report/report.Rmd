@@ -1,19 +1,30 @@
 ---
-title: "CEMiTool Report"
 output:
+  title: CEMiTool
   html_document:
-    code_folding: hide
+     code_folding: hide
+     theme: cosmo
+     self_contained: true
+  pdf_document:
+    toc: true
+    number_sections: true
 ---
 
+```{r echo=FALSE, results="asis", cache=F}
+
+cat("#",title, "{.tabset}")
+
+```
+
 ## Module Statistics ##
-```{r}
+```{r echo=FALSE, cache=F}
     mod_df <- as.data.frame(table(cem_obj@module$modules), stringsAsFactors=FALSE)
     colnames(mod_df) <- c("Module", "No.Genes")
-    DT::datatable(mod_df)
+    DT::datatable(mod_df, rownames=FALSE)
 ```
 
 ## Modules - Profile Plot
-```{r fig.align="center"}
+```{r echo=FALSE, fig.align="center", cache=F}
     if(length(cem_obj@profile_plot) > 0){
         .null <- lapply(cem_obj@profile_plot, print)
     } else {
@@ -21,8 +32,8 @@ output:
     }
 ```
 
-## Gene Set Enrichment Analysis ## 
-```{r fig.width=10, fig.align="center"}
+## Gene Set Enrichment Analysis 
+```{r echo=FALSE, fig.width=10, fig.align="center", cache=F}
     if(!is.null(names(cem_obj@enrichment_plot))){
         plot(cem_obj@enrichment_plot)
     } else {
@@ -30,7 +41,7 @@ output:
     }
 ```
 
-```{r}
+```{r echo=FALSE, cache=F}
     if(length(cem_obj@enrichment) > 0){
         nes <- cem_obj@enrichment$nes
         nes[, -1] <- round(nes[, -1], digits=2)
@@ -45,39 +56,39 @@ output:
 
         # reorder columns
         enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
-        DT::datatable(enrich_df)
+        DT::datatable(enrich_df, rownames=FALSE)
     } else {
         htmltools::h4("Please run enrichment analysis!")
     }
 
 ```
 
-## Over Representation Analysis##
-```{r results="asis"}
+## Over Representation Analysis {.tabset}
+```{r echo=FALSE, results="asis", fig.align="center"}
     if(nrow(cem_obj@ora) > 0){
         columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
         ora_df <- cem_obj@ora[, columns]
         ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
         ora_list <- split(ora_df, cem_obj@ora$Module)
-
-        tl <- htmltools::tagList()
         there_is_barplot <- length(cem_obj@barplot_ora) > 0
-        for(i in seq(1, length(ora_list)*3, by=3)){
-            n <- names(ora_list)[ceiling(i/3)]
-            tl[[i]] <- htmltools::tags$h3(n)
-            if(there_is_barplot) {
-                tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
+
+        for(n in names(ora_list)){
+            h3n <- paste("###", n) 
+            writeLines(h3n)
+            if(there_is_barplot){
+                print(cem_obj@barplot_ora[[n]]$pl)
             }
-            tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
+            print(htmltools::tagList(DT::datatable(ora_list[[n]][1:max_rows_ora, ], 
+                                                   options = list(pageLength=5), 
+                                                   rownames = FALSE)))
         }
-        htmltools::div(tl)
     } else {
-        htmltools::h4("Please run over representation analysis!")
+        print("#### Please run over representation analysis!")
     }
 ```
 
 ## Interaction Network
-```{r echo=FALSE}
+```{r echo=FALSE, fig.align="center", cache=F}
     if(length(cem_obj@interaction_plot) > 0){
         x <- lapply(cem_obj@interaction_plot, print)
     }

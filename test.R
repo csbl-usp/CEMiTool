@@ -54,6 +54,7 @@ cem_obj <- plot_interactions(cem_obj)
 
 # generate report
 generate_report(cem_obj)
+generate_report(cem_obj, output_format=c("pdf_document", "html_document"))
 
 # running cemitool
 res <- cemitool(expr, sample_annotation, gmt_in, interactions=int_df, 
