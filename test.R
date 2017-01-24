@@ -49,6 +49,9 @@ int_fname <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 int_df <- read.delim(int_fname)
 cem_obj <- include_interactions(cem_obj, int_df)
 
+# plot interactions
+cem_obj <- plot_interactions(cem_obj)
+
 # generate report
 generate_report(cem_obj)
 
