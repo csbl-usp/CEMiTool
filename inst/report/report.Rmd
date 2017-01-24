@@ -14,57 +14,67 @@ output:
 
 ## Modules - Profile Plot
 ```{r}
-    htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
+    if(length(cem_obj@profile_plot) > 0){
+        htmltools::tagList(lapply(cem_obj@profile_plot, plotly::ggplotly))
+    } else {
+        htmltools::h4("Please create profile plots!")
+    }
 ```
 
 ## Gene Set Enrichment Analysis ## 
 ```{r fig.width=10}
-    if(!is.null(cem_obj@enrichment_plot)){
+    if(!is.null(names(cem_obj@enrichment_plot))){
         plot(cem_obj@enrichment_plot)
+    } else {
+        htmltools::h4("Please create enrichment plots!")
     }
 ```
 
 ```{r}
-    nes <- cem_obj@enrichment$nes
-    pv <- cem_obj@enrichment$pval
+    if(length(cem_obj@enrichment) > 0){
+        nes <- cem_obj@enrichment$nes
+        pv <- cem_obj@enrichment$pval
 
-    colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
-    colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
+        colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
+        colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
 
-    # join p-values and nes
-    enrich_df <- merge(nes, pv, by.x="pathway")
+        # join p-values and nes
+        enrich_df <- merge(nes, pv, by.x="pathway")
 
-    # reorder columns
-    enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
-    DT::datatable(enrich_df)
+        # reorder columns
+        enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
+        DT::datatable(enrich_df)
+    } else {
+        htmltools::h4("Please run enrichment analysis!")
+    }
+
 ```
 
 ## Over Representation Analysis##
 ```{r results="asis"}
-    columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
-    ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
+    if(nrow(cem_obj@ora) > 0){
+        columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
+        ora_list <- split(cem_obj@ora[, columns], cem_obj@ora$Module)
 
-    tl <- htmltools::tagList()
-    for(i in seq(1, length(ora_list)*3, by=3)){
-        n <- names(ora_list)[ceiling(i/3)]
-        tl[[i]] <- htmltools::tags$h3(n)
-        tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
-        tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
+        tl <- htmltools::tagList()
+        there_is_barplot <- length(cem_obj@barplot_ora) > 0
+        for(i in seq(1, length(ora_list)*3, by=3)){
+            n <- names(ora_list)[ceiling(i/3)]
+            tl[[i]] <- htmltools::tags$h3(n)
+            if(there_is_barplot) {
+                tl[[i+1]] <- plotly::ggplotly(cem_obj@barplot_ora[[n]]$pl)
+            }
+            tl[[i+2]] <- DT::datatable(ora_list[[n]][1:max_rows_ora, ], options = list(pageLength=5))
+        }
+        htmltools::div(tl)
+    } else {
+        htmltools::h4("Please run over representation analysis!")
     }
-    tl
 ```
 
 ## Interaction Network
-```{r}
-    tl <- htmltools::tagList()
-    for(i in seq(1, length(cem_obj@interactions)*2, by=2)){
-        n <- names(cem_obj@interactions)[ceiling(i/2)]
-        tl[[i]] <- htmltools::tags$h3(n)
-        net <- networkD3::igraph_to_networkD3(cem_obj@interactions[[n]])
-        net$nodes$group <- ""
-        tl[[i+1]] <- networkD3::forceNetwork(Links = net$links, Nodes = net$nodes, 
-                                Source = 'source', Target = 'target', 
-                                NodeID = 'name', Group="group", zoom=T)
+```{r echo=FALSE}
+    if(length(cem_obj@interaction_plot) > 0){
+        x <- lapply(cem_obj@interaction_plot, print)
     }
-    tl
 ```
