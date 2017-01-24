@@ -12,16 +12,16 @@ expr_data(cem_obj, ...)
 
 \S4method{expr_data}{CEMiTool}(cem_obj, filtered = T)
 
-expr_data(cem_obj, expr) <- value
+expr_data(cem_obj) <- value
 
-\S4method{expr_data}{CEMiTool}(cem_obj, expr) <- value
+\S4method{expr_data}{CEMiTool}(cem_obj) <- value
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}}
 
 \item{filtered}{logical. If TRUE retrieves filtered expression data}
 
-\item{expr}{Object of class \code{data.frame} with gene
+\item{value}{Object of class \code{data.frame} with gene
 expression data}
 }
 \value{

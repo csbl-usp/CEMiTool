@@ -38,6 +38,8 @@ setMethod('find_modules', signature('CEMiTool'),
                              min_ngen=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
+    cor_method <- match.arg(cor_method)
+    
     expr <- expr_data(cem_obj)
 
     expr_t <- t(expr)
@@ -59,7 +61,7 @@ setMethod('find_modules', signature('CEMiTool'),
     beta <- WGCNA::pickSoftThreshold(expr_t, powerVector=powers,
                               networkType='signed', moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
-                                              method=match.arg(cor_method)),
+                                              method=cor_method),
                               verbose=verbosity)
 
     fit <- -sign(beta$fitIndices[, 3])*beta$fitIndices[, 2]
@@ -165,7 +167,13 @@ setMethod('find_modules', signature('CEMiTool'),
 
         out[, 'modules'] <- as.character(merged_mods)
     }
- 
+    
+    params <- list('cor_method'=cor_method,
+                   'min_ngen'=min_ngen,
+                   'merge_similar'=merge_similar,
+                   'diss_thresh'=diss_thresh
+                   )
+    cem_obj@parameters <- append(params, list('beta'=our_beta, 'phi'=phi))
     cem_obj@module <- out
     return(cem_obj)
 })
@@ -228,14 +236,15 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
                     if (length(pos_cors) >= min_ngen) {
                         pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'), stringsAsFactors=FALSE)
                     } else {
-                        pos_mod <- data.frame(genes=pos_cors, modules=mod, stringsAsFactors=FALSE)
+                        pos_mod <- data.frame(stringsAsFactors=FALSE)
+
                     }
         
                     # checks for the minimum module size of negative correlated genes
-                    if (length(neg_cors) >= min_ngen) {
+                    if (length(neg_cors) >= min_ngen ) {
                         neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'), stringsAsFactors=FALSE)
                     } else {
-                        neg_mod <- data.frame(genes=neg_cors, modules=mod, stringsAsFactors=FALSE)
+                        neg_mod <- data.frame(stringsAsFactors=FALSE)
                     }
         
                     splitted_mods <- rbind(pos_mod, neg_mod)

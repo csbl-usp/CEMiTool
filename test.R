@@ -6,13 +6,13 @@ load_all()
 doParallel::registerDoParallel(cores=8)
 
 # Load expression data
-data(exprs)
+data(expr)
 
 # Load your sample annotation data
-data(sample_annotation)
+data(sample_annotation_data)
 
 # create a new CEMiTool object
-cem_obj <- new("CEMiTool", expression=exprs, 
+cem_obj <- new("CEMiTool", expression=expr, 
                sample_annotation=sample_annotation_data,
                sample_name_column="Sample")
 
@@ -56,7 +56,7 @@ cem_obj <- plot_interactions(cem_obj)
 generate_report(cem_obj)
 
 # running cemitool
-res <- cemitool(exprs, sample_annotation, gmt_in, interactions=int_df, 
+res <- cemitool(expr, sample_annotation, gmt_in, interactions=int_df, 
                 filter=F, plot=T, split_modules=T, sample_name_column="Sample")
 
 generate_report(res)
