@@ -107,6 +107,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating adjacency matrix
     our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type='signed')
+	cem_obj@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
     our_tom <- WGCNA::TOMsimilarity(our_adj)
@@ -173,7 +174,7 @@ setMethod('find_modules', signature('CEMiTool'),
                    'merge_similar'=merge_similar,
                    'diss_thresh'=diss_thresh
                    )
-    cem_obj@parameters <- append(params, list('beta'=our_beta, 'phi'=phi))
+    cem_obj@parameters <- append(params, list('r2'=our_r2, 'beta'=our_beta, 'phi'=phi))
     cem_obj@module <- out
     return(cem_obj)
 })
@@ -335,3 +336,37 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
           }
 )
 
+
+#' Get Hubs 
+#'
+#' Returns \code{n} genes in each module with high connectivity. 
+#'
+#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param n Number of genes to return in each module (default: 5).
+#'
+#' @return A \code{list} containing hub genes.
+#'
+#'
+#'
+#' @examples
+#'
+#' @rdname get_hubs
+#' @export
+setGeneric('get_hubs', function(cem_obj, ...) {
+    standardGeneric('get_hubs')
+})
+
+#' @rdname get_hubs
+setMethod('get_hubs', signature(cem_obj='CEMiTool'),
+          function(cem_obj, n=5){
+              if(nrow(cem_obj@adjacency) == 0){
+                  stop("Make sure that you ran the method find_modules.")
+              }
+              mod2gene <- split(cem_obj@module$genes, cem_obj@module$modules)
+              hubs <- lapply(mod2gene, function(x){
+                                           mod_adj <- cem_obj@adjacency[x, x]
+                                           top <- head(sort(rowSums(mod_adj), decreasing=T), n=n)
+                                           return(names(top))
+                                       })
+              return(hubs)
+          })
