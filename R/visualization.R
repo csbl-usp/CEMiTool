@@ -286,29 +286,45 @@ setMethod('plot_interactions', signature('CEMiTool'),
           function(cem_obj, n=10, ...) {
               mod_cols <- mod_colors(cem_obj)
               mod_names <- names(cem_obj@interactions)
+              hubs <- get_hubs(cem_obj)
               res <- lapply(mod_names, function(name){
                                 plot_interaction(ig_obj=cem_obj@interactions[[name]], 
-                                                 n=n, color=mod_cols[name], title=name, ...)
+                                                 n=n, color=mod_cols[name], title=name,
+                                                 coexp_hubs=hubs[[name]])
                                        })
               names(res) <- mod_names
               cem_obj@interaction_plot <- res
               return(cem_obj)
           })
 
-plot_interaction <- function(ig_obj, n, color, title){
-    degrees <- igraph::degree(ig_obj, normalized=T)
+plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
+    degrees <- igraph::degree(ig_obj, normalized=F)
     max_n <- min(n, length(degrees))
     ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
     net <- ggnetwork(ig_obj)
     net[, "shouldLabel"] <- FALSE
-    sel_vertex <- names(sort(degrees, decreasing=T))[1:max_n]
+    net[, "Hub"] <- ""
+    int_hubs <- names(sort(degrees, decreasing=T))[1:max_n]
+    int_bool <- net[, "vertex.names"] %in% int_hubs
+    net[which(int_bool), "Hub"] <- "Interaction"
+    sel_vertex <- int_hubs
+    if(!missing(coexp_hubs)){
+        coexp_bool <- net[, "vertex.names"] %in% coexp_hubs
+        coexp_and_int <- coexp_bool & int_bool
+        net[which(coexp_bool), "Hub"] <- "Co-expression"
+        net[which(coexp_and_int), "Hub"] <- "Co-expression + Interaction"
+        sel_vertex <- c(sel_vertex, coexp_hubs)
+    }
     net[which(net[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
     pl <- ggplot(net, aes(x = x, y = y, xend = xend, yend = yend)) +
         geom_edges(color = "#DDDDDD", alpha=0.5) +
         geom_nodes(aes(alpha=degree, size=degree), color=color) +
-        geom_nodelabel_repel(aes(label = vertex.names),
+        geom_nodelabel_repel(aes(label = vertex.names, color=Hub),
                              box.padding = unit(1, "lines"),
                              data = function(x) { x[ x$shouldLabel, ]}) + 
+        scale_colour_manual(values=c("Co-expression" = "#005E87",
+                                     "Interaction" = "#540814",
+                                     "Co-expression + Interaction" = "#736E0B")) +
         labs(title=title) +
         theme_blank()
     return(pl)
