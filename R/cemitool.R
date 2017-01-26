@@ -28,7 +28,8 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_name_column='vector',
                                 class_column='vector',
                                 mod_colors='character',
-                                parameters='list'))
+                                parameters='list',
+                                adjacency='matrix'))
 
 setMethod("initialize", signature="CEMiTool",
           function(.Object, expression,
