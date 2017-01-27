@@ -13,7 +13,7 @@ cemoverlap(analyses)
 Returns the occurence of edges between different analyses
 }
 \examples{
-studies <- list('GSE12345'=cem_obj1, 'GSE54321'=cem_obj2)
+studies <- list('GSE12345'=cem1, 'GSE54321'=cem2)
 overlaps <- cemoverlap(studies)
 
 }

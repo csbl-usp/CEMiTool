@@ -6,14 +6,14 @@
 \alias{mod_ora,CEMiTool-method}
 \title{Module Overrepresentation Analysis}
 \usage{
-mod_ora(cem_obj, ...)
+mod_ora(cem, ...)
 
-\S4method{mod_ora}{CEMiTool}(cem_obj, gmt_in, verbose = FALSE)
+\S4method{mod_ora}{CEMiTool}(cem, gmt_in, verbose = FALSE)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
 \item{gmt_in}{Output of CEMiTool::read_gmt function.}
 
@@ -28,7 +28,7 @@ Perfoms overrepresentation analysis for each co-expression module found.
 \examples{
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
-mod_ora(cem_obj, gmt)
+mod_ora(cem, gmt)
 
 }
 

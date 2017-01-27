@@ -8,16 +8,16 @@
 \alias{mod_colors<-,CEMiTool-method}
 \title{Retrieve and set mod_colors attribute}
 \usage{
-mod_colors(cem_obj)
+mod_colors(cem)
 
-\S4method{mod_colors}{CEMiTool}(cem_obj)
+\S4method{mod_colors}{CEMiTool}(cem)
 
-mod_colors(cem_obj) <- value
+mod_colors(cem) <- value
 
-\S4method{mod_colors}{CEMiTool}(cem_obj) <- value
+\S4method{mod_colors}{CEMiTool}(cem) <- value
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}}
 
 \item{value}{a character vector containing colors for each module
 the names should match with module names}

@@ -6,14 +6,14 @@
 \alias{split_modules,CEMiTool-method}
 \title{Co-expression module refinement}
 \usage{
-split_modules(cem_obj, ...)
+split_modules(cem, ...)
 
-\S4method{split_modules}{CEMiTool}(cem_obj, min_ngen = 30, verbose = F)
+\S4method{split_modules}{CEMiTool}(cem, min_ngen = 30, verbose = F)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
@@ -26,7 +26,7 @@ An object of class \code{CEMiTool}.
 Refines modules by splitting them into submodules based on correlation sign.
 }
 \examples{
-splitted_mods <- split_modules(cem_obj)
+splitted_mods <- split_modules(cem)
 
 }
 

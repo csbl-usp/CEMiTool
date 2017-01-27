@@ -6,23 +6,26 @@
 \alias{filter_expr,CEMiTool-method}
 \title{Filter gene expression table}
 \usage{
-filter_expr(cem_obj, ...)
+filter_expr(cem, ...)
 
-\S4method{filter_expr}{CEMiTool}(cem_obj, pval = 0.05, n_genes)
+\S4method{filter_expr}{CEMiTool}(cem, pval = 0.05, n_genes)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
-\item{pval}{P-value cutoff for gene selection}
+\item{pval}{P-value cutoff for gene selection.}
 
-\item{n_genes}{number of genes to be selected}
+\item{n_genes}{Number of genes to be selected.}
 }
 \value{
 Object of class \code{CEMiTool} with selected genes
 }
 \description{
 Filter gene expression table
+}
+\examples{
+
 }
 

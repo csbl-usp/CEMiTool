@@ -16,7 +16,7 @@
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... Other optional parameters
+#' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} 
 #'
@@ -189,7 +189,7 @@ setMethod('find_modules', signature('CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #'
 #' @return An object of class \code{CEMiTool}.
 #'
@@ -280,7 +280,7 @@ setMethod('split_modules', signature(cem='CEMiTool'),
 #' @param method A character string indicating which summarization method 
 #'                   is to be used. Default 'mean'. 
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #'
 #' @return A \code{data.frame} with summarized values.
 #'
@@ -345,7 +345,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n Number of genes to return in each module (default: 5).
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #'
 #' @return A \code{list} containing hub genes.
 #'

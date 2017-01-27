@@ -6,13 +6,12 @@
 \alias{include_interactions,CEMiTool-method}
 \title{Includes interaction information to CEMiTool object}
 \usage{
-include_interactions(cem_obj, ...)
+include_interactions(cem, ...)
 
-\S4method{include_interactions}{CEMiTool}(cem_obj, int_df, directed = FALSE,
-  ...)
+\S4method{include_interactions}{CEMiTool}(cem, int_df, directed = FALSE, ...)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{parameters for igraph::graph_from_data_frame}
 

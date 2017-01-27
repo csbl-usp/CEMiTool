@@ -273,7 +273,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
-#' plot_profile(cem)
+#' plot_interactions(cem)
 #'
 #' @rdname plot_interactions
 #' @export
@@ -281,7 +281,7 @@ setGeneric('plot_interactions', function(cem, ...) {
     standardGeneric('plot_interactions')
 })
 
-#' @rdname plot_profile
+#' @rdname plot_interactions
 setMethod('plot_interactions', signature('CEMiTool'),
           function(cem, n=10, ...) {
               mod_cols <- mod_colors(cem)

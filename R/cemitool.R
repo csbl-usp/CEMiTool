@@ -197,6 +197,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param interactions a data.frame containing two columns with gene names.
 #' @param filter logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.
+#' @param n_genes Number of genes left after filtering.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default \code{"pearson"}.

@@ -8,16 +8,16 @@
 \alias{sample_annotation<-,CEMiTool-method}
 \title{Retrive or set the sample_annotation attribute}
 \usage{
-sample_annotation(cem_obj)
+sample_annotation(cem)
 
-\S4method{sample_annotation}{CEMiTool}(cem_obj)
+\S4method{sample_annotation}{CEMiTool}(cem)
 
-sample_annotation(cem_obj) <- value
+sample_annotation(cem) <- value
 
-\S4method{sample_annotation}{CEMiTool}(cem_obj) <- value
+\S4method{sample_annotation}{CEMiTool}(cem) <- value
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}}
 
 \item{value}{a data.frame containing the sample annotation, 
 should have at least two columns containing the Class 

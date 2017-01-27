@@ -2,19 +2,16 @@
 % Please edit documentation in R/visualization.R
 \docType{methods}
 \name{plot_profile}
-\alias{plot_interactions,CEMiTool-method}
 \alias{plot_profile}
 \alias{plot_profile,CEMiTool-method}
 \title{Expression profile visualization}
 \usage{
-plot_profile(cem_obj, ...)
+plot_profile(cem, ...)
 
-\S4method{plot_profile}{CEMiTool}(cem_obj, order = TRUE)
-
-\S4method{plot_interactions}{CEMiTool}(cem_obj, n = 10, ...)
+\S4method{plot_profile}{CEMiTool}(cem, order = TRUE)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
 
@@ -27,7 +24,7 @@ Object of class \code{CEMiTool} with profile plots
 Creates a line plot of each gene inside the module through the samples
 }
 \examples{
-plot_profile(cem_obj)
+plot_profile(cem)
 
 }
 

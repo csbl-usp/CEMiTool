@@ -6,12 +6,12 @@
 \alias{plot_gsea,CEMiTool-method}
 \title{GSEA visualization}
 \usage{
-plot_gsea(cem_obj, ...)
+plot_gsea(cem, ...)
 
-\S4method{plot_gsea}{CEMiTool}(cem_obj, pv_cut = 0.05)
+\S4method{plot_gsea}{CEMiTool}(cem, pv_cut = 0.05)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
 

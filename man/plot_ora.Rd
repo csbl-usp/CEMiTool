@@ -6,12 +6,12 @@
 \alias{plot_ora,CEMiTool-method}
 \title{ORA visualization}
 \usage{
-plot_ora(cem_obj, ...)
+plot_ora(cem, ...)
 
-\S4method{plot_ora}{CEMiTool}(cem_obj, n = 10, ...)
+\S4method{plot_ora}{CEMiTool}(cem, n = 10, ...)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{paramaters to plot_ora_single}
 

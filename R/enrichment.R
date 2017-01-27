@@ -3,10 +3,7 @@ NULL
 
 #' Reads a GMT file
 #'
-#' @param fname file name of the gmt
-#'
-#'
-#' @param fname GMT file name 
+#' @param fname GMT file name. 
 #'
 #' @return a list containing genes and description of each pathway
 #'
@@ -65,7 +62,7 @@ ora <- function(topgenes, gmt_list, allgenes){
 #' @param cem Object of class \code{CEMiTool}.
 #' @param gmt_in Output of CEMiTool::read_gmt function.
 #' @param verbose logical. Report analysis steps.
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool}
 #'
@@ -107,7 +104,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param verbose logical. Report analysis steps.
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #' 
 #' @return GSEA results.
 #'

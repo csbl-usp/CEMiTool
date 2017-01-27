@@ -6,12 +6,12 @@
 \alias{nmodules,CEMiTool-method}
 \title{Get the number of modules on a cemitool object}
 \usage{
-nmodules(cem_obj)
+nmodules(cem)
 
-\S4method{nmodules}{CEMiTool}(cem_obj)
+\S4method{nmodules}{CEMiTool}(cem)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}}
 }
 \value{
 number of modules

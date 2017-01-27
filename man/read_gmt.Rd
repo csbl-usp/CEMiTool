@@ -7,9 +7,7 @@
 read_gmt(fname)
 }
 \arguments{
-\item{fname}{file name of the gmt}
-
-\item{fname}{GMT file name}
+\item{fname}{GMT file name.}
 }
 \value{
 a list containing genes and description of each pathway

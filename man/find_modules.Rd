@@ -6,16 +6,15 @@
 \alias{find_modules,CEMiTool-method}
 \title{Co-expression modules definition}
 \usage{
-find_modules(cem_obj, ...)
+find_modules(cem, ...)
 
-\S4method{find_modules}{CEMiTool}(cem_obj, cor_method = c("pearson",
-  "spearman"), min_ngen = 30, merge_similar = T, diss_thresh = 0.8,
-  verbose = F)
+\S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
+  min_ngen = 30, merge_similar = T, diss_thresh = 0.8, verbose = F)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
 \item{cor_method}{A character string indicating which correlation coefficient
 is to be computed.}
@@ -36,9 +35,8 @@ Object of class \code{CEMiTool}
 Defines co-expression modules
 }
 \examples{
-data(expr)
-cem_obj <- new('CEMiTool', expression=expr)
-cem_obj <- find_modules(cem_obj)
+cem <- new('CEMiTool', expression=expr)
+cem <- find_modules(cem)
 
 }
 

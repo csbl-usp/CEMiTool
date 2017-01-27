@@ -6,14 +6,14 @@
 \alias{mod_gsea,CEMiTool-method}
 \title{Module Gene Set Enrichment Analysis}
 \usage{
-mod_gsea(cem_obj, ...)
+mod_gsea(cem, ...)
 
-\S4method{mod_gsea}{CEMiTool}(cem_obj, verbose = F)
+\S4method{mod_gsea}{CEMiTool}(cem, verbose = F)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
 \item{verbose}{logical. Report analysis steps.}
 }
@@ -24,7 +24,7 @@ GSEA results.
 Perfoms gene set enrichment analysis for each co-expression module found.
 }
 \examples{
-mod_gsea(cem_obj)
+mod_gsea(cem)
 
 }
 

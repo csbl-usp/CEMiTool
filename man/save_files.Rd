@@ -6,12 +6,12 @@
 \alias{write_files,CEMiTool-method}
 \title{Save the CEMiTool object in files}
 \usage{
-write_files(cem_obj, directory)
+write_files(cem, directory)
 
-\S4method{write_files}{CEMiTool}(cem_obj, directory)
+\S4method{write_files}{CEMiTool}(cem, directory)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}}
 
 \item{directory}{a directory}
 }

@@ -8,16 +8,16 @@
 \alias{expr_data<-,CEMiTool-method}
 \title{Retrieve and set expression attribute}
 \usage{
-expr_data(cem_obj, ...)
+expr_data(cem, ...)
 
-\S4method{expr_data}{CEMiTool}(cem_obj, filtered = T)
+\S4method{expr_data}{CEMiTool}(cem, filtered = T)
 
-expr_data(cem_obj) <- value
+expr_data(cem) <- value
 
-\S4method{expr_data}{CEMiTool}(cem_obj) <- value
+\S4method{expr_data}{CEMiTool}(cem) <- value
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}}
+\item{cem}{Object of class \code{CEMiTool}}
 
 \item{filtered}{logical. If TRUE retrieves filtered expression data}
 

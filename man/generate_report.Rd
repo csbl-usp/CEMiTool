@@ -6,13 +6,13 @@
 \alias{generate_report,CEMiTool-method}
 \title{CEMiTool report}
 \usage{
-generate_report(cem_obj, ...)
+generate_report(cem, ...)
 
-\S4method{generate_report}{CEMiTool}(cem_obj, max_rows_ora = 50,
+\S4method{generate_report}{CEMiTool}(cem, max_rows_ora = 50,
   title = "Report", directory = "./reports", ...)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{parameters to rmarkdown::render}
 

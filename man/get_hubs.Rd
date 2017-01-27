@@ -6,12 +6,14 @@
 \alias{get_hubs,CEMiTool-method}
 \title{Get Hubs}
 \usage{
-get_hubs(cem_obj, ...)
+get_hubs(cem, ...)
 
-\S4method{get_hubs}{CEMiTool}(cem_obj, n = 5)
+\S4method{get_hubs}{CEMiTool}(cem, n = 5)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
+
+\item{...}{Optional parameters.}
 
 \item{n}{Number of genes to return in each module (default: 5).}
 }

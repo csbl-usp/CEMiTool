@@ -24,6 +24,8 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 
 \item{filter_pval}{P-value threshold for filtering.}
 
+\item{n_genes}{Number of genes left after filtering.}
+
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
 Default \code{"pearson"}.}

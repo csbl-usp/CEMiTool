@@ -3,15 +3,15 @@
 #' @param cem Object of class \code{CEMiTool}. 
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
-#' @param ... Other optional parameters.
+#' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
 #'
-#' @rdname filter_expr
-#'
 #' @example
-#' filter_expr(cem) 
+#  filtered_cem <- filter_expr(cem)
 #'
+#'
+#' @rdname filter_expr
 #' @export
 setGeneric('filter_expr', function(cem, ...) {
     standardGeneric('filter_expr')

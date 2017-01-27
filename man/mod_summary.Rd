@@ -6,15 +6,15 @@
 \alias{mod_summary,CEMiTool-method}
 \title{Co-expression module summarization}
 \usage{
-mod_summary(cem_obj, ...)
+mod_summary(cem, ...)
 
-\S4method{mod_summary}{CEMiTool}(cem_obj, method = c("mean", "eigengene"),
+\S4method{mod_summary}{CEMiTool}(cem, method = c("mean", "eigengene"),
   verbose = F)
 }
 \arguments{
-\item{cem_obj}{Object of class \code{CEMiTool}.}
+\item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{other optional parameters}
+\item{...}{Optional parameters.}
 
 \item{method}{A character string indicating which summarization method 
 is to be used. Default 'mean'.}
@@ -28,7 +28,7 @@ A \code{data.frame} with summarized values.
 Summarizes modules using some statistics.
 }
 \examples{
-mod_summary <- mod_summary(cem_obj)
+mod_summary <- mod_summary(cem)
 
 }
 
