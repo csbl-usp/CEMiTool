@@ -17,7 +17,7 @@ cat("#", title, "{.tabset}")
 
 ```
 
-## Module Statistics ##
+## Modules ##
 ```{r echo=FALSE, cache=F}
     mod_df <- as.data.frame(table(cem_obj@module$modules), stringsAsFactors=FALSE)
     colnames(mod_df) <- c("Module", "No.Genes")
@@ -27,7 +27,9 @@ cat("#", title, "{.tabset}")
     DT::datatable(mod_df, rownames=FALSE)
 ```
 
-## Modules - Profile Plot
+
+
+## Profile Plot
 ```{r echo=FALSE, fig.align="center", cache=F}
     if(length(cem_obj@profile_plot) > 0){
         .null <- lapply(cem_obj@profile_plot, print)
@@ -98,4 +100,24 @@ cat("#", title, "{.tabset}")
     } else {
         writeLines("### Please add interactions in the CEMiTool object")
     }
+```
+
+## Parameters ##
+```{r echo=FALSE, cache=F}
+desc <- c("cor_method" = "Correlation method.",
+          "min_ngen" = "Minimum number of genes per module.",
+          "merge_similar" = "Should similar modules be merged ?",
+          "diss_thresh" = "Dissimilarity threshold to be used as cutoff on hierarchical cluster.",
+          "r2" = "Determination coeficient. Reflects the scale-freeness of the resultant network.",
+          "beta" = "Value of beta choosed.",
+          "phi" = "Area under curve / Total area in the graph Beta vs R^2."
+          )
+params_list <- cem_obj@parameters
+params_list[["r2"]] <- round(params_list[["r2"]], digits=3)
+params_list[["diss_thresh"]] <- round(params_list[["diss_thresh"]], digits=3)
+params_list[["phi"]] <- round(params_list[["phi"]], digits=3)
+params <- data.frame(Parameter=names(params_list), 
+                     Description=desc[names(params_list)],
+                     Value=as.character(params_list))
+DT::datatable(params, rownames=F)
 ```
