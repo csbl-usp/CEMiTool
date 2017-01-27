@@ -1,10 +1,10 @@
 context('Cemitool methods')
 
-data(exprs)
+data(expr)
 data(sample_annotation_data)
 
 cem_base <- new('CEMiTool',
-           expression=exprs,
+           expression=expr,
            sample_name_column='Sample')
 
 sample_annotation(cem_base) <- sample_annotation_data
