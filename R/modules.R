@@ -172,9 +172,12 @@ setMethod('find_modules', signature('CEMiTool'),
     params <- list('cor_method'=cor_method,
                    'min_ngen'=min_ngen,
                    'merge_similar'=merge_similar,
-                   'diss_thresh'=diss_thresh
+                   'diss_thresh'=diss_thresh,
+                   'r2'=our_r2, 
+                   'beta'=our_beta, 
+                   'phi'=phi
                    )
-    cem_obj@parameters <- append(params, list('r2'=our_r2, 'beta'=our_beta, 'phi'=phi))
+    cem_obj@parameters <- c(cem_obj@parameters, params)
     cem_obj@module <- out
     return(cem_obj)
 })

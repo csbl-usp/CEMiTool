@@ -1,15 +1,16 @@
 #' @import data.table
 
-# Reads a GMT file
-#
-# @keywords internal
-#
-# @param fname GMT file name 
-#
-# @return a list containing genes and description of each pathway
-#
-#
-#
+#' Reads a GMT file
+#'
+#' @param fname file name of the gmt
+#'
+#' @keywords internal
+#'
+#' @param fname GMT file name 
+#'
+#' @return a list containing genes and description of each pathway
+#'
+#' @export
 read_gmt <- function(fname){
     res <- list(genes=list(), desc=list())
     gmt <- file(fname)

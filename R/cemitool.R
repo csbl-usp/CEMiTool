@@ -227,6 +227,7 @@ cemitool <- function(exprs,
                      interactions,
                      filter=TRUE,
                      filter_pval=0.1,
+                     n_genes,
                      cor_method=c('pearson', 'spearman'),
                      sample_name_column="SampleName",
                      class_column="Class",
@@ -250,12 +251,19 @@ cemitool <- function(exprs,
                    class_column=class_column)
     
     if (filter) {
-        results <- filter_expr(results, filter_pval)
-        if (length(results@selected_genes) >= 0) {
+        if(!missing(n_genes)){
+            results <- filter_expr(results, n=n_genes)
+        } else {
+            results <- filter_expr(results, filter_pval)
+        }
+        if (length(results@selected_genes) <= 0) {
             stop('Stopping analysis, no gene left for analysis, try to change the filter parameters.')
         }
     }
 
+    if(verbose){
+        message("Finding modules ...")
+    }
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
                             min_ngen=min_ngen,
@@ -265,41 +273,69 @@ cemitool <- function(exprs,
 
     # if user wants splitted modules
     if (split_modules) {
+        if(verbose){
+            message("Spliting modules ...")
+        }
         results <- split_modules(results, min_ngen=min_ngen,
                                  verbose=verbose)
     }
 
     if (!missing(interactions)){
+        if(verbose){
+            message("Including interactions ...")
+        }
         results <- include_interactions(results, int_df=interactions, 
                                         directed=directed)
     }
 
     # if user provides annot file
     if (!missing(annot)) {
+        if(verbose){
+            message("Including sample annotation ...")
+        }
         sample_annotation(results) <- annot
+        if(verbose){
+            message("Running Gene Set Enrichment Analysis ...")
+        }
         #run mod_gsea
         results <- mod_gsea(results, verbose=verbose)
     }
 
     # if user provides .gmt file
     if (!missing(gmt)) {
+        if(verbose){
+            message("Running over representation analysis ...")
+        }
         #run mod_ora
         results <- mod_ora(results, gmt_in=gmt, verbose=verbose)
     }
 
     # plots all desired charts
     if (plot) {
+        if(verbose){
+            message("Generating profile plots ...")
+        }
         results <- plot_profile(results)
 
-        if (!is.null(results@enrichment)) {
+        if (length(results@enrichment) > 0) {
+            if(verbose){
+                message("Plotting Enrichment Scores ...")
+            }
             results <- plot_gsea(results)
         }
 
-        if (!is.null(results@ora)) {
+        if (nrow(results@ora) == 0) {
+            if(verbose){
+                message("Plotting over representation analysis results ...")
+            }
+            
             results <- plot_ora(results)
         }
 
         if (!is.null(results@interactions)) {
+            if(verbose){
+                message("Plotting interaction network ...")
+            }
             results <- plot_interactions(results)
         }
     }
@@ -389,3 +425,55 @@ setMethod('show', signature(object='CEMiTool'),
 )
 
 
+
+
+#' Save the CEMiTool object in files
+#'
+#' @param cem_obj Object of class \code{CEMiTool}
+#' @param directory a directory
+#' 
+#' @return
+#'
+#' @rdname save_files
+#' @export
+setGeneric('write_files', function(cem_obj, directory) {
+    standardGeneric('write_files')
+})
+
+#' @rdname save_files
+setMethod('write_files', signature(cem_obj='CEMiTool'),
+          function(cem_obj, directory) {
+              if(nrow(cem_obj@module) > 0){
+                  write.table(cem_obj@module, file.path(directory, "module.tsv"), sep="\t", row.names=F)
+              }
+              if(length(cem_obj@selected_genes) > 0){
+                  writeLines(cem_obj@selected_genes, file.path(directory, "selected_genes.txt"))
+              }
+              if(length(cem_obj@enrichment) > 0){
+                  write.table(cem_obj@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=F)
+                  write.table(cem_obj@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=F)
+                  write.table(cem_obj@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=F)
+              }
+              if(nrow(cem_obj@ora) > 0){
+                  write.table(cem_obj@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=F)
+              }
+              if(length(cem_obj@interactions) > 0){
+                  int_df <- data.frame(Module=character(),
+                                       Gene1=character(),
+                                       Gene2=character())
+                  for(n in names(cem_obj@interactions)){
+                      int_df <- rbind.data.frame(int_df, 
+                                                 data.frame(Module=n, 
+                                                            igraph::get.edgelist(cem_obj@interactions[[n]])
+                                                            ))
+                  }
+                  colnames(int_df) <- c("Module", "Gene1", "Gene2")
+                  write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=F)
+              }
+              if(length(cem_obj@parameters) > 0){
+                  params <- cem_obj@parameters
+                  param_df <- data.frame(Parameter=names(params), Value=as.character(params))
+                  write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=F)
+              }
+          }
+)

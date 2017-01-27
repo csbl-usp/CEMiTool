@@ -19,7 +19,7 @@ Authors@R: c(
                     role = c("aut")))
 Description: CEMiTool improves WGCNA gene co-expression module discovery by optimizing network parameter selection. This package also perfoms enrichment analysis with the discovered modules.
 Depends:
-    R (>= 3.3.2)
+    R (>= 3.3.1)
 Imports:
     methods,
     data.table (>= 1.9.4),
@@ -31,7 +31,6 @@ Imports:
     rmarkdown,
     igraph,
     ggnetwork,
-    plotly,
     DT,
     htmltools,
     pracma

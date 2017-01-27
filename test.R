@@ -62,3 +62,5 @@ res <- cemitool(expr, sample_annotation, gmt_in, interactions=int_df,
 
 generate_report(res)
 
+write_files(res, directory="./reports")
+

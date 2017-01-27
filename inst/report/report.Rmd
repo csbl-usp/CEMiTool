@@ -39,7 +39,7 @@ cat("#", title, "{.tabset}")
 ```
 
 ## Gene Set Enrichment Analysis 
-```{r echo=FALSE, fig.width=10, fig.align="center", cache=F}
+```{r echo=FALSE, results="asis", fig.width=10, fig.align="center", cache=F}
     if(!is.null(names(cem_obj@enrichment_plot))){
         plot(cem_obj@enrichment_plot)
     } else {
@@ -47,7 +47,7 @@ cat("#", title, "{.tabset}")
     }
 ```
 
-```{r echo=FALSE, cache=F}
+```{r echo=FALSE, results="asis", cache=F}
     if(length(cem_obj@enrichment) > 0){
         nes <- cem_obj@enrichment$nes
         nes[, -1] <- round(nes[, -1], digits=2)
@@ -69,9 +69,10 @@ cat("#", title, "{.tabset}")
 
 ```
 
-## Over Representation Analysis {.tabset}
 ```{r echo=FALSE, results="asis", fig.align="center"}
     if(nrow(cem_obj@ora) > 0){
+        writeLines("## Over Representation Analysis {.tabset}")
+
         columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
         ora_df <- cem_obj@ora[, columns]
         ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
@@ -89,6 +90,7 @@ cat("#", title, "{.tabset}")
                                                    rownames = FALSE)))
         }
     } else {
+        writeLines("## Over Representation Analysis")
         writeLines("### Please run over representation analysis!")
     }
 ```
@@ -98,7 +100,7 @@ cat("#", title, "{.tabset}")
     if(length(cem_obj@interaction_plot) > 0){
         x <- lapply(cem_obj@interaction_plot, print)
     } else {
-        writeLines("### Please add interactions in the CEMiTool object")
+        writeLines("### Please add interactions to the CEMiTool object")
     }
 ```
 
@@ -108,16 +110,21 @@ desc <- c("cor_method" = "Correlation method.",
           "min_ngen" = "Minimum number of genes per module.",
           "merge_similar" = "Should similar modules be merged ?",
           "diss_thresh" = "Dissimilarity threshold to be used as cutoff on hierarchical cluster.",
-          "r2" = "Determination coeficient. Reflects the scale-freeness of the resultant network.",
+          "r2" = 'Determination coeficient. Reflects the "scale-freeness" of the resultant network.',
           "beta" = "Value of beta choosed.",
-          "phi" = "Area under curve / Total area in the graph Beta vs R^2."
+          "phi" = "Area under curve / Total area in the graph Beta vs R^2.",
+          "n_genes" = "Number of genes after filtering.",
+          "filter_pval" = "p-value used on filtering."
           )
+desc_df <- data.frame(Parameter=names(desc), Description=desc)
+
 params_list <- cem_obj@parameters
 params_list[["r2"]] <- round(params_list[["r2"]], digits=3)
 params_list[["diss_thresh"]] <- round(params_list[["diss_thresh"]], digits=3)
 params_list[["phi"]] <- round(params_list[["phi"]], digits=3)
+params_list[["filter_pval"]] <- round(params_list[["filter_pval"]], digits=3)
 params <- data.frame(Parameter=names(params_list), 
-                     Description=desc[names(params_list)],
                      Value=as.character(params_list))
+params <- merge(desc_df, params, all.y=T)
 DT::datatable(params, rownames=F)
 ```
