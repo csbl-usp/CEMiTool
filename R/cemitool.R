@@ -252,7 +252,7 @@ cemitool <- function(exprs,
     if (filter) {
         results <- filter_expr(results, filter_pval)
         if (length(results@selected_genes) >= 0) {
-            stop('Stopping analysis')
+            stop('Stopping analysis, no gene left for analysis, try to change the filter parameters.')
         }
     }
 
