@@ -1,10 +1,10 @@
 #' @import data.table
+NULL
 
 #' Reads a GMT file
 #'
 #' @param fname file name of the gmt
 #'
-#' @keywords internal
 #'
 #' @param fname GMT file name 
 #'
@@ -62,33 +62,33 @@ ora <- function(topgenes, gmt_list, allgenes){
 #'
 #' Perfoms overrepresentation analysis for each co-expression module found.
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param gmt_in Output of CEMiTool::read_gmt function.
 #' @param verbose logical. Report analysis steps.
-#' @param ... other optional parameters
+#' @param ... Other optional parameters.
 #'
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
-#' mod_ora(cem_obj, gmt)
+#' mod_ora(cem, gmt)
 #'
 #' @rdname mod_ora
 #' @export
-setGeneric('mod_ora', function(cem_obj, ...) {
+setGeneric('mod_ora', function(cem, ...) {
     standardGeneric('mod_ora')
 })
 
 #' @rdname mod_ora
-setMethod('mod_ora', signature(cem_obj='CEMiTool'),
-          function(cem_obj, gmt_in, verbose=FALSE) {
+setMethod('mod_ora', signature(cem='CEMiTool'),
+          function(cem, gmt_in, verbose=FALSE) {
               if (verbose) {
                   message('Running ORA')
               }
               message("Using all genes in GMT file as universe.")
               allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
-              mods <- split(cem_obj@module[, "genes"], cem_obj@module[, "modules"])
+              mods <- split(cem@module[, "genes"], cem@module[, "modules"])
               res_list <- lapply(mods, ora, gmt_in, allgenes)
               names(res_list) <- names(mods)
               for(n in names(res_list)) {
@@ -96,8 +96,8 @@ setMethod('mod_ora', signature(cem_obj='CEMiTool'),
               }
               res <- do.call(rbind, res_list)
               rownames(res) <- NULL
-              cem_obj@ora <- res
-              return(cem_obj)
+              cem@ora <- res
+              return(cem)
           }
 )
 
@@ -105,27 +105,27 @@ setMethod('mod_ora', signature(cem_obj='CEMiTool'),
 #'
 #' Perfoms gene set enrichment analysis for each co-expression module found.
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param verbose logical. Report analysis steps.
-#' @param ... other optional parameters
+#' @param ... Other optional parameters.
 #' 
 #' @return GSEA results.
 #'
 #' @examples
-#' mod_gsea(cem_obj)
+#' mod_gsea(cem)
 #'
 #' @rdname mod_gsea
 #' @export
-setGeneric('mod_gsea', function(cem_obj, ...) {
+setGeneric('mod_gsea', function(cem, ...) {
     standardGeneric('mod_gsea')
 })
 
 #' @rdname mod_gsea
-setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
-          function(cem_obj, verbose=F) {
-    if (nrow(cem_obj@sample_annotation)==0) {
+setMethod('mod_gsea', signature(cem='CEMiTool'),
+          function(cem, verbose=F) {
+    if (nrow(cem@sample_annotation)==0) {
         warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
-        return(cem_obj)
+        return(cem)
     }
 
     if (verbose) {
@@ -133,22 +133,22 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
     }
     
     # creates gene sets from modules
-    modules <- unique(cem_obj@module[, 'modules'])
+    modules <- unique(cem@module[, 'modules'])
     gene_sets <- lapply(modules, function(mod){
-        return(cem_obj@module[cem_obj@module[, 'modules']==mod, 'genes'])
+        return(cem@module[cem@module[, 'modules']==mod, 'genes'])
     })
     names(gene_sets) <- modules
         
     # expression to z-score
-    z_exprs <- data.frame(t(scale(t(expr_data(cem_obj, filtered=FALSE)), 
+    z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
                                   center=TRUE, 
                                   scale=TRUE)),
                           stringsAsFactors=FALSE)
 
     # calculates enrichment for each module for each class in annot
-    annot <- cem_obj@sample_annotation
-    class_col <- cem_obj@class_column
-    sample_col <- cem_obj@sample_name_column
+    annot <- cem@sample_annotation
+    class_col <- cem@class_column
+    sample_col <- cem@sample_name_column
     classes <- unique(annot[, class_col])
     gsea_list <- lapply(classes, function(class_group){
         
@@ -160,7 +160,7 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
         class_samples <- annot[annot[, class_col]==class_group, sample_col]
         
         # genes ranked by mean
-        genes_ranked <- apply(z_exprs[, class_samples], 1, mean)
+        genes_ranked <- apply(z_expr[, class_samples], 1, mean)
         genes_ranked <- sort(genes_ranked, decreasing=TRUE)
         
         # BiocParallel setting up
@@ -196,8 +196,8 @@ setMethod('mod_gsea', signature(cem_obj='CEMiTool'),
     })
     
     names(out_gsea) <- names(patterns)
-    cem_obj@enrichment <- out_gsea 
-    return(cem_obj)
+    cem@enrichment <- out_gsea 
+    return(cem)
 })
 
 

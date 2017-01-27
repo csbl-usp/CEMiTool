@@ -6,40 +6,40 @@ NULL
 #'
 #' Creates a line plot of each gene inside the module through the samples
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param order Logical. If TRUE, sorts samples by class.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
-#' plot_profile(cem_obj)
+#' plot_profile(cem)
 #'
 #' @rdname plot_profile
 #' @export
-setGeneric('plot_profile', function(cem_obj, ...) {
+setGeneric('plot_profile', function(cem, ...) {
     standardGeneric('plot_profile')
 })
 
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
-          function(cem_obj, order=TRUE) {
-              modules <- sort(unique(cem_obj@module[, 'modules']))
-              exprs <- expr_data(cem_obj)
-              annot <- cem_obj@sample_annotation
-              sample_name_column <- cem_obj@sample_name_column
-              class_column <- cem_obj@class_column
-              mod_cols <- mod_colors(cem_obj)
+          function(cem, order=TRUE) {
+              modules <- sort(unique(cem@module[, 'modules']))
+              expr <- expr_data(cem)
+              annot <- cem@sample_annotation
+              sample_name_column <- cem@sample_name_column
+              class_column <- cem@class_column
+              mod_cols <- mod_colors(cem)
               plots <- lapply(modules, function(mod){
-                                  # subsets from exprs all genes inside module mod
-                                  genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
-                                  exprs[, 'id'] <- rownames(exprs)
-                                  mod_exprs <- melt(exprs[genes,], 'id',
+                                  # subsets from expr all genes inside module mod
+                                  genes <- cem@module[cem@module[,'modules']==mod, 'genes']
+                                  expr[, 'id'] <- rownames(expr)
+                                  mod_expr <- melt(expr[genes,], 'id',
                                                     variable.name='sample',
                                                     value.name='expression')
 
                                   # initialize plot base layer
-                                  g <- ggplot(mod_exprs, aes(x=sample, y=expression))
+                                  g <- ggplot(mod_expr, aes(x=sample, y=expression))
 
                                   # adds different background colours if annot is provided
                                   if (nrow(annot)!=0) {
@@ -48,15 +48,15 @@ setMethod('plot_profile', signature('CEMiTool'),
                                           annot <- annot[order(annot[, class_column]),]
                                           annot[, sample_name_column] <- factor(annot[, sample_name_column],
                                                                                 levels=annot[, sample_name_column])
-                                          mod_exprs[, 'sample'] <- factor(mod_exprs[, 'sample'],
+                                          mod_expr[, 'sample'] <- factor(mod_expr[, 'sample'],
                                                                           levels=annot[, sample_name_column])
                                       }
 
                                       # y positioning of background tiles
-                                      y_pos <- mean(mod_exprs[, 'expression'])
+                                      y_pos <- mean(mod_expr[, 'expression'])
 
                                       # reinitialize base layer adding background tiles
-                                      g <- ggplot(mod_exprs, aes(x=sample, y=expression)) +
+                                      g <- ggplot(mod_expr, aes(x=sample, y=expression)) +
                                           geom_tile(data=annot, alpha=0.3, height=Inf,
                                                     aes(x=get(sample_name_column), y=y_pos,
                                                         fill=get(class_column)))
@@ -94,8 +94,8 @@ setMethod('plot_profile', signature('CEMiTool'),
                                   return(g)
               })
               names(plots) <- modules
-              cem_obj@profile_plot <- plots
-              return(cem_obj)
+              cem@profile_plot <- plots
+              return(cem)
           })
 
 
@@ -104,7 +104,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #'
 #' Creates a bar plot with the results of overenrichment analysis of co-expression modules
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param n number of modules to show
 #' @param ... paramaters to plot_ora_single
 #'
@@ -115,23 +115,23 @@ setMethod('plot_profile', signature('CEMiTool'),
 #'
 #' @rdname plot_ora
 #' @export
-setGeneric('plot_ora', function(cem_obj, ...) {
+setGeneric('plot_ora', function(cem, ...) {
     standardGeneric('plot_ora')
 })
 
 #' @rdname plot_ora
 setMethod('plot_ora', signature('CEMiTool'),
-          function(cem_obj, n=10, ...){
-              ora_splitted <- split(cem_obj@ora, cem_obj@ora$Module)
-              mod_cols <- mod_colors(cem_obj)
+          function(cem, n=10, ...){
+              ora_splitted <- split(cem@ora, cem@ora$Module)
+              mod_cols <- mod_colors(cem)
               res <- lapply(ora_splitted, function(x){
                                 plot_ora_single(head(x, n=n),
                                                 graph_color=mod_cols[unique(x$Module)],
                                                 title=unique(x$Module),
                                                 ...)
               })
-              cem_obj@barplot_ora <- res
-              return(cem_obj)
+              cem@barplot_ora <- res
+              return(cem)
           }
 )
 
@@ -193,7 +193,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #'
 #' Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param pv_cut P-value cut-off. Default \code{0.05}
 #' @param ... Optional parameters.
 #'
@@ -204,15 +204,15 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #'
 #' @rdname plot_gsea
 #' @export
-setGeneric('plot_gsea', function(cem_obj, ...) {
+setGeneric('plot_gsea', function(cem, ...) {
     standardGeneric('plot_gsea')
 })
 
 #' @rdname plot_gsea
 setMethod('plot_gsea', signature('CEMiTool'),
-          function(cem_obj, pv_cut=0.05) {
-              stats <- names(cem_obj@enrichment)
-              enrichment <- lapply(cem_obj@enrichment, function(stat){
+          function(cem, pv_cut=0.05) {
+              stats <- names(cem@enrichment)
+              enrichment <- lapply(cem@enrichment, function(stat){
                                        stat[is.na(stat)] <- 0
                                        rownames(stat) <- stat[,1]
                                        stat[,1] <- NULL
@@ -255,9 +255,9 @@ setMethod('plot_gsea', signature('CEMiTool'),
                   theme_minimal() +
                   theme(panel.grid.major = element_blank()) +
                   scale_x_discrete(position = "top")
-              cem_obj@enrichment_plot <- res
+              cem@enrichment_plot <- res
 
-              return(cem_obj)
+              return(cem)
           }
           )
 
@@ -266,35 +266,35 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #'
 #' Creates a graph based on interactions provided
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param n number of nodes to label
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
-#' plot_profile(cem_obj)
+#' plot_profile(cem)
 #'
 #' @rdname plot_interactions
 #' @export
-setGeneric('plot_interactions', function(cem_obj, ...) {
+setGeneric('plot_interactions', function(cem, ...) {
     standardGeneric('plot_interactions')
 })
 
 #' @rdname plot_profile
 setMethod('plot_interactions', signature('CEMiTool'),
-          function(cem_obj, n=10, ...) {
-              mod_cols <- mod_colors(cem_obj)
-              mod_names <- names(cem_obj@interactions)
-              hubs <- get_hubs(cem_obj)
+          function(cem, n=10, ...) {
+              mod_cols <- mod_colors(cem)
+              mod_names <- names(cem@interactions)
+              hubs <- get_hubs(cem)
               res <- lapply(mod_names, function(name){
-                                plot_interaction(ig_obj=cem_obj@interactions[[name]], 
+                                plot_interaction(ig_obj=cem@interactions[[name]], 
                                                  n=n, color=mod_cols[name], title=name,
                                                  coexp_hubs=hubs[[name]])
                                        })
               names(res) <- mod_names
-              cem_obj@interaction_plot <- res
-              return(cem_obj)
+              cem@interaction_plot <- res
+              return(cem)
           })
 
 plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){

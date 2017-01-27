@@ -1,5 +1,5 @@
 #' @importFrom grDevices rainbow
-#' @importFrom utils head
+#' @importFrom utils head write.table
 #' @importFrom methods new 'slot<-' show
 
 setOldClass('gg')
@@ -51,7 +51,7 @@ setMethod("initialize", signature="CEMiTool",
 
 #' Retrieve and set expression attribute
 #'
-#' @param cem_obj Object of class \code{CEMiTool}
+#' @param cem Object of class \code{CEMiTool}
 #' @param value Object of class \code{data.frame} with gene
 #'        expression data
 #' @param filtered logical. If TRUE retrieves filtered expression data
@@ -60,40 +60,40 @@ setMethod("initialize", signature="CEMiTool",
 #'
 #' @rdname expr_data 
 #' @export
-setGeneric("expr_data", function(cem_obj, ...) {
+setGeneric("expr_data", function(cem, ...) {
             standardGeneric("expr_data")
           })
 
 #' @rdname expr_data
 setMethod("expr_data", signature("CEMiTool"),
-         function(cem_obj, filtered=T){
+         function(cem, filtered=T){
             if (filtered) {
-                return(cem_obj@expression[cem_obj@selected_genes,])
+                return(cem@expression[cem@selected_genes,])
             } else {
-                return(cem_obj@expression)
+                return(cem@expression)
             }
          })
 
 
 #' @rdname expr_data
 #' @export
-setGeneric("expr_data<-", function(cem_obj, value) {
+setGeneric("expr_data<-", function(cem, value) {
             standardGeneric("expr_data<-")
           })
 
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
-         function(cem_obj, value){
-            cem_obj@expression <- value
-            cem_obj@selected_genes <- rownames(cem_obj@expression)
-            return(cem_obj)
+         function(cem, value){
+            cem@expression <- value
+            cem@selected_genes <- rownames(cem@expression)
+            return(cem)
          })
 
 
 
 #' Retrieve and set mod_colors attribute
 #'
-#' @param cem_obj Object of class \code{CEMiTool}
+#' @param cem Object of class \code{CEMiTool}
 #' @param value a character vector containing colors for each module
 #'              the names should match with module names
 #' 
@@ -101,18 +101,18 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #'
 #' @rdname mod_colors
 #' @export
-setGeneric("mod_colors", function(cem_obj) {
+setGeneric("mod_colors", function(cem) {
             standardGeneric("mod_colors")
           })
 
 #' @rdname mod_colors
 setMethod("mod_colors", signature("CEMiTool"),
-         function(cem_obj){
-            mod_names <- unique(cem_obj@module$modules)
+         function(cem){
+            mod_names <- unique(cem@module$modules)
             nmod <- length(mod_names)
-            cols <- cem_obj@mod_colors
+            cols <- cem@mod_colors
             if(nmod != 0) { 
-                if(length(cem_obj@mod_colors) == 0){
+                if(length(cem@mod_colors) == 0){
                     if(nmod <= 16) {
                         cols <- rainbow(16, s = 1, v = 0.7)[1:nmod]
                     } else {
@@ -120,7 +120,7 @@ setMethod("mod_colors", signature("CEMiTool"),
                     }
                     names(cols) <- mod_names
                 } else {
-                    if(!all(sort(names(cem_obj@mod_colors)) == sort(mod_names))){
+                    if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
                         warning("mod_colors does not match with modules!")
                     }
                 }
@@ -130,21 +130,21 @@ setMethod("mod_colors", signature("CEMiTool"),
 
 #' @rdname mod_colors
 #' @export
-setGeneric("mod_colors<-", function(cem_obj, value) {
+setGeneric("mod_colors<-", function(cem, value) {
             standardGeneric("mod_colors<-")
           })
 
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool"),
-         function(cem_obj, value){
-            cem_obj@mod_colors <- value
-            return(cem_obj)
+         function(cem, value){
+            cem@mod_colors <- value
+            return(cem)
          } )
 
 
 #' Retrive or set the sample_annotation attribute
 #'
-#' @param cem_obj Object of class \code{CEMiTool}
+#' @param cem Object of class \code{CEMiTool}
 #' @param value a data.frame containing the sample annotation, 
 #'              should have at least two columns containing the Class 
 #'              and the Sample Name that should match with samples in 
@@ -152,37 +152,37 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #'
 #' @rdname sample_annotation
 #' @export
-setGeneric("sample_annotation", function(cem_obj) {
+setGeneric("sample_annotation", function(cem) {
             standardGeneric("sample_annotation")
           })
 
 #' @rdname sample_annotation
 setMethod("sample_annotation", signature("CEMiTool"),
-         function(cem_obj){
-            return(cem_obj@sample_annotation)
+         function(cem){
+            return(cem@sample_annotation)
          } )
 
 #' @rdname sample_annotation
 #' @export
-setGeneric("sample_annotation<-", function(cem_obj, value) {
+setGeneric("sample_annotation<-", function(cem, value) {
             standardGeneric("sample_annotation<-")
           })
 
 #' @rdname sample_annotation
 setReplaceMethod("sample_annotation", signature("CEMiTool"),
-         function(cem_obj, value){
-            if(!cem_obj@sample_name_column %in% colnames(value)){
+         function(cem, value){
+            if(!cem@sample_name_column %in% colnames(value)){
                 stop("Please supply a data.frame with a column named ", 
-                     cem_obj@sample_name_column, 
+                     cem@sample_name_column, 
                      " or change the slot sample_name_column.")
             }
-            if(!cem_obj@class_column %in% colnames(value)){
+            if(!cem@class_column %in% colnames(value)){
                 stop("Please supply a data.frame with a column named ", 
-                     cem_obj@class_column, 
+                     cem@class_column, 
                      " or change the slot class_column.")
             }
-            cem_obj@sample_annotation <- value
-            return(cem_obj)
+            cem@sample_annotation <- value
+            return(cem)
          } )
 
 
@@ -191,7 +191,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' Defines co-expression modules and functionally characterizes
 #' each one of them.
 #'
-#' @param exprs Gene expression \code{data.frame}.
+#' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
 #' @param gmt a list from function prepare_gmt containing the gene sets.
 #' @param interactions a data.frame containing two columns with gene names.
@@ -217,11 +217,10 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @return a cemitool object 
 #'
 #' @examples
-#' data(exprs) 
-#' cemitool(exprs=exprs)
+#' cemitool(expr=expr)
 #'
 #' @export
-cemitool <- function(exprs, 
+cemitool <- function(expr, 
                      annot,
                      gmt,
                      interactions,
@@ -241,12 +240,12 @@ cemitool <- function(exprs,
                      verbose=FALSE
                      )
 {
-    if (missing(exprs)) {
+    if (missing(expr)) {
         stop('Must provide, at least, expression data')
     }
  
     # initialize CEMiTool object to hold data, analysis results and plots
-    results <- new('CEMiTool', expression=exprs, 
+    results <- new('CEMiTool', expression=expr, 
                    sample_name_column=sample_name_column, 
                    class_column=class_column)
     
@@ -345,22 +344,22 @@ cemitool <- function(exprs,
 
 #' Get the number of modules on a cemitool object
 #'
-#' @param cem_obj Object of class \code{CEMiTool}
+#' @param cem Object of class \code{CEMiTool}
 #' 
 #' @return number of modules
 #'
 #' @rdname nmodules
 #' @export
-setGeneric('nmodules', function(cem_obj) {
+setGeneric('nmodules', function(cem) {
     standardGeneric('nmodules')
 })
 
 #' @rdname nmodules
-setMethod('nmodules', signature(cem_obj='CEMiTool'),
-          function(cem_obj) {
+setMethod('nmodules', signature(cem='CEMiTool'),
+          function(cem) {
               n <- 0
-              if(!is.null(cem_obj@module)){
-                  n <- length(unique(cem_obj@module$modules))
+              if(!is.null(cem@module)){
+                  n <- length(unique(cem@module$modules))
               } else {
                   message("Run cemitool function to get modules!") 
               }
@@ -429,49 +428,49 @@ setMethod('show', signature(object='CEMiTool'),
 
 #' Save the CEMiTool object in files
 #'
-#' @param cem_obj Object of class \code{CEMiTool}
+#' @param cem Object of class \code{CEMiTool}
 #' @param directory a directory
 #' 
 #' @return
 #'
 #' @rdname save_files
 #' @export
-setGeneric('write_files', function(cem_obj, directory) {
+setGeneric('write_files', function(cem, directory) {
     standardGeneric('write_files')
 })
 
 #' @rdname save_files
-setMethod('write_files', signature(cem_obj='CEMiTool'),
-          function(cem_obj, directory) {
-              if(nrow(cem_obj@module) > 0){
-                  write.table(cem_obj@module, file.path(directory, "module.tsv"), sep="\t", row.names=F)
+setMethod('write_files', signature(cem='CEMiTool'),
+          function(cem, directory) {
+              if(nrow(cem@module) > 0){
+                  write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=F)
               }
-              if(length(cem_obj@selected_genes) > 0){
-                  writeLines(cem_obj@selected_genes, file.path(directory, "selected_genes.txt"))
+              if(length(cem@selected_genes) > 0){
+                  writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
               }
-              if(length(cem_obj@enrichment) > 0){
-                  write.table(cem_obj@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=F)
-                  write.table(cem_obj@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=F)
-                  write.table(cem_obj@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=F)
+              if(length(cem@enrichment) > 0){
+                  write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=F)
+                  write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=F)
+                  write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=F)
               }
-              if(nrow(cem_obj@ora) > 0){
-                  write.table(cem_obj@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=F)
+              if(nrow(cem@ora) > 0){
+                  write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=F)
               }
-              if(length(cem_obj@interactions) > 0){
+              if(length(cem@interactions) > 0){
                   int_df <- data.frame(Module=character(),
                                        Gene1=character(),
                                        Gene2=character())
-                  for(n in names(cem_obj@interactions)){
+                  for(n in names(cem@interactions)){
                       int_df <- rbind.data.frame(int_df, 
                                                  data.frame(Module=n, 
-                                                            igraph::get.edgelist(cem_obj@interactions[[n]])
+                                                            igraph::get.edgelist(cem@interactions[[n]])
                                                             ))
                   }
                   colnames(int_df) <- c("Module", "Gene1", "Gene2")
                   write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=F)
               }
-              if(length(cem_obj@parameters) > 0){
-                  params <- cem_obj@parameters
+              if(length(cem@parameters) > 0){
+                  params <- cem@parameters
                   param_df <- data.frame(Parameter=names(params), Value=as.character(params))
                   write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=F)
               }

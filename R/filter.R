@@ -1,15 +1,19 @@
 #' Filter gene expression table
 #'
-#' @param cem_obj Object of class \code{CEMiTool} 
-#' @param pval P-value cutoff for gene selection
-#' @param n_genes number of genes to be selected
-#' @param ... other optional parameters
+#' @param cem Object of class \code{CEMiTool}. 
+#' @param pval P-value cutoff for gene selection.
+#' @param n_genes Number of genes to be selected.
+#' @param ... Other optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
 #'
 #' @rdname filter_expr
+#'
+#' @example
+#' filter_expr(cem) 
+#'
 #' @export
-setGeneric('filter_expr', function(cem_obj, ...) {
+setGeneric('filter_expr', function(cem, ...) {
     standardGeneric('filter_expr')
 })
 
@@ -17,14 +21,14 @@ setGeneric('filter_expr', function(cem_obj, ...) {
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-          function(cem_obj, pval=0.05, n_genes)
+          function(cem, pval=0.05, n_genes)
 {
     if(!missing(n_genes)){
         if(!missing(pval)){
             stop("Please specify exclusively pval or n_genes.")
         }
     }
-    expr <- expr_data(cem_obj, filtered=FALSE)
+    expr <- expr_data(cem, filtered=FALSE)
 
     if(!missing(n_genes)){
         n_genes <- min(n_genes, nrow(expr))
@@ -54,15 +58,15 @@ setMethod('filter_expr', signature('CEMiTool'),
     selected <- which(p <= pval)
     
     if (length(selected) > 0) {
-        cem_obj@selected_genes <- names(selected)
+        cem@selected_genes <- names(selected)
     } else {
-        cem_obj@selected_genes <- selected
+        cem@selected_genes <- selected
         warning('No gene left after the filtering')
     }
 
-    cem_obj@parameters <- c(cem_obj@parameters, 
+    cem@parameters <- c(cem@parameters, 
                             n_genes=length(selected),
                             filter_pval=pval)
 
-    return(cem_obj)
+    return(cem)
 })

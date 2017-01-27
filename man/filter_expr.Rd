@@ -8,7 +8,7 @@
 \usage{
 filter_expr(cem_obj, ...)
 
-\S4method{filter_expr}{CEMiTool}(cem_obj, pval = 0.05)
+\S4method{filter_expr}{CEMiTool}(cem_obj, pval = 0.05, n_genes)
 }
 \arguments{
 \item{cem_obj}{Object of class \code{CEMiTool}}
@@ -16,6 +16,8 @@ filter_expr(cem_obj, ...)
 \item{...}{other optional parameters}
 
 \item{pval}{P-value cutoff for gene selection}
+
+\item{n_genes}{number of genes to be selected}
 }
 \value{
 Object of class \code{CEMiTool} with selected genes

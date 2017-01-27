@@ -8,7 +8,7 @@
 #'
 #' Defines co-expression modules
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
@@ -16,31 +16,30 @@
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... other optional parameters
+#' @param ... Other optional parameters
 #'
 #' @return Object of class \code{CEMiTool} 
 #'
 #' @examples
-#' data(expr)
-#' cem_obj <- new('CEMiTool', expression=expr)
-#' cem_obj <- find_modules(cem_obj)
+#' cem <- new('CEMiTool', expression=expr)
+#' cem <- find_modules(cem)
 #'
 #' @rdname find_modules
 #' @export
-setGeneric('find_modules', function(cem_obj, ...) {
+setGeneric('find_modules', function(cem, ...) {
     standardGeneric('find_modules')
 })
 
 #' @rdname find_modules
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
-          function(cem_obj, cor_method=c('pearson', 'spearman'),
+          function(cem, cor_method=c('pearson', 'spearman'),
                              min_ngen=30, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
     cor_method <- match.arg(cor_method)
     
-    expr <- expr_data(cem_obj)
+    expr <- expr_data(cem)
 
     expr_t <- t(expr)
     names(expr_t) <- rownames(expr)
@@ -107,7 +106,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating adjacency matrix
     our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type='signed')
-	cem_obj@adjacency <- our_adj
+	cem@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
     our_tom <- WGCNA::TOMsimilarity(our_adj)
@@ -177,9 +176,9 @@ setMethod('find_modules', signature('CEMiTool'),
                    'beta'=our_beta, 
                    'phi'=phi
                    )
-    cem_obj@parameters <- c(cem_obj@parameters, params)
-    cem_obj@module <- out
-    return(cem_obj)
+    cem@parameters <- c(cem@parameters, params)
+    cem@module <- out
+    return(cem)
 })
 
 
@@ -187,35 +186,35 @@ setMethod('find_modules', signature('CEMiTool'),
 #'
 #' Refines modules by splitting them into submodules based on correlation sign.
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... other optional parameters
+#' @param ... Other optional parameters.
 #'
 #' @return An object of class \code{CEMiTool}.
 #'
 #' @examples
-#' splitted_mods <- split_modules(cem_obj)
+#' splitted_mods <- split_modules(cem)
 #' 
 #' @rdname split_modules
 #' @export
-setGeneric('split_modules', function(cem_obj, ...) {
+setGeneric('split_modules', function(cem, ...) {
     standardGeneric('split_modules')
 })
 
 #' @rdname split_modules
-setMethod('split_modules', signature(cem_obj='CEMiTool'),
-          function(cem_obj, min_ngen=30, verbose=F) {
+setMethod('split_modules', signature(cem='CEMiTool'),
+          function(cem, min_ngen=30, verbose=F) {
 
             if (verbose) {
                 message('Splitting modules')
             }
-            modules <- unique(cem_obj@module[, 'modules'])
+            modules <- unique(cem@module[, 'modules'])
             submods <- lapply(modules, function(mod){
         
                 # subsets from expr all genes inside module mod
-                genes <- cem_obj@module[cem_obj@module[,'modules']==mod, 'genes']
-                mod_expr <- expr_data(cem_obj)[genes,]
+                genes <- cem@module[cem@module[,'modules']==mod, 'genes']
+                mod_expr <- expr_data(cem)[genes,]
         
                 # recalculates the correlation matrix for genes in module mod
                 gene_cors <- cor(t(mod_expr), use='everything', method='pearson')
@@ -267,8 +266,8 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
                 }
             }) # end of lapply
             
-            cem_obj@module <- do.call(rbind, submods)
-            return(cem_obj)
+            cem@module <- do.call(rbind, submods)
+            return(cem)
         }
 )
 
@@ -277,28 +276,28 @@ setMethod('split_modules', signature(cem_obj='CEMiTool'),
 #'
 #' Summarizes modules using some statistics. 
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param method A character string indicating which summarization method 
 #'                   is to be used. Default 'mean'. 
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
-#' @param ... other optional parameters
+#' @param ... Other optional parameters.
 #'
 #' @return A \code{data.frame} with summarized values.
 #'
 #'
 #'
 #' @examples
-#' mod_summary <- mod_summary(cem_obj)
+#' mod_summary <- mod_summary(cem)
 #'
 #' @rdname mod_summary
 #' @export
-setGeneric('mod_summary', function(cem_obj, ...) {
+setGeneric('mod_summary', function(cem, ...) {
     standardGeneric('mod_summary')
 })
 
 #' @rdname mod_summary
-setMethod('mod_summary', signature(cem_obj='CEMiTool'),
-          function(cem_obj, method=c('mean', 'eigengene'),
+setMethod('mod_summary', signature(cem='CEMiTool'),
+          function(cem, method=c('mean', 'eigengene'),
                    verbose=F)
           {
               method <- match.arg(method)
@@ -307,14 +306,14 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
                   message(paste0('Summarizing modules by ', method))
               }
 
-              modules <- unique(cem_obj@module[, 'modules'])
+              modules <- unique(cem@module[, 'modules'])
 
               # mean expression of genes in modules
               if (method == 'mean') {
-                  expr <- data.table(expr_data(cem_obj), keep.rownames=T)
+                  expr <- data.table(expr_data(cem), keep.rownames=T)
                   expr_melt <- melt(expr, id='rn', variable.name='samples',
                                      value.name='expression')
-                  expr_melt <- merge(expr_melt, cem_obj@module, by.x='rn', by.y='genes')
+                  expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
                   summarized <- expr_melt[, .(mean=mean(expression)),
                                            by=c('samples', 'modules')]
                   summarized <- dcast(summarized, modules~samples, value.var='mean')
@@ -323,11 +322,11 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
                   return(summarized)
                   # eigengene for each module
               } else if (method == 'eigengene') {
-                  expr_t <- t(expr_data(cem_obj))
+                  expr_t <- t(expr_data(cem))
                   colnames(expr_t) <- rownames(expr)
                   rownames(expr_t) <- colnames(expr)
                   me_list <- WGCNA::moduleEigengenes(expr_t, 
-                                                     colors=cem_obj@module[,2])
+                                                     colors=cem@module[,2])
                   me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=T)
                   setnames(me_eigen, c('modules', colnames(expr)))
                   me_eigen[, modules := gsub('^ME', '', modules)]
@@ -344,8 +343,9 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
 #'
 #' Returns \code{n} genes in each module with high connectivity. 
 #'
-#' @param cem_obj Object of class \code{CEMiTool}.
+#' @param cem Object of class \code{CEMiTool}.
 #' @param n Number of genes to return in each module (default: 5).
+#' @param ... Other optional parameters.
 #'
 #' @return A \code{list} containing hub genes.
 #'
@@ -355,19 +355,19 @@ setMethod('mod_summary', signature(cem_obj='CEMiTool'),
 #'
 #' @rdname get_hubs
 #' @export
-setGeneric('get_hubs', function(cem_obj, ...) {
+setGeneric('get_hubs', function(cem, ...) {
     standardGeneric('get_hubs')
 })
 
 #' @rdname get_hubs
-setMethod('get_hubs', signature(cem_obj='CEMiTool'),
-          function(cem_obj, n=5){
-              if(nrow(cem_obj@adjacency) == 0){
+setMethod('get_hubs', signature(cem='CEMiTool'),
+          function(cem, n=5){
+              if(nrow(cem@adjacency) == 0){
                   stop("Make sure that you ran the method find_modules.")
               }
-              mod2gene <- split(cem_obj@module$genes, cem_obj@module$modules)
+              mod2gene <- split(cem@module$genes, cem@module$modules)
               hubs <- lapply(mod2gene, function(x){
-                                           mod_adj <- cem_obj@adjacency[x, x]
+                                           mod_adj <- cem@adjacency[x, x]
                                            top <- head(sort(rowSums(mod_adj), decreasing=T), n=n)
                                            return(names(top))
                                        })

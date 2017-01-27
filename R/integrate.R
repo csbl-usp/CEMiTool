@@ -5,16 +5,16 @@
 #' @param analyses List of objects of class \code{CEMiTool}
 #'
 #' @examples
-#' studies <- list('GSE12345'=cem_obj1, 'GSE54321'=cem_obj2)
+#' studies <- list('GSE12345'=cem1, 'GSE54321'=cem2)
 #' overlaps <- cemoverlap(studies)
 #'
 #' @export
 cemoverlap <- function(analyses) {
     edgelist <- lapply(seq_along(analyses), function(index) {
-        cem_obj <- analyses[[index]]
+        cem <- analyses[[index]]
         cem_name <- names(analyses[index])
         # splits by module
-        mods <- split(cem_obj@module[,1], cem_obj@module[, 'modules'])
+        mods <- split(cem@module[,1], cem@module[, 'modules'])
         
         # combines all genes inside each module
         per_mod <- lapply(mods, function(mod) {
