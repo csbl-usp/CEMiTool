@@ -10,7 +10,7 @@ output:
     number_sections: true
 ---
 
-```{r echo=FALSE, results="asis", cache=F}
+```{r echo=FALSE, results="asis", cache=F, label=title}
 
 cat("#", title, "{.tabset}")
 
@@ -18,10 +18,10 @@ cat("#", title, "{.tabset}")
 ```
 
 ## Modules ##
-```{r echo=FALSE, cache=F}
-    mod_df <- as.data.frame(table(cem_obj@module$modules), stringsAsFactors=FALSE)
+```{r echo=FALSE, cache=F, label=modules-stats}
+    mod_df <- as.data.frame(table(cem@module$modules), stringsAsFactors=FALSE)
     colnames(mod_df) <- c("Module", "No.Genes")
-    hub_list <- get_hubs(cem_obj, n=5)
+    hub_list <- get_hubs(cem, n=5)
     Hubs <- sapply(hub_list, paste, collapse=", ")
     mod_df <- merge(mod_df, as.data.frame(Hubs), by.x="Module", by.y="row.names")
     DT::datatable(mod_df, rownames=FALSE)
@@ -30,28 +30,28 @@ cat("#", title, "{.tabset}")
 
 
 ## Profile Plot
-```{r echo=FALSE, fig.align="center", cache=F}
-    if(length(cem_obj@profile_plot) > 0){
-        .null <- lapply(cem_obj@profile_plot, print)
+```{r echo=FALSE, fig.align="center", cache=F, label=profile-plots}
+    if(length(cem@profile_plot) > 0){
+        .null <- lapply(cem@profile_plot, print)
     } else {
         writeLines("### Please create profile plots!")
     }
 ```
 
 ## Gene Set Enrichment Analysis 
-```{r echo=FALSE, results="asis", fig.width=10, fig.align="center", cache=F}
-    if(!is.null(names(cem_obj@enrichment_plot))){
-        plot(cem_obj@enrichment_plot)
+```{r echo=FALSE, results="asis", fig.width=10, fig.align="center", cache=F, label=gsea-plot}
+    if(!is.null(names(cem@enrichment_plot))){
+        plot(cem@enrichment_plot)
     } else {
         writeLines("### Please create enrichment plots!")
     }
 ```
 
-```{r echo=FALSE, results="asis", cache=F}
-    if(length(cem_obj@enrichment) > 0){
-        nes <- cem_obj@enrichment$nes
+```{r echo=FALSE, results="asis", cache=F, label=gsea-table}
+    if(length(cem@enrichment) > 0){
+        nes <- cem@enrichment$nes
         nes[, -1] <- round(nes[, -1], digits=2)
-        pv <- cem_obj@enrichment$pval
+        pv <- cem@enrichment$pval
         pv[, -1] <- round(pv[, -1], digits=5)
 
         colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
@@ -69,21 +69,21 @@ cat("#", title, "{.tabset}")
 
 ```
 
-```{r echo=FALSE, results="asis", fig.align="center"}
-    if(nrow(cem_obj@ora) > 0){
+```{r echo=FALSE, results="asis", fig.align="center", label=ora-results}
+    if(nrow(cem@ora) > 0){
         writeLines("## Over Representation Analysis {.tabset}")
 
         columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
-        ora_df <- cem_obj@ora[, columns]
+        ora_df <- cem@ora[, columns]
         ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
-        ora_list <- split(ora_df, cem_obj@ora$Module)
-        there_is_barplot <- length(cem_obj@barplot_ora) > 0
+        ora_list <- split(ora_df, cem@ora$Module)
+        there_is_barplot <- length(cem@barplot_ora) > 0
 
         for(n in names(ora_list)){
             h3n <- paste("###", n) 
             writeLines(h3n)
             if(there_is_barplot){
-                print(cem_obj@barplot_ora[[n]]$pl)
+                print(cem@barplot_ora[[n]]$pl)
             }
             print(htmltools::tagList(DT::datatable(ora_list[[n]][1:max_rows_ora, ], 
                                                    options = list(pageLength=5), 
@@ -96,16 +96,16 @@ cat("#", title, "{.tabset}")
 ```
 
 ## Interaction Network
-```{r echo=FALSE, fig.align="center", cache=F, results="asis"}
-    if(length(cem_obj@interaction_plot) > 0){
-        x <- lapply(cem_obj@interaction_plot, print)
+```{r echo=FALSE, fig.align="center", cache=F, results="asis", label=interaction-networks}
+    if(length(cem@interaction_plot) > 0){
+        x <- lapply(cem@interaction_plot, print)
     } else {
         writeLines("### Please add interactions to the CEMiTool object")
     }
 ```
 
 ## Parameters ##
-```{r echo=FALSE, cache=F}
+```{r echo=FALSE, cache=F, label=parameters}
 desc <- c("cor_method" = "Correlation method.",
           "min_ngen" = "Minimum number of genes per module.",
           "merge_similar" = "Should similar modules be merged ?",
@@ -118,11 +118,13 @@ desc <- c("cor_method" = "Correlation method.",
           )
 desc_df <- data.frame(Parameter=names(desc), Description=desc)
 
-params_list <- cem_obj@parameters
-params_list[["r2"]] <- round(params_list[["r2"]], digits=3)
-params_list[["diss_thresh"]] <- round(params_list[["diss_thresh"]], digits=3)
-params_list[["phi"]] <- round(params_list[["phi"]], digits=3)
-params_list[["filter_pval"]] <- round(params_list[["filter_pval"]], digits=3)
+params_list <- cem@parameters
+numeric_params <- c("r2", "diss_thresh", "phi", "filter_pval")
+for(np in numeric_params){
+	if(np %in% names(params_list)){
+		params_list[[np]] <- round(params_list[[np]], digits=3)
+	}
+}
 params <- data.frame(Parameter=names(params_list), 
                      Value=as.character(params_list))
 params <- merge(desc_df, params, all.y=T)
