@@ -28,12 +28,14 @@ Imports:
     clusterProfiler,
     fgsea,
     stringr,
+    knitr,
     rmarkdown,
     igraph,
     ggnetwork,
     DT,
     htmltools,
-    pracma
+    pracma,
+    intergraph
 Suggests:
     testthat
 Remotes:
@@ -42,3 +44,4 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
