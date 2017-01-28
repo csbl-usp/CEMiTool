@@ -1,0 +1,157 @@
+---
+title: "CEMiTool: Co-expression Modules Identification Tool"
+output: 
+  prettydoc::html_pretty:
+    toc: true,
+	theme: cayman,
+	highlight: github
+  pdf_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{CEMiTool: Co-expression Modules Identification Tool}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Basic usage
+
+The `CEMiTool` `R` package provides users with an easy-to-use method to automatically
+implement `WGCNA` analyses with optimized parameters, gene set enrichment analysis and
+overrepresentation analysis.
+
+In order to use `CEMiTool`, you only needs a data.frame containing you expression data,
+with the gene names in the rows and sample names in the columns, as following:
+
+```{r}
+
+library("CEMiTool")
+
+# Load expression data
+data(expr)
+head(expr[,1:4])
+```
+
+There is a function called `cemitool` that receives the expression data and returns a `CEMiTool` object:
+```{r}
+cem <- cemitool(expr)
+```
+
+We can print the `CEMiTool` object to see what is inside of it:
+```{r}
+print(cem)
+```
+
+As you can see there are `r nmodules(cem)` and we the relation between genes and modules are in `cem@module`:
+```{r}
+head(cem@module)
+```
+
+As you include more informations to cemitool we can build a more complete object and as you will see a more reich report.
+
+For instance, we can provide a sample annotation `data.frame` specifying a class for each sample.
+
+```{r}
+# Load your sample annotation data
+data(sample_annotation_data)
+
+head(sample_annotation_data)
+```
+
+And then generate a report:
+
+
+```{r}
+ncores <- parallel::detectCores()
+doParallel::registerDoParallel(cores=ncores)
+```
+
+```{r}
+# Reading GMT file
+gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+gmt_in <- read_gmt(gmt_fname)
+```
+
+```{r}
+# Reading interactions
+int_fname <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
+int_df <- read.delim(int_fname)
+```
+
+```{r}
+# running cemitool
+cem <- cemitool(expr, sample_annotation_data, gmt_in, interactions=int_df, 
+                filter=F, plot=T, split_modules=T, sample_name_column="Sample")
+```
+
+```{r}
+generate_report(cem)
+```
+
+
+```{r}
+write_files(cem, directory="./reports", force=T)
+```
+
+```{r}
+# create a new CEMiTool object
+cem <- new("CEMiTool", expression=expr, 
+               sample_annotation=sample_annotation_data,
+               sample_name_column="Sample")
+```
+
+```{r}
+# Find the modules
+cem <- find_modules(cem) 
+```
+
+```{r}
+# If you desire, split the modules by positive and negative correlation
+cem <- split_modules(cem)
+```
+
+```{r}
+# Take a look at the expression patterns of those modules.
+# You can also use the gene_module variable here.
+cem <- plot_profile(cem)
+print(cem@profile_plot[[1]])
+```
+
+```{r}
+# Now that you got the modules, why don't you just give a look
+# at the enrichment of those modules in your experimental classes
+cem <- mod_gsea(cem)
+```
+
+```{r}
+# Heatmap of gene set enrichment analysis
+cem <- plot_gsea(cem)
+print(cem@enrichment_plot)
+```
+
+```{r}
+# Performs over representation analysis
+cem <- mod_ora(cem, gmt_in)
+```
+
+```{r}
+# plot ora results
+cem <- plot_ora(cem)
+print(cem@barplot_ora[[1]][["pl"]])
+```
+
+```{r}
+# adds interaction
+cem <- include_interactions(cem, int_df)
+```
+
+```{r}
+# plot interactions
+cem <- plot_interactions(cem)
+```
+
+```{r results="hide"}
+# generate report
+generate_report(cem)
+generate_report(cem, output_format=c("pdf_document", "html_document"))
+```
+
