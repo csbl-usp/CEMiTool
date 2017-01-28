@@ -431,18 +431,28 @@ setMethod('show', signature(object='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}
 #' @param directory a directory
+#' @param force if the directory exists the execution will not stop
 #' 
 #' @return
 #'
 #' @rdname save_files
 #' @export
-setGeneric('write_files', function(cem, directory) {
+setGeneric('write_files', function(cem, ...) {
     standardGeneric('write_files')
 })
 
 #' @rdname save_files
 setMethod('write_files', signature(cem='CEMiTool'),
-          function(cem, directory) {
+          function(cem, directory, force=FALSE) {
+              if(dir.exists(directory)){
+                  if(!force){
+                      stop("Stopping analysis: ", directory, " already exists!")
+                  } else {
+                      warning(directory, " already exists!")
+                  }
+              } else {
+                  dir.create(directory)
+              }
               if(nrow(cem@module) > 0){
                   write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=F)
               }
