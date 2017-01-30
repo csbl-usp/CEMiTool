@@ -26,8 +26,8 @@ The `CEMiTool` `R` package provides users with an easy-to-use method to automati
 implement `WGCNA` analyses with optimized parameters, gene set enrichment analysis and
 overrepresentation analysis.
 
-In order to use `CEMiTool`, you only needs a data.frame containing you expression data,
-with the gene names in the rows and sample names in the columns, as following:
+In order to use `CEMiTool`, you only need a data.frame containing expression data,
+with gene symbols in the rows and sample names in the columns, as following:
 
 ```{r}
 
@@ -38,24 +38,24 @@ data(expr)
 head(expr[,1:4])
 ```
 
-There is a function called `cemitool` that receives the expression data and returns a `CEMiTool` object:
+The `cemitool` function receives the expression data and returns a `CEMiTool` object:
 ```{r}
 cem <- cemitool(expr)
 ```
 
-We can print the `CEMiTool` object to see what is inside of it:
+To see what's inside of the `CEMiTool` object we can use `print`:
 ```{r}
 print(cem)
 ```
 
-There are `r nmodules(cem)` modules and we can see the relation between genes and modules in `cem@module` slot:
+There are `r nmodules(cem)` modules and the relation between genes and modules can be seen in `cem@module` slot:
 ```{r}
 head(cem@module)
 ```
 
-As you include more informations to cemitool we can build a more complete object and as you will see more rich reports.
+As more information is included in CEMiTool a more complete object can be built and richer reports can be provided.
 
-For instance, we can provide a sample annotation `data.frame` specifying a class for each sample.
+For instance, we can provide a sample annotation `data.frame` specifying a class for each sample. Classes can represent, for example, different conditions, phenotypes, cell lines, time points, etc. In this example, classes are defined as samples obtained on the same time points, where "g0" represents samples obtained at the beginning of the experiment, time point 0. 
 
 ```{r}
 # Load your sample annotation data
@@ -65,7 +65,7 @@ head(sample_annot)
 ```
 
 And then generate a report:
-```{r}
+```{r, echo=FALSE}
 generate_report(cem)
 ```
 
