@@ -24,7 +24,8 @@ setGeneric('plot_profile', function(cem, ...) {
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
           function(cem, order=TRUE) {
-              modules <- sort(unique(cem@module[, 'modules']))
+              modules <- unique(cem@module[, 'modules'])
+              modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
               expr <- expr_data(cem)
               annot <- cem@sample_annotation
               sample_name_column <- cem@sample_name_column
