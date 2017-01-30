@@ -163,7 +163,7 @@ setMethod('find_modules', signature('CEMiTool'),
         # The merged modules colors
         merged_mods <- factor(merged_mods$colors)
 
-        levels(merged_mods) <- paste0('M', rank(-table(merged_mods)))
+        levels(merged_mods) <- paste0('M', rank(-table(merged_mods), ties.method='first'))
 
         out[, 'modules'] <- as.character(merged_mods)
     }
