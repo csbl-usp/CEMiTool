@@ -2,9 +2,9 @@
 title: "CEMiTool: Co-expression Modules Identification Tool"
 output: 
   prettydoc::html_pretty:
-    toc: true,
-	theme: cayman,
-	highlight: github
+    toc: true
+    theme: cayman
+    highlight: github
   pdf_document:
     toc: true
 vignette: >
@@ -13,7 +13,14 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Basic usage
+
+```{r style, echo=FALSE, results="asis", message=FALSE}
+knitr::opts_chunk$set(tidy = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+# Basic usage
 
 The `CEMiTool` `R` package provides users with an easy-to-use method to automatically
 implement `WGCNA` analyses with optimized parameters, gene set enrichment analysis and
@@ -41,24 +48,31 @@ We can print the `CEMiTool` object to see what is inside of it:
 print(cem)
 ```
 
-As you can see there are `r nmodules(cem)` and we the relation between genes and modules are in `cem@module`:
+There are `r nmodules(cem)` modules and we can see the relation between genes and modules in `cem@module` slot:
 ```{r}
 head(cem@module)
 ```
 
-As you include more informations to cemitool we can build a more complete object and as you will see a more reich report.
+As you include more informations to cemitool we can build a more complete object and as you will see more rich reports.
 
 For instance, we can provide a sample annotation `data.frame` specifying a class for each sample.
 
 ```{r}
 # Load your sample annotation data
-data(sample_annotation_data)
+data(sample_annot)
 
-head(sample_annotation_data)
+head(sample_annot)
 ```
 
 And then generate a report:
+```{r}
+generate_report(cem)
+```
 
+The report will be in the directory `./reports`.
+
+
+...
 
 ```{r}
 ncores <- parallel::detectCores()
@@ -79,8 +93,8 @@ int_df <- read.delim(int_fname)
 
 ```{r}
 # running cemitool
-cem <- cemitool(expr, sample_annotation_data, gmt_in, interactions=int_df, 
-                filter=F, plot=T, split_modules=T, sample_name_column="Sample")
+cem <- cemitool(expr, sample_annot, gmt_in, interactions=int_df, 
+                filter=F, plot=T, split_modules=T)
 ```
 
 ```{r}
@@ -95,8 +109,7 @@ write_files(cem, directory="./reports", force=T)
 ```{r}
 # create a new CEMiTool object
 cem <- new("CEMiTool", expression=expr, 
-               sample_annotation=sample_annotation_data,
-               sample_name_column="Sample")
+               sample_annotation=sample_annot)
 ```
 
 ```{r}
