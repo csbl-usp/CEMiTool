@@ -11,10 +11,7 @@ output:
 ---
 
 ```{r echo=FALSE, results="asis", cache=F, label=title}
-
 cat("#", title, "{.tabset}")
-
-
 ```
 
 ## Modules ##
@@ -24,7 +21,9 @@ cat("#", title, "{.tabset}")
     hub_list <- get_hubs(cem, n=5)
     Hubs <- sapply(hub_list, paste, collapse=", ")
     mod_df <- merge(mod_df, as.data.frame(Hubs), by.x="Module", by.y="row.names")
-    DT::datatable(mod_df, rownames=FALSE)
+    modules <- as.character(mod_df[, "Module"])
+    ord <- order(as.numeric(stringr::str_extract(modules, "\\d+")))
+    DT::datatable(mod_df[ord, ], rownames=FALSE)
 ```
 
 
@@ -78,8 +77,10 @@ cat("#", title, "{.tabset}")
         ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
         ora_list <- split(ora_df, cem@ora$Module)
         there_is_barplot <- length(cem@barplot_ora) > 0
+        modules <- names(ora_list)
+        modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
 
-        for(n in names(ora_list)){
+        for(n in modules){
             h3n <- paste("###", n) 
             writeLines(h3n)
             if(there_is_barplot){
