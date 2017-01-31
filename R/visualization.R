@@ -131,7 +131,9 @@ setMethod('plot_ora', signature('CEMiTool'),
                                                 title=unique(x$Module),
                                                 ...)
               })
-              cem@barplot_ora <- res
+              modules <- names(res) 
+              modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
+              cem@barplot_ora <- res[modules]
               return(cem)
           }
 )
@@ -294,7 +296,8 @@ setMethod('plot_interactions', signature('CEMiTool'),
                                                  coexp_hubs=hubs[[name]])
                                        })
               names(res) <- mod_names
-              cem@interaction_plot <- res
+              mod_names_ordered <- mod_names[order(as.numeric(stringr::str_extract(mod_names, "\\d+")))]
+              cem@interaction_plot <- res[mod_names_ordered]
               return(cem)
           })
 
