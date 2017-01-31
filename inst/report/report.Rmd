@@ -37,8 +37,12 @@ cat("#", title, "{.tabset}")
     }
 ```
 
+```{r echo=FALSE}
+height <- 1.1*nrow(cem@enrichment$nes)
+```
+
 ## Gene Set Enrichment Analysis 
-```{r echo=FALSE, results="asis", fig.width=10, fig.align="center", cache=F, label=gsea-plot}
+```{r echo=FALSE, results="asis", fig.width=10, fig.height=height, fig.align="center", cache=F, label=gsea-plot}
     if(!is.null(names(cem@enrichment_plot))){
         plot(cem@enrichment_plot)
     } else {
