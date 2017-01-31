@@ -324,7 +324,7 @@ cemitool <- function(expr,
             results <- plot_gsea(results)
         }
 
-        if (nrow(results@ora) == 0) {
+        if (nrow(results@ora) > 0) {
             if(verbose){
                 message("Plotting over representation analysis results ...")
             }
