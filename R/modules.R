@@ -205,7 +205,8 @@ setGeneric('split_modules', function(cem, ...) {
 #' @rdname split_modules
 setMethod('split_modules', signature(cem='CEMiTool'),
           function(cem, min_ngen=30, verbose=F) {
-
+            save(file="/tmp/CEMITOOL.RDATA", list=ls())
+            #load(file="/tmp/CEMITOOL.RDATA")
             if (verbose) {
                 message('Splitting modules')
             }
@@ -235,24 +236,28 @@ setMethod('split_modules', signature(cem='CEMiTool'),
                     pos_cors <- rownames(gene_cors)[which(k==1)]
                     neg_cors <- rownames(gene_cors)[which(k==2)]
         
-                    # checks for the minimum module size of positive correlated genes
-                    if (length(pos_cors) >= min_ngen) {
-                        pos_mod <- data.frame(genes=pos_cors, modules=paste0(mod, '.A'), stringsAsFactors=FALSE)
+                    # checks for the minimum module size of positive and negative correlated genes
+                    if (length(pos_cors) >= min_ngen && length(neg_cors) >= min_ngen) {
+                        modA_name <- paste0(mod, ".A")
+                        modB_name <- paste0(mod, ".B")
+                        if(verbose){
+                            prop <- sum(gene_cors < 0, na.rm=T)/(nrow(gene_cors)**2)
+                            prop_pos <- sum(gene_cors[pos_cors, pos_cors] < 0, na.rm=T)/(length(pos_cors)**2)
+                            prop_neg <- sum(gene_cors[neg_cors, neg_cors] < 0, na.rm=T)/(length(neg_cors)**2)
+                            message("Proportion of negative correlations on ", mod, ": ", round(prop_pos, digits=4))
+                            message("Proportion of negative correlations on ", modA_name, ": ", round(prop_pos, digits=4))
+                            message("Proportion of negative correlations on ", modB_name, ": ", round(prop_neg, digits=4))
+                        }
+                        pos_mod <- data.frame(genes=pos_cors, modules=modA_name, stringsAsFactors=FALSE)
+                        neg_mod <- data.frame(genes=neg_cors, modules=modB_name, stringsAsFactors=FALSE)
+                        mod_return <- rbind(pos_mod, neg_mod)
                     } else {
-                        pos_mod <- data.frame(stringsAsFactors=FALSE)
-
-                    }
-        
-                    # checks for the minimum module size of negative correlated genes
-                    if (length(neg_cors) >= min_ngen ) {
-                        neg_mod <- data.frame(genes=neg_cors, modules=paste0(mod, '.B'), stringsAsFactors=FALSE)
-                    } else {
-                        neg_mod <- data.frame(stringsAsFactors=FALSE)
-                    }
-        
-                    splitted_mods <- rbind(pos_mod, neg_mod)
-        
-                    return(splitted_mods)
+                        if (verbose) {
+                            message(paste0('Module ', mod, ' will not be splitted'))
+                        }
+                        mod_return <- data.frame(genes=genes, modules=mod, stringsAsFactors=FALSE)
+                    } 
+                    return(mod_return)
         
                 } else {
                     # no negative correlations inside module mod
