@@ -106,7 +106,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating adjacency matrix
     our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type='signed')
-	cem@adjacency <- our_adj
+    cem@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
     our_tom <- WGCNA::TOMsimilarity(our_adj)
@@ -205,13 +205,14 @@ setGeneric('split_modules', function(cem, ...) {
 #' @rdname split_modules
 setMethod('split_modules', signature(cem='CEMiTool'),
           function(cem, min_ngen=30, verbose=F) {
-            save(file="/tmp/CEMITOOL.RDATA", list=ls())
-            #load(file="/tmp/CEMITOOL.RDATA")
             if (verbose) {
                 message('Splitting modules')
             }
             modules <- unique(cem@module[, 'modules'])
             submods <- lapply(modules, function(mod){
+                if (verbose) {
+                    message('Evaluating Module ', mod)
+                }
         
                 # subsets from expr all genes inside module mod
                 genes <- cem@module[cem@module[,'modules']==mod, 'genes']
@@ -219,6 +220,18 @@ setMethod('split_modules', signature(cem='CEMiTool'),
         
                 # recalculates the correlation matrix for genes in module mod
                 gene_cors <- cor(t(mod_expr), use='everything', method='pearson')
+
+                test_obj <- diptest::dip.test(gene_cors[lower.tri(gene_cors)])
+                bimod_pval <- test_obj$p.value
+
+                if(verbose){
+                    tryCatch({
+                        bimod_ratio <- modes::bimodality_ratio(gene_cors[lower.tri(gene_cors)])
+                        message("Bimodality ratio: ", bimod_ratio)
+                        message("Hartingans Dip Test - p-value: ", bimod_pval)
+                    })
+                }
+                
         
                 # checks if there are positive and negative correlations
                 # inside module mod
@@ -241,10 +254,10 @@ setMethod('split_modules', signature(cem='CEMiTool'),
                         modA_name <- paste0(mod, ".A")
                         modB_name <- paste0(mod, ".B")
                         if(verbose){
-                            prop <- sum(gene_cors < 0, na.rm=T)/(nrow(gene_cors)**2)
-                            prop_pos <- sum(gene_cors[pos_cors, pos_cors] < 0, na.rm=T)/(length(pos_cors)**2)
-                            prop_neg <- sum(gene_cors[neg_cors, neg_cors] < 0, na.rm=T)/(length(neg_cors)**2)
-                            message("Proportion of negative correlations on ", mod, ": ", round(prop_pos, digits=4))
+                            prop <- sum(gene_cors < 0, na.rm=T)/(nrow(gene_cors)**2 - nrow(gene_cors))
+                            prop_pos <- sum(gene_cors[pos_cors, pos_cors] < 0, na.rm=T)/(length(pos_cors)**2 - length(pos_cors))
+                            prop_neg <- sum(gene_cors[neg_cors, neg_cors] < 0, na.rm=T)/(length(neg_cors)**2 - length(neg_cors))
+                            message("Proportion of negative correlations on ", mod, ": ", round(prop, digits=4))
                             message("Proportion of negative correlations on ", modA_name, ": ", round(prop_pos, digits=4))
                             message("Proportion of negative correlations on ", modB_name, ": ", round(prop_neg, digits=4))
                         }
