@@ -57,7 +57,7 @@ generate_report(cem_obj, output_format=c("pdf_document", "html_document"))
 
 # running cemitool
 res <- cemitool(expr, sample_annot, gmt_in, interactions=int_df, 
-                filter=F, plot=T, split_modules=T)
+                filter=F, plot=T, split_modules=T, verbose=T)
 
 generate_report(res)
 
