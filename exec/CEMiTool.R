@@ -14,7 +14,7 @@ Options:
   -s <ANNOT> --sample-annot=<ANNOT> sample annotation, must have a column with sample names and class
   --samples-column=<SAMPLECOL>      the column name containing sample names in template file [default: SampleName]
   --class-column=<CLASSCOL>         the column name containing classes in template file [default: Class]
-  -nf --nofilter                    filter the expression data.frame
+  --dontfilter                      filter the expression data.frame
   --filter-pval=<p>                 p-value to be used in the filtering step [default: 0.1]
   --genenum=<GENNUM>                number of genes remaining after filtering
   --gmtfile=<GMT>                   GMT file name (Gene Matrix Transposed format)
