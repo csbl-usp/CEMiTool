@@ -58,7 +58,7 @@ setMethod('find_modules', signature('CEMiTool'),
     
     ## Automatic selection of soft-thresholding power beta ##
     beta <- WGCNA::pickSoftThreshold(expr_t, powerVector=powers,
-                              networkType='signed', moreNetworkConcepts=TRUE,
+                              networkType='unsigned', moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
                                               method=cor_method),
                               verbose=verbosity)
