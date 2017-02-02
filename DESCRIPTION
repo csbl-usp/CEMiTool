@@ -35,7 +35,9 @@ Imports:
     DT,
     htmltools,
     pracma,
-    intergraph
+    intergraph,
+    modes,
+    diptest
 Suggests:
     testthat
 Remotes:
