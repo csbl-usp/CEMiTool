@@ -158,7 +158,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
         # Merging modules
         merged_mods <-  WGCNA::mergeCloseModules(expr_t, our_colors,
-                                          cutHeight=diss_thresh)
+                                          cutHeight=me_diss_thresh)
 
         # The merged modules colors
         merged_mods <- factor(merged_mods$colors)
