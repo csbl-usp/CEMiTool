@@ -50,7 +50,12 @@ ora <- function(topgenes, gmt_list, allgenes){
                          universe = allgenes,
                          TERM2GENE = gmt_list[['term2gene']],
                          TERM2NAME = gmt_list[['term2name']])
-    result <- enriched@result
+    if (!is.null(enriched)) {
+        result <- enriched@result
+    } else {
+        warning("Enrichment is NULL. Either your gmt file is not good or your modules are really not enriched for any of the pathways in the gmt file")
+        result <- NULL
+    }
     return(result)
 }
 
