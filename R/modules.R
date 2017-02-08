@@ -122,16 +122,11 @@ setMethod('find_modules', signature('CEMiTool'),
                               deepSplit = 2,
                               pamRespectsDendro = FALSE,
                               minClusterSize = min_ngen)
-    
-    our_colors <- paste0('M',our_mods)
-    
-    #our_table <- table(our_mods)
+    ngens <- length(unique(our_mods))
 
-    #our_colors <- WGCNA::labels2colors(our_mods)
 
-    n_mods <- length(unique(our_colors))
+    n_mods <- length(unique(our_mods))
     
-    out <- data.frame(genes=rownames(expr), modules=our_colors, stringsAsFactors=FALSE)
 
     # checks number of modules found
     if (n_mods <= 1) {
@@ -144,7 +139,7 @@ setMethod('find_modules', signature('CEMiTool'),
             message('Merging modules based on eigengene similarity')
         }
         # Calculates eigengenes
-        me_list <- WGCNA::moduleEigengenes(expr_t, colors=our_colors)
+        me_list <- WGCNA::moduleEigengenes(expr_t, colors=our_mods, grey=0)
         me_eigen <- me_list$eigengenes
 
         # Calculates dissimilarity of module eigengenes
@@ -157,16 +152,22 @@ setMethod('find_modules', signature('CEMiTool'),
         me_diss_thresh <- 1 - diss_thresh 
 
         # Merging modules
-        merged_mods <-  WGCNA::mergeCloseModules(expr_t, our_colors,
+
+        merged_mods <-  WGCNA::mergeCloseModules(expr_t, our_mods,
                                           cutHeight=me_diss_thresh)
 
         # The merged modules colors
-        merged_mods <- factor(merged_mods$colors)
-
-        levels(merged_mods) <- paste0('M', rank(-table(merged_mods), ties.method='first'))
-
-        out[, 'modules'] <- as.character(merged_mods)
+        our_mods <- merged_mods$colors
     }
+
+    original_names <- setdiff(names(sort(table(our_mods), decreasing=TRUE)), 0)
+    new_names <- paste0("M", 1:length(original_names))
+    names(new_names) <- original_names
+    new_names["0"] <- "Not.Correlated"
+
+    out <- data.frame(genes=rownames(expr), 
+                      modules=new_names[as.character(our_mods)], 
+                      stringsAsFactors=FALSE)
     
     params <- list('cor_method'=cor_method,
                    'min_ngen'=min_ngen,
