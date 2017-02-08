@@ -20,9 +20,9 @@ read_gmt <- function(fname){
     names(gmt_desc) <- names(gmt_genes) <- gmt_names
     res <- list()
     res[["term2gene"]] <- do.call(rbind, lapply(names(gmt_genes),
-                            function(n) cbind(Term=n, Gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
+                            function(n) cbind.data.frame(Term=n, Gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
     res[["term2name"]] <- do.call(rbind, lapply(names(gmt_desc),
-                            function(n) cbind(Term=n, Name=gmt_desc[[n]], stringsAsFactors=FALSE)))
+                            function(n) cbind.data.frame(Term=n, Name=gmt_desc[[n]], stringsAsFactors=FALSE)))
     return(res)
 }
 
@@ -54,7 +54,12 @@ ora <- function(topgenes, gmt_list, allgenes){
         result <- enriched@result
     } else {
         warning("Enrichment is NULL. Either your gmt file is not good or your modules are really not enriched for any of the pathways in the gmt file")
-        result <- NULL
+        result <- data.frame(Module=character(), ID=character(),
+                             Description=character(),
+                             GeneRation=numeric(), BgRatio=numeric(),
+                             pvalue=numeric(), p.adjust=numeric(),
+                             qvalue=numeric(), geneID=character(),
+                             Count=numeric(), stringsAsFactors=FALSE)
     }
     return(result)
 }
@@ -94,7 +99,9 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
               res_list <- lapply(mods, ora, gmt_in, allgenes)
               names(res_list) <- names(mods)
               for(n in names(res_list)) {
-                  res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]], stringsAsFactors=FALSE)
+                  if (nrow(res_list[[n]]) > 0){
+                    res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]], stringsAsFactors=FALSE)
+                  }
               }
               res <- do.call(rbind, res_list)
               rownames(res) <- NULL
