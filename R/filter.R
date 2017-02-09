@@ -36,11 +36,10 @@ setMethod('filter_expr', signature('CEMiTool'),
     expr_var <- apply(expr, 1, var)
 
     mean_var <- mean(expr_var)
-    squared_mean_var <- mean(expr_var)^2
-    mean_var_sqr <- mean(expr_var^2)
+    var_var <- var(expr_var)
 
-    ah <- squared_mean_var/(mean_var_sqr - squared_mean_var) + 2
-    bh <- (ah-1)*(ah-2)*(mean_var_sqr - squared_mean_var)/mean_var
+    ah <- mean_var/var_var + 2*var_var
+    bh <- mean_var*(ah - 1)
 
     p <- sapply(expr_var, function(x) {
         ig <- pracma::gammainc(bh/x, ah)['uppinc']
