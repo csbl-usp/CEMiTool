@@ -33,7 +33,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
 
 setMethod("initialize", signature="CEMiTool",
           function(.Object, expression,
-                   sample_name_column="SampleName", 
+                   sample_name_column="SampleName",
                    class_column="Class", ...){
               .Object@sample_name_column <- sample_name_column
               .Object@class_column <- class_column
@@ -43,7 +43,7 @@ setMethod("initialize", signature="CEMiTool",
               }
               if (!missing(expression)) {
                   slot(.Object, 'expression') <- expression
-                  slot(.Object, 'selected_genes') <- rownames(expression) 
+                  slot(.Object, 'selected_genes') <- rownames(expression)
               }
               return(.Object)
           })
@@ -55,10 +55,10 @@ setMethod("initialize", signature="CEMiTool",
 #' @param value Object of class \code{data.frame} with gene
 #'        expression data
 #' @param filtered logical. If TRUE retrieves filtered expression data
-#' 
+#'
 #' @return Object of class \code{data.frame} with gene expression data
 #'
-#' @rdname expr_data 
+#' @rdname expr_data
 #' @export
 setGeneric("expr_data", function(cem, ...) {
             standardGeneric("expr_data")
@@ -96,8 +96,8 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @param cem Object of class \code{CEMiTool}
 #' @param value a character vector containing colors for each module
 #'              the names should match with module names
-#' 
-#' @return 
+#'
+#' @return
 #'
 #' @rdname mod_colors
 #' @export
@@ -111,7 +111,7 @@ setMethod("mod_colors", signature("CEMiTool"),
             mod_names <- unique(cem@module$modules)
             nmod <- length(mod_names)
             cols <- cem@mod_colors
-            if(nmod != 0) { 
+            if(nmod != 0) {
                 if(length(cem@mod_colors) == 0){
                     if(nmod <= 16) {
                         cols <- rainbow(16, s = 1, v = 0.7)[1:nmod]
@@ -145,9 +145,9 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #' Retrive or set the sample_annotation attribute
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param value a data.frame containing the sample annotation, 
-#'              should have at least two columns containing the Class 
-#'              and the Sample Name that should match with samples in 
+#' @param value a data.frame containing the sample annotation,
+#'              should have at least two columns containing the Class
+#'              and the Sample Name that should match with samples in
 #'              expression
 #'
 #' @rdname sample_annotation
@@ -172,13 +172,13 @@ setGeneric("sample_annotation<-", function(cem, value) {
 setReplaceMethod("sample_annotation", signature("CEMiTool"),
          function(cem, value){
             if(!cem@sample_name_column %in% colnames(value)){
-                stop("Please supply a data.frame with a column named ", 
-                     cem@sample_name_column, 
+                stop("Please supply a data.frame with a column named ",
+                     cem@sample_name_column,
                      " or change the slot sample_name_column.")
             }
             if(!cem@class_column %in% colnames(value)){
-                stop("Please supply a data.frame with a column named ", 
-                     cem@class_column, 
+                stop("Please supply a data.frame with a column named ",
+                     cem@class_column,
                      " or change the slot class_column.")
             }
             cem@sample_annotation <- value
@@ -201,9 +201,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default \code{"pearson"}.
-#' @param sample_name_column A character string indicating the sample column 
+#' @param sample_name_column A character string indicating the sample column
 #'        name of the annotation table.
-#' @param class_column A character string indicating the class column name of the 
+#' @param class_column A character string indicating the class column name of the
 #'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
 #' @param split_modules Logical. If \code{TRUE}, splits modules by correlation sign.
@@ -215,13 +215,13 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return a cemitool object 
+#' @return a cemitool object
 #'
 #' @examples
 #' cemitool(expr=expr)
 #'
 #' @export
-cemitool <- function(expr, 
+cemitool <- function(expr,
                      annot,
                      gmt,
                      interactions,
@@ -244,12 +244,12 @@ cemitool <- function(expr,
     if (missing(expr)) {
         stop('Must provide, at least, expression data')
     }
- 
+
     # initialize CEMiTool object to hold data, analysis results and plots
-    results <- new('CEMiTool', expression=expr, 
-                   sample_name_column=sample_name_column, 
+    results <- new('CEMiTool', expression=expr,
+                   sample_name_column=sample_name_column,
                    class_column=class_column)
-    
+
     if (filter) {
         if(!missing(n_genes)){
             results <- filter_expr(results, n=n_genes)
@@ -284,7 +284,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Including interactions ...")
         }
-        results <- include_interactions(results, int_df=interactions, 
+        results <- include_interactions(results, int_df=interactions,
                                         directed=directed)
     }
 
@@ -328,7 +328,7 @@ cemitool <- function(expr,
             if(verbose){
                 message("Plotting over representation analysis results ...")
             }
-            
+
             results <- plot_ora(results)
         }
 
@@ -346,7 +346,7 @@ cemitool <- function(expr,
 #' Get the number of modules on a cemitool object
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' 
+#'
 #' @return number of modules
 #'
 #' @rdname nmodules
@@ -362,7 +362,7 @@ setMethod('nmodules', signature(cem='CEMiTool'),
               if(!is.null(cem@module)){
                   n <- length(unique(cem@module$modules))
               } else {
-                  message("Run cemitool function to get modules!") 
+                  message("Run cemitool function to get modules!")
               }
               return(n)
           }
@@ -383,6 +383,15 @@ setMethod('show', signature(object='CEMiTool'),
               } else {
                   cat("\b\b (data.frame: ", nrow(object@module), "x", ncol(object@module), "): \n", sep="")
                   print(object@module[1:3, ])
+              }
+              cat("- Expression file: ")
+              if(nrow(object@expression) == 0){
+                  cat("null\n")
+              } else {
+                  cat("data.frame with", nrow(object@expression), "genes and", ncol(object@expression), "samples\n")
+              }
+              if(is.character(object@selected_genes)){
+                  cat("- Selected data:", length(object@selected_genes), "genes selected\n")
               }
               cat("- Gene Set Enrichment Analysis: ")
               if(length(object@enrichment)!=3) {
@@ -432,7 +441,7 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}
 #' @param directory a directory
 #' @param force if the directory exists the execution will not stop
-#' 
+#'
 #' @return
 #'
 #' @rdname save_files
@@ -472,8 +481,8 @@ setMethod('write_files', signature(cem='CEMiTool'),
                                        Gene1=character(),
                                        Gene2=character())
                   for(n in names(cem@interactions)){
-                      int_df <- rbind.data.frame(int_df, 
-                                                 data.frame(Module=n, 
+                      int_df <- rbind.data.frame(int_df,
+                                                 data.frame(Module=n,
                                                             igraph::get.edgelist(cem@interactions[[n]])
                                                             ))
                   }
