@@ -147,7 +147,25 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         return(cem@module[cem@module[, 'modules']==mod, 'genes'])
     })
     names(gene_sets) <- modules
-        
+    
+    annot <- cem@sample_annotation
+    class_col <- cem@class_column
+    sample_col <- cem@sample_name_column
+    classes <- unique(annot[, class_col])
+    
+    
+    # Check if expression samples are all in sample_annotation
+    expr_samples <- names(expr_data(cem))
+    annot_samples <- sample_annotation(cem)[, sample_col]
+    if(!all(expr_samples %in% annot_samples)){
+        stop("Sample annotation file does not contain all samples in expression file. Please input new sample annotation file using function sample_annotation()")
+    }
+    if(length(expr_samples) < length(annot_samples)){
+        warning("Expression file has less samples than annotation file. Cutting annotation file.")
+        annot <- annot[annot[,sample_col] %in% expr_samples,]
+        annot_samples <- annot[, sample_col]
+    }
+    
     # expression to z-score
     z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
                                   center=TRUE, 
@@ -155,10 +173,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
                           stringsAsFactors=FALSE)
 
     # calculates enrichment for each module for each class in annot
-    annot <- cem@sample_annotation
-    class_col <- cem@class_column
-    sample_col <- cem@sample_name_column
-    classes <- unique(annot[, class_col])
+    
     gsea_list <- lapply(classes, function(class_group){
         
         if (verbose) {

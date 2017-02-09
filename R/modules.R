@@ -34,7 +34,7 @@ setGeneric('find_modules', function(cem, ...) {
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
           function(cem, cor_method=c('pearson', 'spearman'),
-                             min_ngen=30, merge_similar=T,
+                             min_ngen=20, merge_similar=T,
                              diss_thresh=0.8, verbose=F)
 {
     cor_method <- match.arg(cor_method)
@@ -109,7 +109,6 @@ setMethod('find_modules', signature('CEMiTool'),
     cem@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
-    message("Using signed TOM")
     our_tom <- WGCNA::TOMsimilarity(our_adj, TOMType = "signed")
 
     # Determining TOM based distance measure
@@ -123,9 +122,8 @@ setMethod('find_modules', signature('CEMiTool'),
                               deepSplit = 2,
                               pamRespectsDendro = FALSE,
                               minClusterSize = min_ngen)
-    ngens <- length(unique(our_mods))
-
-
+    
+    # Number of modules
     n_mods <- length(unique(our_mods))
     
 
@@ -159,6 +157,9 @@ setMethod('find_modules', signature('CEMiTool'),
 
         # The merged modules colors
         our_mods <- merged_mods$colors
+        
+        # Number of modules after merging
+        n_mods <- length(unique(our_mods))
     }
 
     original_names <- setdiff(names(sort(table(our_mods), decreasing=TRUE)), 0)
@@ -176,7 +177,8 @@ setMethod('find_modules', signature('CEMiTool'),
                    'diss_thresh'=diss_thresh,
                    'r2'=our_r2, 
                    'beta'=our_beta, 
-                   'phi'=phi
+                   'phi'=phi,
+                   'n_mods'=n_mods
                    )
     cem@parameters <- c(cem@parameters, params)
     cem@module <- out
