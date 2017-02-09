@@ -38,7 +38,7 @@ setMethod('filter_expr', signature('CEMiTool'),
     mean_var <- mean(expr_var)
     var_var <- var(expr_var)
 
-    ah <- mean_var/var_var + 2*var_var
+    ah <- mean_var^2/var_var + 2*var_var
     bh <- mean_var*(ah - 1)
 
     p <- sapply(expr_var, function(x) {
