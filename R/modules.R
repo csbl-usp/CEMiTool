@@ -394,9 +394,13 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
               }
               mod2gene <- split(cem@module$genes, cem@module$modules)
               hubs <- lapply(mod2gene, function(x){
-                                           mod_adj <- cem@adjacency[x, x]
-                                           top <- head(sort(rowSums(mod_adj), decreasing=T), n=n)
-                                           return(names(top))
+                                           if (length(x) > 1) {
+                                               mod_adj <- cem@adjacency[x, x]
+                                               top <- head(sort(rowSums(mod_adj), decreasing=T), n=n)
+                                               return(names(top))
+                                           } else {
+                                               return(character())
+                                           }
                                        })
               return(hubs)
           })
