@@ -102,6 +102,11 @@ setMethod('find_modules', signature('CEMiTool'),
         }
     }
     our_beta <- as.integer(st[2])
+    if(is.na(our_beta)){
+        cem@parameters <- c(cem@parameters, NA)
+        stop('Could not specify the parameter Beta. No modules found.')
+    }
+    
     our_r2 <- st[1]
 
     # Calculating adjacency matrix
@@ -129,7 +134,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # checks number of modules found
     if (n_mods <= 1) {
-        stop('Could not specify the parameter Beta. No modules found.')
+        stop('No modules found.')
     }
 
     # if merge_similar=TRUE, merges similar modules
