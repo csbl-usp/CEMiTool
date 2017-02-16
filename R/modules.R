@@ -35,6 +35,7 @@ setGeneric('find_modules', function(cem, ...) {
 setMethod('find_modules', signature('CEMiTool'), 
           function(cem, cor_method=c('pearson', 'spearman'),
                              min_ngen=20, merge_similar=T,
+                             network_type='unsigned', tom_type='signed',
                              diss_thresh=0.8, verbose=F)
 {
     cor_method <- match.arg(cor_method)
@@ -45,7 +46,8 @@ setMethod('find_modules', signature('CEMiTool'),
     names(expr_t) <- rownames(expr)
     rownames(expr_t) <- colnames(expr)
 
-
+    expr_cor <- cor(expr_t)
+    
     if (verbose) {
         message('Selecting Beta')
         verbosity <- 10
@@ -58,7 +60,7 @@ setMethod('find_modules', signature('CEMiTool'),
     
     ## Automatic selection of soft-thresholding power beta ##
     beta <- WGCNA::pickSoftThreshold(expr_t, powerVector=powers,
-                              networkType='unsigned', moreNetworkConcepts=TRUE,
+                              networkType=network_type, moreNetworkConcepts=TRUE,
                               corOptions=list(use='p',
                                               method=cor_method),
                               verbose=verbosity)
@@ -110,11 +112,11 @@ setMethod('find_modules', signature('CEMiTool'),
     our_r2 <- st[1]
 
     # Calculating adjacency matrix
-    our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type='unsigned')
+    our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type=network_type)
     cem@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
-    our_tom <- WGCNA::TOMsimilarity(our_adj, TOMType = "signed")
+    our_tom <- WGCNA::TOMsimilarity(our_adj*sign(expr_cor), TOMType=tom_type)
 
     # Determining TOM based distance measure
     our_diss <- 1 - our_tom
