@@ -229,6 +229,8 @@ cemitool <- function(expr,
                      filter_pval=0.1,
                      n_genes,
                      cor_method=c('pearson', 'spearman'),
+                     network_type='unsigned',
+                     tom_type='signed',
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
@@ -269,6 +271,8 @@ cemitool <- function(expr,
                             min_ngen=min_ngen,
                             merge_similar=merge_similar,
                             diss_thresh=diss_thresh,
+                            network_type=network_type,
+                            tom_type=tom_type,
                             verbose=verbose)
 
     # if user wants splitted modules
