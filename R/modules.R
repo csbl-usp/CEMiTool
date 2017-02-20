@@ -46,8 +46,6 @@ setMethod('find_modules', signature('CEMiTool'),
     names(expr_t) <- rownames(expr)
     rownames(expr_t) <- colnames(expr)
 
-    expr_cor <- cor(expr_t)
-    
     if (verbose) {
         message('Selecting Beta')
         verbosity <- 10
@@ -117,7 +115,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating Topological Overlap Matrix
     if (tom_type == 'signed') {
-        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(expr_cor), TOMType=tom_type)
+        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(cor(expr_t)), TOMType=tom_type)
     } else if (tom_type == 'unsigned') {
         our_tom <- WGCNA::TOMsimilarity(our_adj, TOMType=tom_type)
     }
