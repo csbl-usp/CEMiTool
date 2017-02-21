@@ -243,7 +243,11 @@ setMethod('plot_gsea', signature('CEMiTool'),
               pval <- as.matrix(pval)
               nes[which(pval > pv_cut, arr.ind=T)] <- 0
 
-              row_order <- rownames(nes)[hclust(dist(nes))$order]
+              if(nrow(nes) > 2){
+                  row_order <- rownames(nes)[hclust(dist(nes))$order]
+              } else {
+                  row_order <- rownames(nes)
+              }
 
               nes_melted <- reshape2::melt(nes)
               colnames(nes_melted) <- c("Module", "Class", "NES")
