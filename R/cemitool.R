@@ -193,7 +193,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'
 #' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
-#' @param gmt a list from function prepare_gmt containing the gene sets.
+#' @param gmt a list from function read_gmt containing the gene sets.
 #' @param interactions a data.frame containing two columns with gene names.
 #' @param filter logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.
