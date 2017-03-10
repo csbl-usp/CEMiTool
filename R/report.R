@@ -20,5 +20,5 @@ setGeneric('generate_report', function(cem, ...) {
 setMethod('generate_report', signature('CEMiTool'),
           function(cem, max_rows_ora=50, title="Report", directory="./reports", ...) {
               rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
-              rmarkdown::render(rmd, output_dir=directory, ...)
+              rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, ...)
           })
