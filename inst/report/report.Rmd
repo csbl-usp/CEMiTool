@@ -45,7 +45,9 @@ height <- ifelse(height == 0, 7, height)
 ## Gene Set Enrichment Analysis 
 ```{r echo=FALSE, results="asis", fig.width=10, fig.height=height, fig.align="center", cache=F, label=gsea-plot}
     #knitr::opts_current$set('fig.height'=height)
-    if(!is.null(names(cem@enrichment_plot))){
+    if(length(cem@enrichment) == 0){
+        writeLines("### Please provide a sample annotation!")
+    } else if(!is.null(names(cem@enrichment_plot))){
         plot(cem@enrichment_plot)
     } else if(nrow(cem@enrichment$nes) == 0) {
         writeLines("### No module enriched.")
