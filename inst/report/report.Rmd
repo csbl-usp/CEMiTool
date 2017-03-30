@@ -1,5 +1,6 @@
 ---
 title: "CEMiTool"
+always_allow_html: yes
 output:
   html_document:
      code_folding: hide
