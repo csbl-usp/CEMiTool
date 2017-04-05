@@ -3,6 +3,8 @@
 #' @param cem Object of class \code{CEMiTool}. 
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
+#' @param dtype Type of experiment. One of \code{'microarray'} or
+#'           \code{'rnaseq'}. Default is \code{'microarray'}.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
@@ -21,7 +23,7 @@ setGeneric('filter_expr', function(cem, ...) {
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-          function(cem, pval=0.05, n_genes)
+          function(cem, pval=0.05, n_genes, dtype=c('microarray', 'rnaseq'))
 {
     if(!missing(n_genes)){
         if(!missing(pval)){
@@ -33,6 +35,13 @@ setMethod('filter_expr', signature('CEMiTool'),
     if(!missing(n_genes)){
         n_genes <- min(n_genes, nrow(expr))
     }
+
+    dtype <- match.arg(dtype)
+    
+    if (dtype == 'rnaseq') {
+        expr <- vst(expr)
+    }
+
     expr_var <- apply(expr, 1, var)
 
     mean_var <- mean(expr_var)
@@ -69,3 +78,11 @@ setMethod('filter_expr', signature('CEMiTool'),
 
     return(cem)
 })
+
+vst <- function(expr) {
+    gene_mean <- apply(expr, 1, mean)
+    gene_var  <- apply(expr, 1, var)
+
+    r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
+    return(sqrt(r)*asinh(sqrt(expr/r)))
+}
