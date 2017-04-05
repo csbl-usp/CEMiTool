@@ -293,7 +293,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
           function(cem, n=10, ...) {
               mod_cols <- mod_colors(cem)
               mod_names <- names(cem@interactions)
-              mod_names <- mod_names[mod_names!="Not.Correlated"]
+              mod_names <- mod_names[which(mod_names!="Not.Correlated")]
               hubs <- get_hubs(cem)
               res <- lapply(mod_names, function(name){
                                 plot_interaction(ig_obj=cem@interactions[[name]], 
