@@ -185,7 +185,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         class_samples <- annot[annot[, class_col]==class_group, sample_col]
         
         # genes ranked by mean
-        genes_ranked <- apply(z_expr[, class_samples], 1, mean)
+        genes_ranked <- apply(z_expr[, class_samples, drop=FALSE], 1, mean)
         genes_ranked <- sort(genes_ranked, decreasing=TRUE)
         
         # BiocParallel setting up
