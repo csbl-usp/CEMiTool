@@ -181,6 +181,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
                      cem@class_column,
                      " or change the slot class_column.")
             }
+            if(min(table(value[, cem@class_column])) == 1){
+                warning("There is at least one class with only 1 sample in it. Results may be suboptimal.")
+            }
             cem@sample_annotation <- value
             return(cem)
          } )
