@@ -485,10 +485,13 @@ setMethod('write_files', signature(cem='CEMiTool'),
                                        Gene1=character(),
                                        Gene2=character())
                   for(n in names(cem@interactions)){
-                      int_df <- rbind.data.frame(int_df,
+                      mod_int <- igraph::get.edgelist(cem@interactions[[n]])
+                      if(nrow(mod_int) > 0 ){
+                          int_df <- rbind.data.frame(int_df,
                                                  data.frame(Module=n,
                                                             igraph::get.edgelist(cem@interactions[[n]])
                                                             ))
+                      }
                   }
                   colnames(int_df) <- c("Module", "Gene1", "Gene2")
                   write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=F)
