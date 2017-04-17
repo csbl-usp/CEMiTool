@@ -307,7 +307,8 @@ setMethod('plot_interactions', signature('CEMiTool'),
                   mod_names <- mod_names[which(!(mod_names %in% zero_ints))]
               }
               if(length(mod_names) == 0){
-                  stop("There are no interactions in the given modules. Please check interactions file.")
+                  warning("There are no interactions in the given modules. Please check interactions file.")
+                  return(cem)
               }              
               res <- lapply(mod_names, function(name){
                                 plot_interaction(ig_obj=cem@interactions[[name]], 
