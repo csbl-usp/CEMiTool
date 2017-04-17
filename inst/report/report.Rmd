@@ -40,7 +40,7 @@ cat("#", title, "{.tabset}")
 
 ```{r echo=FALSE}
 height <- 1.1*nrow(cem@enrichment$nes)
-height <- ifelse(height == 0, 7, height)
+height <- ifelse(length(height) == 0, 7, height)
 ```
 
 ## Gene Set Enrichment Analysis 
