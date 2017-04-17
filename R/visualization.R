@@ -295,6 +295,20 @@ setMethod('plot_interactions', signature('CEMiTool'),
               mod_names <- names(cem@interactions)
               mod_names <- mod_names[which(mod_names!="Not.Correlated")]
               hubs <- get_hubs(cem)
+              zero_ints <- character()
+              zero_ints <- lapply(names(cem@interactions), function(mod){
+                  degree <- igraph::degree(cem@interactions[[mod]], normalized=FALSE)
+                  if(length(degree) == 0) {
+                      zero_ints <- append(zero_ints, mod)
+                  }
+              })
+              zero_ints <- unlist(zero_ints)
+              if(!is.null(zero_ints)){
+                  mod_names <- mod_names[which(!(mod_names %in% zero_ints))]
+              }
+              if(length(mod_names) == 0){
+                  stop("There are no interactions in the given modules. Please check interactions file.")
+              }              
               res <- lapply(mod_names, function(name){
                                 plot_interaction(ig_obj=cem@interactions[[name]], 
                                                  n=n, color=mod_cols[name], title=name,
