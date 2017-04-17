@@ -31,7 +31,11 @@ setMethod('filter_expr', signature('CEMiTool'),
         }
     }
     expr <- expr_data(cem, filtered=FALSE)
-
+              
+    expr_var <- apply(expr, 1, var)
+              
+    expr <- expr[which(expr_var!=0),]
+              
     if(!missing(n_genes)){
         n_genes <- min(n_genes, nrow(expr))
     }
