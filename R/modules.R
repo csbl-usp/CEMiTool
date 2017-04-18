@@ -56,7 +56,13 @@ setMethod('find_modules', signature('CEMiTool'),
     }
 
     # Define a range of soft-thresholding candidates
-    powers <- c(c(1:10), seq(12, 20, 2))
+    if(network_type=="unsigned"){
+        powers_end <- 20 
+    } else if (network_type=="signed"){
+        powers_end <- 30
+    }
+    
+    powers <- c(c(1:10), seq(12, powers_end, 2))
     
     ## Automatic selection of soft-thresholding power beta ##
     beta <- WGCNA::pickSoftThreshold(expr_t, powerVector=powers,
