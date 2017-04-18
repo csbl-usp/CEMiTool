@@ -23,7 +23,7 @@ setGeneric('filter_expr', function(cem, ...) {
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-          function(cem, pval=0.05, n_genes, dtype=c('microarray', 'rnaseq'))
+          function(cem, pval=0.1, n_genes, dtype=c('microarray', 'rnaseq'))
 {
     if(!missing(n_genes)){
         if(!missing(pval)){
