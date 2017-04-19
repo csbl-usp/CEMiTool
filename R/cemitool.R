@@ -16,6 +16,7 @@ setOldClass('ggplot')
 #' @slot barplot_ora list of ggplot graphs with over-representation analysis resultsper module
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
+                                fit_indices='data.frame',
                                 selected_genes='vector',
                                 module='data.frame',
                                 enrichment='list', # gene set enrichment analysis
