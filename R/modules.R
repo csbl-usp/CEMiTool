@@ -199,6 +199,7 @@ setMethod('find_modules', signature('CEMiTool'),
                    )
     cem@parameters <- c(cem@parameters, params)
     cem@module <- out
+    cem@fit_indices <- beta$fitIndices
     return(cem)
 })
 
