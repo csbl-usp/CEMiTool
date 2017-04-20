@@ -25,7 +25,8 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 interaction_plot='list',
                                 profile_plot='list',
                                 enrichment_plot='gg',
-                                beta_r2_plot='gg', 
+                                beta_r2_plot='gg',
+                                mean_k_plot='gg',
                                 barplot_ora='list',
                                 sample_name_column='vector',
                                 class_column='vector',
@@ -440,7 +441,13 @@ setMethod('show', signature(object='CEMiTool'),
                   cat("ok\n")
               }
               cat("- Beta x R2 plot: ")
-              if(length(object@beta_r2_plot)==0) {
+              if(length(object@beta_r2_plot)==1) {
+                  cat("null\n")
+              } else {
+                  cat("ok\n")
+              }
+              cat("- Mean connectivity plot: ")
+              if(length(object@mean_k_plot)==1) {
                   cat("null\n")
               } else {
                   cat("ok\n")
