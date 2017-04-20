@@ -5,18 +5,18 @@
 \title{Full gene co-expression analysis}
 \usage{
 cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
-  n_genes, cor_method = c("pearson", "spearman"),
-  sample_name_column = "SampleName", class_column = "Class",
-  merge_similar = TRUE, split_modules = FALSE, ora_pval = 0.05,
-  min_ngen = 30, diss_thresh = 0.8, plot = FALSE, directed = FALSE,
-  verbose = FALSE)
+  n_genes, cor_method = c("pearson", "spearman"), network_type = "unsigned",
+  tom_type = "signed", sample_name_column = "SampleName",
+  class_column = "Class", merge_similar = TRUE, split_modules = FALSE,
+  ora_pval = 0.05, min_ngen = 30, diss_thresh = 0.8, plot = FALSE,
+  directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
 
 \item{annot}{Sample annotation \code{data.frame}.}
 
-\item{gmt}{a list from function prepare_gmt containing the gene sets.}
+\item{gmt}{a list from function read_gmt containing the gene sets.}
 
 \item{interactions}{a data.frame containing two columns with gene names.}
 
@@ -30,10 +30,10 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
 Default \code{"pearson"}.}
 
-\item{sample_name_column}{A character string indicating the sample column 
+\item{sample_name_column}{A character string indicating the sample column
 name of the annotation table.}
 
-\item{class_column}{A character string indicating the class column name of the 
+\item{class_column}{A character string indicating the class column name of the
 annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
@@ -64,4 +64,3 @@ each one of them.
 cemitool(expr=expr)
 
 }
-

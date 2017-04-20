@@ -27,4 +27,3 @@ Creates a line plot of each gene inside the module through the samples
 plot_profile(cem)
 
 }
-

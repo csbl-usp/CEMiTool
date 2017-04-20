@@ -9,4 +9,3 @@ This dataset, together with \code{sample_annotation_data}
 can be used as input for CEMiTool functions
 }
 \keyword{datasets}
-

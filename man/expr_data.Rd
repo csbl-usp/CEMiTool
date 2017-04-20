@@ -30,4 +30,3 @@ Object of class \code{data.frame} with gene expression data
 \description{
 Retrieve and set expression attribute
 }
-

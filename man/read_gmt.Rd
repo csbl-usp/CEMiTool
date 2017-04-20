@@ -15,4 +15,3 @@ a list containing genes and description of each pathway
 \description{
 Reads a GMT file
 }
-

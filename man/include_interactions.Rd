@@ -28,4 +28,3 @@ Includes interaction information to CEMiTool object
 \examples{
 
 }
-

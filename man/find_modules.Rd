@@ -9,7 +9,8 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  min_ngen = 30, merge_similar = T, diss_thresh = 0.8, verbose = F)
+  min_ngen = 20, merge_similar = T, network_type = "unsigned",
+  tom_type = "signed", diss_thresh = 0.8, verbose = F)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -22,6 +23,10 @@ is to be computed.}
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
+
+\item{network_type}{A character string indicating to use either "unsigned" (default) or "signed" networks.}
+
+\item{tom_type}{A character string indicating to use either "unsigned" or "signed" (default) TOM similarity measure.}
 
 \item{diss_thresh}{Module merging correlation threshold for eigengene similarity.
 Default \code{0.8}.}
@@ -39,4 +44,3 @@ cem <- new('CEMiTool', expression=expr)
 cem <- find_modules(cem)
 
 }
-

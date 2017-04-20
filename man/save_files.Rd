@@ -6,14 +6,16 @@
 \alias{write_files,CEMiTool-method}
 \title{Save the CEMiTool object in files}
 \usage{
-write_files(cem, directory)
+write_files(cem, ...)
 
-\S4method{write_files}{CEMiTool}(cem, directory)
+\S4method{write_files}{CEMiTool}(cem, directory, force = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
 \item{directory}{a directory}
+
+\item{force}{if the directory exists the execution will not stop}
 }
 \value{
 
@@ -21,4 +23,3 @@ write_files(cem, directory)
 \description{
 Save the CEMiTool object in files
 }
-

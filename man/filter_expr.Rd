@@ -8,7 +8,8 @@
 \usage{
 filter_expr(cem, ...)
 
-\S4method{filter_expr}{CEMiTool}(cem, pval = 0.05, n_genes)
+\S4method{filter_expr}{CEMiTool}(cem, pval = 0.1, n_genes,
+  dtype = c("microarray", "rnaseq"))
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -18,6 +19,9 @@ filter_expr(cem, ...)
 \item{pval}{P-value cutoff for gene selection.}
 
 \item{n_genes}{Number of genes to be selected.}
+
+\item{dtype}{Type of experiment. One of \code{'microarray'} or
+\code{'rnaseq'}. Default is \code{'microarray'}.}
 }
 \value{
 Object of class \code{CEMiTool} with selected genes
@@ -28,4 +32,3 @@ Filter gene expression table
 \examples{
 
 }
-

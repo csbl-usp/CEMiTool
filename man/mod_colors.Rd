@@ -28,4 +28,3 @@ the names should match with module names}
 \description{
 Retrieve and set mod_colors attribute
 }
-

@@ -26,4 +26,3 @@ Returns \code{n} genes in each module with high connectivity.
 \examples{
 
 }
-
