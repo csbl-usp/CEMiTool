@@ -383,5 +383,6 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
                     annotate(geom="text", label=beta, x=beta, y=fit[fit$Power == beta, "SFT.R.sq"] + 0.05, color="red", size=7) +
                     theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                     labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
-              return(pl)
+              cem@beta_r2_plot <- pl
+              return(cem)
           })
