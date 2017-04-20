@@ -367,7 +367,7 @@ plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
 #' 
 #' @rdname plot_beta_r2
 #' @export
-setGeneric('plot_beta_r2', function(cem)){
+setGeneric('plot_beta_r2', function(cem){
     standardGeneric('plot_beta_r2')
 })
 
