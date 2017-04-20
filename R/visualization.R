@@ -353,3 +353,35 @@ plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
         theme_blank()
     return(pl)
 }
+
+#' Soft-threshold beta selection
+#' 
+#' Creates a graph showing each possible soft-threshold value and its corresponding R squared value
+#' 
+#' @param cem Object of class \code{CEMiTool}.
+#' 
+#' @return Object of class \code{CEMiTool} with beta x R squared plot
+#' 
+#' @examples 
+#' plot_beta_r2(cem)
+#' 
+#' @rdname plot_beta_r2
+#' @export
+setGeneric('plot_beta_r2', function(cem)){
+    standardGeneric('plot_beta_r2')
+})
+
+#' @rdname plot_beta_r2
+setMethod('plot_beta_r2', signature('CEMiTool'),
+          function(cem, title="Scale independence (beta selection)"){
+              fit <- cem@fit_indices
+              beta <- cem@parameters$beta
+              
+              pl <- ggplot(fit, aes(x=Power, y=SFT.R.sq)) +
+                    geom_line(color="darkgrey") +
+                    geom_point(size=1.5) +
+                    annotate(geom="text", label=beta, x=beta, y=fit[fit$Power == beta, "SFT.R.sq"] + 0.05, color="red", size=7) +
+                    theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
+                    labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
+              return(pl)
+          })
