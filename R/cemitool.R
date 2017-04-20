@@ -348,6 +348,11 @@ cemitool <- function(expr,
             }
             results <- plot_interactions(results)
         }
+      
+        if(verbose){
+            results <- plot_beta_r2(cem)
+            results <- plot_mean_k(cem)
+        }
     }
     return(results)
 }
@@ -441,13 +446,13 @@ setMethod('show', signature(object='CEMiTool'),
                   cat("ok\n")
               }
               cat("- Beta x R2 plot: ")
-              if(length(object@beta_r2_plot)==1) {
+              if(!is.ggplot(object@beta_r2_plot)) {
                   cat("null\n")
               } else {
                   cat("ok\n")
               }
               cat("- Mean connectivity plot: ")
-              if(length(object@mean_k_plot)==1) {
+              if(!is.ggplot(object@mean_k_plot)) {
                   cat("null\n")
               } else {
                   cat("ok\n")
