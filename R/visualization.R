@@ -386,3 +386,34 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
               cem@beta_r2_plot <- pl
               return(cem)
           })
+
+#' Network mean connectivity
+#' 
+#' Creates a graph showing the mean connectivity of genes in the network
+#' 
+#' @param cem Object of class \code{CEMiTool}.
+#' 
+#' @return Object of class \code{CEMiTool} with connectivity plot
+#' 
+#' @examples 
+#' plot_mean_k(cem)
+#' 
+#' @rdname plot_mean_k
+#' @export
+setGeneric('plot_mean_k', function(cem, ...){
+    standardGeneric('plot_mean_k')
+})
+
+#' @rdname plot_mean_k
+setMethod('plot_mean_k', signature('CEMiTool'),
+          function(cem, title="Mean connectivity"){
+              fit <- cem@fit_indices
+              
+              pl <- ggplot(fit, aes(x=Power, y=mean.k.)) +
+                  geom_line(color="darkgrey") +
+                  geom_point(size=1.5) +
+                  theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
+                  labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
+              cem@mean_k_plot <- pl
+              return(cem)
+          })
