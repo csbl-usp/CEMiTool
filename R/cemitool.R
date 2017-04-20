@@ -348,11 +348,14 @@ cemitool <- function(expr,
             }
             results <- plot_interactions(results)
         }
-      
+        
         if(verbose){
-            results <- plot_beta_r2(cem)
-            results <- plot_mean_k(cem)
+            message("Plotting beta x R squared curve ...")
+            message("Plotting mean connectivity curve ...")
         }
+      
+        results <- plot_beta_r2(cem)
+        results <- plot_mean_k(cem)
     }
     return(results)
 }
