@@ -87,6 +87,10 @@ vst <- function(expr) {
     gene_mean <- apply(expr, 1, mean)
     gene_var  <- apply(expr, 1, var)
 
-    r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
-    return(sqrt(r)*asinh(sqrt(expr/r)))
+    if(cor(gene_mean, gene_var, method="spearman") > 0.5){
+        r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
+        return(sqrt(r)*asinh(sqrt(expr/r)))
+    }else{
+        return(expr)
+    }
 }
