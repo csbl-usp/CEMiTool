@@ -354,8 +354,8 @@ cemitool <- function(expr,
             message("Plotting mean connectivity curve ...")
         }
       
-        results <- plot_beta_r2(cem)
-        results <- plot_mean_k(cem)
+        results <- plot_beta_r2(results)
+        results <- plot_mean_k(results)
     }
     return(results)
 }
