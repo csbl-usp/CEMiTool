@@ -55,7 +55,7 @@ print(cem)
 
 As a default, the `cemitool` function  performs a filtering of the gene expression data before running the `WGCNA` analysis. This filtering is done in accordance to gene variance. In this example the filtering step has reduced the gene number to `r length(cem@selected_genes)`.
 
-The filtering parameters can be adjusted in the `cemitool` functon or you can refilter an existing `CEMiTool` object with the `filter_exp(cem, ...)` function.
+The filtering parameters can be adjusted in the `cemitool` functon or you can refilter an existing `CEMiTool` object with the `filter_expr(cem, ...)` function.
 
 
 
@@ -73,7 +73,7 @@ Genes that are allocated to `Not.Correlated` are genes that are not clustered in
 
 If you wish to adjust the the module definition parameters of your `CEMiTool` object, use `find_modules(cem, ...)`.
 
-You can use the `get_hubs` function to identigy the top `n` genes with the highest connectivity in each module: `hubs <- get_hubs(cem,n)`. 
+You can use the `get_hubs` function to identify the top `n` genes with the highest connectivity in each module: `hubs <- get_hubs(cem,n)`. 
 A summary statistic of the expression data within each module (either the module mean or eigengene) can be obtained using: `summary <- mod_summary(cem)`
  
 
@@ -117,7 +117,7 @@ The sample annotation of your CEMiTool object can be retrieved and reassigned us
 
 When sample annotation is provided, the `cemitool` function will automatically evaluate how the modules are up or down regulated between classes. This is performed using the gene set enrichment analysis function from the `fgsea` package. 
 
-You can generate a heatmap of how the enrichment of the modules varies across classes with the `plot_gsea` function. Results can be displayed as a heatmap with `cem@enrichment_plot`. The size and intensity of the cirlces in the heatmap correspond to the Normalised Enrichment Score (NES), which is the enrichment score for a module in each class normalised by the number of genes in the module.
+You can generate a heatmap of how the enrichment of the modules varies across classes with the `plot_gsea` function. Results can be displayed as a heatmap with `cem@enrichment_plot`. The size and intensity of the circles in the heatmap correspond to the Normalised Enrichment Score (NES), which is the enrichment score for a module in each class normalised by the number of genes in the module.
 
 ```{r}
 # generate heatmap of gene set enrichment analysis
