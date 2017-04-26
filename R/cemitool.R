@@ -199,14 +199,18 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'
 #' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
-#' @param gmt a list from function read_gmt containing the gene sets.
-#' @param interactions a data.frame containing two columns with gene names.
-#' @param filter logical. If TRUE, will filter expression data.
-#' @param filter_pval P-value threshold for filtering.
+#' @param gmt A list from function read_gmt containing the gene sets.
+#' @param interactions A data.frame containing two columns with gene names.
+#' @param filter Logical. If TRUE, will filter expression data.
+#' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
 #' @param n_genes Number of genes left after filtering.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
-#'        Default \code{"pearson"}.
+#'        Default is \code{"pearson"}.
+#' @param network_type A character string indicating if network type should be computed 
+#'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}
+#' @param tom_type  A character string indicating if the TOM type should be computed 
+#'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}
 #' @param sample_name_column A character string indicating the sample column
 #'        name of the annotation table.
 #' @param class_column A character string indicating the class column name of the
