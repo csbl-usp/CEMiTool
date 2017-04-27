@@ -375,13 +375,15 @@ setGeneric('plot_beta_r2', function(cem, ...){
 setMethod('plot_beta_r2', signature('CEMiTool'),
           function(cem, title="Scale independence (beta selection)"){
               fit <- cem@fit_indices
+              fit$new_fit <- -sign(fit[, 3])*fit[, 2]
               beta <- cem@parameters$beta
               
-              pl <- ggplot(fit, aes(x=Power, y=SFT.R.sq)) +
+              pl <- ggplot(fit, aes(x=Power, y=new_fit)) +
                     geom_line(color="darkgrey") +
                     geom_point(size=1.5) +
                     annotate(geom="text", label=beta, x=beta, y=fit[fit$Power == beta, "SFT.R.sq"] + 0.05, color="red", size=7) +
                     theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
+                    scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
                     labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
               cem@beta_r2_plot <- pl
               return(cem)
