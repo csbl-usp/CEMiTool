@@ -14,7 +14,10 @@ cemoverlap <- function(analyses) {
         cem <- analyses[[index]]
         cem_name <- names(analyses[index])
         # splits by module
-        mods <- split(cem@module[,1], cem@module[, 'modules'])
+        mods <- split(cem@module[,'genes'], cem@module[, 'modules'])
+        mods_log <- sapply(mods, length) < 2
+        mods <- mods[!mods_log]
+        mods <- mods[names(mods) != 'Not.Correlated']
         
         # combines all genes inside each module
         per_mod <- lapply(mods, function(mod) {
@@ -36,5 +39,12 @@ cemoverlap <- function(analyses) {
         set(out,which(is.na(out[[col]])),col,FALSE)
     }
     setDF(out)
+    # Sum of cemitool objects containing pair and
+    #   order dataframe by sum of occurrences 
+    out_presentin <- apply(out[,!colnames(out) %in% c('gene1', 'gene2')], 1, sum)
+    out_order <- order(out_presentin, decreasing = T)
+    out$presentin <- out_presentin
+    out <- out[out_order,]
+
     return(out)
 }
