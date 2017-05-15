@@ -39,7 +39,8 @@ read_gmt <- function(fname){
 # @return a data.frame containing the results
 #
 #
-ora <- function(mod_name, gmt_list, allgenes){
+ora <- function(mod_name, gmt_list, allgenes, mods){
+    message(mod_name)
     if(missing(allgenes)) {
         message("Using all genes in GMT file as universe.")
         allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
@@ -99,7 +100,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
               message("Using all genes in GMT file as universe.")
               allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
               mods <- split(cem@module[, "genes"], cem@module[, "modules"])
-              res_list <- lapply(names(mods), ora, gmt_in, allgenes)
+              res_list <- lapply(names(mods), ora, gmt_in, allgenes, mods)
               if (all(lapply(res_list, nrow) == 0)){
                   message("Enrichment is NULL. Either your gmt file isn't good or your modules really aren't enriched for any of the pathways in the gmt file")
               }
