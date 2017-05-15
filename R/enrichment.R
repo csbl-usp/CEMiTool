@@ -40,7 +40,6 @@ read_gmt <- function(fname){
 #
 #
 ora <- function(mod_name, gmt_list, allgenes, mods){
-    message(mod_name)
     if(missing(allgenes)) {
         message("Using all genes in GMT file as universe.")
         allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
