@@ -346,7 +346,7 @@ cemitool <- function(expr,
             results <- plot_ora(results)
         }
 
-        if (!is.null(results@interactions)) {
+        if (length(results@interactions) > 0) {
             if(verbose){
                 message("Plotting interaction network ...")
             }
