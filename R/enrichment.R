@@ -176,6 +176,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
                                            center=TRUE, 
                                            scale=TRUE)),
+                                   check.names = FALSE,
                                    stringsAsFactors=FALSE)
               
               # calculates enrichment for each module for each class in annot
