@@ -10,8 +10,7 @@ output:
     toc: true
     number_sections: true
 ---
-#' @import DT
-#' @import htmltools
+
 
 ```{r echo=FALSE, results="asis", cache=FALSE, label=title}
 cat("#", title, "{.tabset}")
