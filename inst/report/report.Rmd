@@ -10,13 +10,15 @@ output:
     toc: true
     number_sections: true
 ---
+#' @import DT
+#' @import htmltools
 
-```{r echo=FALSE, results="asis", cache=F, label=title}
+```{r echo=FALSE, results="asis", cache=FALSE, label=title}
 cat("#", title, "{.tabset}")
 ```
 
 ## Modules ##
-```{r echo=FALSE, cache=F, label=modules-stats}
+```{r echo=FALSE, cache=FALSE, label=modules-stats}
     mod_df <- as.data.frame(table(cem@module$modules), stringsAsFactors=FALSE)
     colnames(mod_df) <- c("Module", "No.Genes")
     hub_list <- get_hubs(cem, n=5)
@@ -30,7 +32,7 @@ cat("#", title, "{.tabset}")
 
 
 ## Profile Plot
-```{r echo=FALSE, fig.align="center", cache=F, label=profile-plots}
+```{r echo=FALSE, fig.align="center", cache=FALSE, label=profile-plots}
     if(length(cem@profile_plot) > 0){
         .null <- lapply(cem@profile_plot, print)
     } else {
@@ -44,7 +46,7 @@ height <- ifelse(length(height) == 0, 7, height)
 ```
 
 ## Gene Set Enrichment Analysis 
-```{r echo=FALSE, results="asis", fig.width=10, fig.height=height, fig.align="center", cache=F, label=gsea-plot}
+```{r echo=FALSE, results="asis", fig.width=10, fig.height=height, fig.align="center", cache=FALSE, label=gsea-plot}
     #knitr::opts_current$set('fig.height'=height)
     if(length(cem@enrichment) == 0){
         writeLines("### Please provide a sample annotation!")
@@ -57,7 +59,7 @@ height <- ifelse(length(height) == 0, 7, height)
     }
 ```
 
-```{r echo=FALSE, results="asis", cache=F, label=gsea-table}
+```{r echo=FALSE, results="asis", cache=FALSE, label=gsea-table}
     if(length(cem@enrichment) > 0){
         nes <- cem@enrichment$nes
         nes[, -1] <- round(nes[, -1], digits=2)
@@ -108,7 +110,7 @@ height <- ifelse(length(height) == 0, 7, height)
 ```
 
 ## Interaction Network
-```{r echo=FALSE, fig.align="center", cache=F, results="asis", label=interaction-networks}
+```{r echo=FALSE, fig.align="center", cache=FALSE, results="asis", label=interaction-networks}
     if(length(cem@interaction_plot) > 0){
         x <- lapply(cem@interaction_plot, print)
     } else {
@@ -117,7 +119,7 @@ height <- ifelse(length(height) == 0, 7, height)
 ```
 
 ## Parameters ##
-```{r echo=FALSE, cache=F, label=parameters}
+```{r echo=FALSE, cache=FALSE, label=parameters}
 desc <- c("cor_method" = "Correlation method.",
           "min_ngen" = "Minimum number of genes per module.",
           "merge_similar" = "Should similar modules be merged ?",
@@ -139,6 +141,6 @@ for(np in numeric_params){
 }
 params <- data.frame(Parameter=names(params_list), 
                      Value=as.character(params_list))
-params <- merge(desc_df, params, all.y=T)
+params <- merge(desc_df, params, all.y=TRUE)
 DT::datatable(params, rownames=F)
 ```

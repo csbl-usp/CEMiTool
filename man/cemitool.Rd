@@ -16,19 +16,25 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 
 \item{annot}{Sample annotation \code{data.frame}.}
 
-\item{gmt}{a list from function read_gmt containing the gene sets.}
+\item{gmt}{A list from function read_gmt containing the gene sets.}
 
-\item{interactions}{a data.frame containing two columns with gene names.}
+\item{interactions}{A data.frame containing two columns with gene names.}
 
-\item{filter}{logical. If TRUE, will filter expression data.}
+\item{filter}{Logical. If TRUE, will filter expression data.}
 
-\item{filter_pval}{P-value threshold for filtering.}
+\item{filter_pval}{P-value threshold for filtering.Default \code{0.1}.}
 
 \item{n_genes}{Number of genes left after filtering.}
 
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
-Default \code{"pearson"}.}
+Default is \code{"pearson"}.}
+
+\item{network_type}{A character string indicating if network type should be computed 
+as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}}
+
+\item{tom_type}{A character string indicating if the TOM type should be computed 
+as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}}
 
 \item{sample_name_column}{A character string indicating the sample column
 name of the annotation table.}

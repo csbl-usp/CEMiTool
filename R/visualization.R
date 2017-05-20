@@ -1,5 +1,7 @@
 #' @import ggplot2
 #' @import ggnetwork
+#' @import igraph
+#' @import intergraph
 NULL
 
 #' Expression profile visualization
@@ -241,7 +243,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 
               nes <- as.matrix(nes)
               pval <- as.matrix(pval)
-              nes[which(pval > pv_cut, arr.ind=T)] <- 0
+              nes[which(pval > pv_cut, arr.ind=TRUE)] <- 0
 
               if(nrow(nes) > 2){
                   row_order <- rownames(nes)[hclust(dist(nes))$order]
@@ -322,13 +324,13 @@ setMethod('plot_interactions', signature('CEMiTool'),
           })
 
 plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
-    degrees <- igraph::degree(ig_obj, normalized=F)
+    degrees <- igraph::degree(ig_obj, normalized=FALSE)
     max_n <- min(n, length(degrees))
     ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
     net <- ggnetwork(ig_obj)
     net[, "shouldLabel"] <- FALSE
     net[, "Hub"] <- ""
-    int_hubs <- names(sort(degrees, decreasing=T))[1:max_n]
+    int_hubs <- names(sort(degrees, decreasing=TRUE))[1:max_n]
     int_bool <- net[, "vertex.names"] %in% int_hubs
     net[which(int_bool), "Hub"] <- "Interaction"
     sel_vertex <- int_hubs

@@ -42,7 +42,7 @@ cemoverlap <- function(analyses) {
     # Sum of cemitool objects containing pair and
     #   order dataframe by sum of occurrences 
     out_presentin <- apply(out[,!colnames(out) %in% c('gene1', 'gene2')], 1, sum)
-    out_order <- order(out_presentin, decreasing = T)
+    out_order <- order(out_presentin, decreasing=TRUE)
     out$presentin <- out_presentin
     out <- out[out_order,]
 

@@ -1,4 +1,5 @@
 #' @import data.table
+#' @import fgsea
 NULL
 
 #' Reads a GMT file
@@ -137,7 +138,7 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-          function(cem, verbose=F) {
+          function(cem, verbose=FALSE) {
               if (nrow(cem@sample_annotation)==0) {
                   warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
                   return(cem)
@@ -221,7 +222,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               patterns <- list('es'='^ES_','nes'='^NES_', 'pval'='^pval_')
               out_gsea <- lapply(patterns, function(pattern) {
                   desired_stat <- all_classes_df[, c('pathway',
-                                                     grep(pattern, colnames(all_classes_df),value=T))]
+                                                     grep(pattern, colnames(all_classes_df),value=TRUE))]
                   colnames(desired_stat) <- gsub(pattern, '', colnames(desired_stat))
                   return(desired_stat)
               })

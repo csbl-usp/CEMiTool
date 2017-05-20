@@ -2,6 +2,9 @@
 #' @importFrom grDevices colorRampPalette
 #' @import stats
 #' @import data.table
+#' @import WGCNA
+#' @import diptest
+#' @import modes
 
 .datatable.aware=TRUE
 #' Co-expression modules definition
@@ -36,9 +39,9 @@ setGeneric('find_modules', function(cem, ...) {
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
           function(cem, cor_method=c('pearson', 'spearman'),
-                             min_ngen=20, merge_similar=T,
+                             min_ngen=20, merge_similar=TRUE,
                              network_type='unsigned', tom_type='signed',
-                             diss_thresh=0.8, verbose=F)
+                             diss_thresh=0.8, verbose=FALSE)
 {
     cor_method <- match.arg(cor_method)
     
@@ -226,7 +229,7 @@ setGeneric('split_modules', function(cem, ...) {
 
 #' @rdname split_modules
 setMethod('split_modules', signature(cem='CEMiTool'),
-          function(cem, min_ngen=30, verbose=F) {
+          function(cem, min_ngen=30, verbose=FALSE) {
             if (verbose) {
                 message('Splitting modules')
             }
@@ -276,9 +279,9 @@ setMethod('split_modules', signature(cem='CEMiTool'),
                         modA_name <- paste0(mod, ".A")
                         modB_name <- paste0(mod, ".B")
                         if(verbose){
-                            prop <- sum(gene_cors < 0, na.rm=T)/(nrow(gene_cors)**2 - nrow(gene_cors))
-                            prop_pos <- sum(gene_cors[pos_cors, pos_cors] < 0, na.rm=T)/(length(pos_cors)**2 - length(pos_cors))
-                            prop_neg <- sum(gene_cors[neg_cors, neg_cors] < 0, na.rm=T)/(length(neg_cors)**2 - length(neg_cors))
+                            prop <- sum(gene_cors < 0, na.rm=TRUE)/(nrow(gene_cors)**2 - nrow(gene_cors))
+                            prop_pos <- sum(gene_cors[pos_cors, pos_cors] < 0, na.rm=TRUE)/(length(pos_cors)**2 - length(pos_cors))
+                            prop_neg <- sum(gene_cors[neg_cors, neg_cors] < 0, na.rm=TRUE)/(length(neg_cors)**2 - length(neg_cors))
                             message("Proportion of negative correlations on ", mod, ": ", round(prop, digits=4))
                             message("Proportion of negative correlations on ", modA_name, ": ", round(prop_pos, digits=4))
                             message("Proportion of negative correlations on ", modB_name, ": ", round(prop_neg, digits=4))
@@ -338,7 +341,7 @@ setGeneric('mod_summary', function(cem, ...) {
 #' @rdname mod_summary
 setMethod('mod_summary', signature(cem='CEMiTool'),
           function(cem, method=c('mean', 'eigengene'),
-                   verbose=F)
+                   verbose=FALSE)
           {
               method <- match.arg(method)
 
@@ -350,7 +353,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 
               # mean expression of genes in modules
               if (method == 'mean') {
-                  expr <- data.table(expr_data(cem), keep.rownames=T)
+                  expr <- data.table(expr_data(cem), keep.rownames=TRUE)
                   expr_melt <- melt(expr, id='rn', variable.name='samples',
                                      value.name='expression')
                   expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
@@ -367,7 +370,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
                   rownames(expr_t) <- colnames(expr)
                   me_list <- WGCNA::moduleEigengenes(expr_t, 
                                                      colors=cem@module[,2])
-                  me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=T)
+                  me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=TRUE)
                   setnames(me_eigen, c('modules', colnames(expr)))
                   me_eigen[, modules := gsub('^ME', '', modules)]
                   setDF(me_eigen)
@@ -409,7 +412,7 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
               hubs <- lapply(mod2gene, function(x){
                                            if (length(x) > 1) {
                                                mod_adj <- cem@adjacency[x, x]
-                                               top <- head(sort(rowSums(mod_adj), decreasing=T), n=n)
+                                               top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
                                                return(names(top))
                                            } else {
                                                return(character())

@@ -8,7 +8,7 @@
 \usage{
 mod_gsea(cem, ...)
 
-\S4method{mod_gsea}{CEMiTool}(cem, verbose = F)
+\S4method{mod_gsea}{CEMiTool}(cem, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

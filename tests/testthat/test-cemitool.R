@@ -7,10 +7,10 @@ cem_base <- new('CEMiTool',
            expression=expr,
            sample_name_column='Sample')
 
-sample_annotation(cem_base) <- sample_annotation_data
+sample_annotation(cem_base) <- sample_annot
 
 ppi <- system.file('extdata', 'interactions.tsv', package='CEMiTool')
-ppi <- fread(ppi, data.table=F)
+ppi <- fread(ppi, data.table=FALSE)
 
 gmt <- system.file('extdata', 'pathways.gmt', package='CEMiTool')
 gmt <- read_gmt(gmt)

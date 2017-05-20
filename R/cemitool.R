@@ -69,7 +69,7 @@ setGeneric("expr_data", function(cem, ...) {
 
 #' @rdname expr_data
 setMethod("expr_data", signature("CEMiTool"),
-         function(cem, filtered=T){
+         function(cem, filtered=TRUE){
             if (filtered) {
                 return(cem@expression[cem@selected_genes,])
             } else {
@@ -497,18 +497,18 @@ setMethod('write_files', signature(cem='CEMiTool'),
                   dir.create(directory)
               }
               if(nrow(cem@module) > 0){
-                  write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=F)
+                  write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
               }
               if(length(cem@selected_genes) > 0){
                   writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
               }
               if(length(cem@enrichment) > 0){
-                  write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=F)
-                  write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=F)
-                  write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=F)
+                  write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=FALSE)
+                  write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=FALSE)
+                  write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=FALSE)
               }
               if(nrow(cem@ora) > 0){
-                  write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=F)
+                  write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=FALSE)
               }
               if(length(cem@interactions) > 0){
                   int_df <- data.frame(Module=character(),
@@ -524,12 +524,12 @@ setMethod('write_files', signature(cem='CEMiTool'),
                       }
                   }
                   colnames(int_df) <- c("Module", "Gene1", "Gene2")
-                  write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=F)
+                  write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)
               }
               if(length(cem@parameters) > 0){
                   params <- cem@parameters
                   param_df <- data.frame(Parameter=names(params), Value=as.character(params))
-                  write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=F)
+                  write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=FALSE)
               }
           }
 )

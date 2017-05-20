@@ -89,7 +89,7 @@ The report will written to the directory `./reports`.
 
 Alternatively you can generate reports with: 
 ```{r}
-write_files(cem, directory="./reports", force=T)
+write_files(cem, directory="./reports", force=TRUE)
 ```
 
 
@@ -198,7 +198,7 @@ A `CEMiTool` object with all of the components mentioned above can be constructe
 # run cemitool
 library(ggplot2)
 cem <- cemitool(expr, sample_annot, gmt_in, interactions=int_df, 
-                filter=T, plot=T)
+                filter=TRUE, plot=TRUE)
 generate_report(cem, output_format=c("pdf_document", "html_document"))
 ```
 

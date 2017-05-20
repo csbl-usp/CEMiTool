@@ -1,3 +1,10 @@
+#' @import rmarkdown
+#' @import knitr
+#' @import DT
+#' @import htmltools
+#'
+NULL
+
 #' CEMiTool report
 #'
 #' Creates report for CEMiTool results

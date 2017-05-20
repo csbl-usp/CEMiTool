@@ -10,7 +10,7 @@
 \usage{
 expr_data(cem, ...)
 
-\S4method{expr_data}{CEMiTool}(cem, filtered = T)
+\S4method{expr_data}{CEMiTool}(cem, filtered = TRUE)
 
 expr_data(cem) <- value
 

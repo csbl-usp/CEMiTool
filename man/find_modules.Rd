@@ -9,8 +9,8 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  min_ngen = 20, merge_similar = T, network_type = "unsigned",
-  tom_type = "signed", diss_thresh = 0.8, verbose = F)
+  min_ngen = 20, merge_similar = TRUE, network_type = "unsigned",
+  tom_type = "signed", diss_thresh = 0.8, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

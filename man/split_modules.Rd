@@ -8,7 +8,7 @@
 \usage{
 split_modules(cem, ...)
 
-\S4method{split_modules}{CEMiTool}(cem, min_ngen = 30, verbose = F)
+\S4method{split_modules}{CEMiTool}(cem, min_ngen = 30, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

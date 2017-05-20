@@ -1,6 +1,6 @@
 Package: CEMiTool
 Title: Finds Gene Co-expression Modules
-Version: 0.0.0.9000
+Version: 0.99.0
 Authors@R: c(
             person("Pedro", "Russo",
                     email = "pedro.russo@usp.br",
@@ -37,13 +37,16 @@ Imports:
     pracma,
     intergraph,
     modes,
-    diptest
+    diptest,
+    stats,
+    grDevices
 Suggests:
     testthat
 Remotes:
     ctlab/fgsea
 License: What license is it under?
 Encoding: UTF-8
+biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray, RNASeq, Network, NetworkEnrichment
 LazyData: true
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

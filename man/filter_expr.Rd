@@ -8,7 +8,7 @@
 \usage{
 filter_expr(cem, ...)
 
-\S4method{filter_expr}{CEMiTool}(cem, pval = 0.1, n_genes,
+\S4method{filter_expr}{CEMiTool}(cem, pval = 0.1, n_genes, pct = 0.75,
   dtype = c("microarray", "rnaseq"))
 }
 \arguments{

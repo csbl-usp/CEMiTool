@@ -48,7 +48,7 @@ More information:
 if (!interactive()) {
     # Get and check arguments.
     suppressMessages(library("docopt"))
-    arg <- docopt(doc, version="0.0.1\n", strict=T)
+    arg <- docopt(doc, version="0.0.1\n", strict=TRUE)
     arg <- arg[!sapply(arg, is.null)][-(1:2)]  # filter missing, 'help' and 'version'
     clean <- function(s) gsub('-', '_', gsub('^-+', '', tolower(s)))
     names(arg) <- clean(names(arg))
@@ -179,7 +179,7 @@ if (!interactive()) {
     if(p$verbose){
         message("Writing CEMiTool results...")
     }
-    write_files(cem, directory=parameters[["output"]], force=T)
+    write_files(cem, directory=parameters[["output"]], force=TRUE)
 
     # Generate reports
     generate_report(cem, directory=parameters[["output"]])

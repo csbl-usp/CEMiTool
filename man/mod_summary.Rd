@@ -9,7 +9,7 @@
 mod_summary(cem, ...)
 
 \S4method{mod_summary}{CEMiTool}(cem, method = c("mean", "eigengene"),
-  verbose = F)
+  verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

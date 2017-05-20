@@ -1,3 +1,6 @@
+#' @import pracma
+NULL
+
 #' Filter gene expression table
 #'
 #' @param cem Object of class \code{CEMiTool}. 
@@ -82,7 +85,6 @@ setMethod('filter_expr', signature('CEMiTool'),
               cem@parameters <- c(cem@parameters, 
                                   n_genes=length(selected),
                                   filter_pval=pval)
-              
               return(cem)
           })
 
