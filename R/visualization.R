@@ -327,7 +327,7 @@ plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
     degrees <- igraph::degree(ig_obj, normalized=FALSE)
     max_n <- min(n, length(degrees))
     ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
-    net <- ggnetwork(ig_obj)
+    net <- ggnetwork::ggnetwork(ig_obj)
     net[, "shouldLabel"] <- FALSE
     net[, "Hub"] <- ""
     int_hubs <- names(sort(degrees, decreasing=TRUE))[1:max_n]
