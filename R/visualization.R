@@ -1,6 +1,7 @@
 #' @import ggplot2
 #' @import ggnetwork
-#' @import igraph
+#' @importFrom igraph degree
+#' @importFrom igraph set_vertex_attr 
 #' @import intergraph
 NULL
 
@@ -42,7 +43,7 @@ setMethod('plot_profile', signature('CEMiTool'),
                                                     value.name='expression')
 
                                   # initialize plot base layer
-                                  g <- ggplot(mod_expr, aes(x=sample, y=expression))
+                                  g <- ggplot(mod_expr, aes_(x=~sample, y=~expression))
 
                                   # adds different background colours if annot is provided
                                   if (nrow(annot)!=0) {
@@ -59,14 +60,14 @@ setMethod('plot_profile', signature('CEMiTool'),
                                       y_pos <- mean(mod_expr[, 'expression'])
 
                                       # reinitialize base layer adding background tiles
-                                      g <- ggplot(mod_expr, aes(x=sample, y=expression)) +
+                                      g <- ggplot(mod_expr, aes_(x=~sample, y=~expression)) +
                                           geom_tile(data=annot, alpha=0.3, height=Inf,
                                                     aes(x=get(sample_name_column), y=y_pos,
                                                         fill=get(class_column)))
                                   }
 
                                   # adding lines
-                                  g <- g + geom_line(aes(group=id), alpha=0.2, colour=mod_cols[mod]) +
+                                  g <- g + geom_line(aes_(group=~id), alpha=0.2, colour=mod_cols[mod]) +
                                       stat_summary(aes(group=1), size=1, fun.y=mean, geom='line')
 
                                   # custom theme
@@ -255,7 +256,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
               colnames(nes_melted) <- c("Module", "Class", "NES")
               nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
               max_abs_nes <- max(abs(nes_melted$NES))
-              res <- ggplot(nes_melted, aes(x=Class, y=Module, size=abs(NES), fill=NES)) + 
+              res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) + 
                   geom_point(color = "white", shape=21) +
                   scale_fill_gradientn(colours=custom_pal, space = "Lab", 
                                        limits=c(-max_abs_nes, max_abs_nes)) +
@@ -342,10 +343,10 @@ plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
         sel_vertex <- c(sel_vertex, coexp_hubs)
     }
     net[which(net[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
-    pl <- ggplot(net, aes(x = x, y = y, xend = xend, yend = yend)) +
+    pl <- ggplot(net, aes_(x = ~x, y = ~y, xend = ~xend, yend = ~yend)) +
         geom_edges(color = "#DDDDDD", alpha=0.5) +
-        geom_nodes(aes(alpha=degree, size=degree), color=color) +
-        geom_nodelabel_repel(aes(label = vertex.names, color=Hub),
+        geom_nodes(aes_(alpha=~degree, size=~degree), color=color) +
+        geom_nodelabel_repel(aes_(label = ~vertex.names, color=~Hub),
                              box.padding = unit(1, "lines"),
                              data = function(x) { x[ x$shouldLabel, ]}) + 
         scale_colour_manual(values=c("Co-expression" = "#005E87",
@@ -380,7 +381,7 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
               fit$new_fit <- -sign(fit[, 3])*fit[, 2]
               beta <- cem@parameters$beta
               
-              pl <- ggplot(fit, aes(x=Power, y=new_fit)) +
+              pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
                     geom_line(color="darkgrey") +
                     geom_point(size=1.5) +
                     annotate(geom="text", label=beta, x=beta, y=fit[fit$Power == beta, "SFT.R.sq"] + 0.05, color="red", size=7) +
@@ -413,7 +414,7 @@ setMethod('plot_mean_k', signature('CEMiTool'),
           function(cem, title="Mean connectivity"){
               fit <- cem@fit_indices
               
-              pl <- ggplot(fit, aes(x=Power, y=mean.k.)) +
+              pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +
                   geom_line(color="darkgrey") +
                   geom_point(size=1.5) +
                   theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +

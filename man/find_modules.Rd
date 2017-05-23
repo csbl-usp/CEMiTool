@@ -44,3 +44,4 @@ cem <- new('CEMiTool', expression=expr)
 cem <- find_modules(cem)
 
 }
+

@@ -23,3 +23,4 @@ Creates a graph showing the mean connectivity of genes in the network
 plot_mean_k(cem)
 
 }
+
