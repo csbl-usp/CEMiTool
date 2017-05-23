@@ -31,3 +31,4 @@ gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 mod_ora(cem, gmt)
 
 }
+

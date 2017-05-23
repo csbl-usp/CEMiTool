@@ -1,3 +1,6 @@
+#' @importFrom igraph graph_from_data_frame
+NULL
+
 #' Includes interaction information to CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}.

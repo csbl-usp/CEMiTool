@@ -31,3 +31,4 @@ Summarizes modules using some statistics.
 mod_summary <- mod_summary(cem)
 
 }
+

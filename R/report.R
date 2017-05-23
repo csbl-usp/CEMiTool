@@ -1,6 +1,6 @@
 #' @import rmarkdown
 #' @import knitr
-#' @import DT
+#' @importFrom DT datatable
 #' @import htmltools
 #'
 NULL

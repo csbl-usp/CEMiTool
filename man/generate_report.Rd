@@ -28,3 +28,4 @@ Creates report for CEMiTool results
 \examples{
 
 }
+

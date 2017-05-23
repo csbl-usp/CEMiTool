@@ -17,7 +17,9 @@ Authors@R: c(
             person("Lucas", "Cardozo",
                     email = "lucas.cardozo@usp.br",
                     role = c("aut")))
-Description: CEMiTool improves WGCNA gene co-expression module discovery by optimizing network parameter selection. This package also perfoms enrichment analysis with the discovered modules.
+Description: CEMiTool improves WGCNA gene co-expression module discovery by
+    optimizing network parameter selection. This package also perfoms enrichment
+    analysis with the discovered modules.
 Depends:
     R (>= 3.3.1)
 Imports:
@@ -42,11 +44,11 @@ Imports:
     grDevices
 Suggests:
     testthat
-Remotes:
-    ctlab/fgsea
+Remotes: ctlab/fgsea
 License: What license is it under?
 Encoding: UTF-8
-biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray, RNASeq, Network, NetworkEnrichment
+biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray,
+    RNASeq, Network, NetworkEnrichment
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1
 VignetteBuilder: knitr

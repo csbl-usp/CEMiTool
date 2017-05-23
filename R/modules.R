@@ -126,7 +126,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating Topological Overlap Matrix
     if (tom_type == 'signed') {
-        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(cor(expr_t)), TOMType=tom_type)
+        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(stats::cor(expr_t)), TOMType=tom_type)
     } else if (tom_type == 'unsigned') {
         our_tom <- WGCNA::TOMsimilarity(our_adj, TOMType=tom_type)
     }
@@ -357,7 +357,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
                   expr_melt <- melt(expr, id='rn', variable.name='samples',
                                      value.name='expression')
                   expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
-                  summarized <- expr_melt[, .(mean=mean(expression)),
+                  summarized <- expr_melt[, list(mean=mean(expression)),
                                            by=c('samples', 'modules')]
                   summarized <- dcast(summarized, modules~samples, value.var='mean')
                   setDF(summarized)

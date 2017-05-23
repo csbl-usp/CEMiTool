@@ -27,3 +27,4 @@ Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-
 plot_gsea(enrichment)
 
 }
+

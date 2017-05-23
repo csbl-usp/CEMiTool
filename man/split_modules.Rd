@@ -29,3 +29,4 @@ Refines modules by splitting them into submodules based on correlation sign.
 splitted_mods <- split_modules(cem)
 
 }
+
