@@ -4,13 +4,13 @@ Version: 0.99.0
 Authors@R: c(
             person("Pedro", "Russo",
                     email = "pedro.russo@usp.br",
-                    role = c("aut", "cre")),
+                    role = c("aut")),
             person("Gustavo", "Ferreira",
                     email = "gustavo.rodrigues.ferreira@usp.br",
                     role = c("aut")),
             person("Helder", "Nakaya",
                     email = "hnakaya@usp.br",
-                    role = c("aut")),
+                    role = c("aut", "cre")),
             person("Matheus", "Bürger",
                     email = "burger@usp.br",
                     role = c("aut")),
@@ -48,8 +48,8 @@ Suggests:
     testthat
 Remotes:
     ctlab/fgsea
-    briatte/ggnetwork
-License: What license is it under?
+    lecardozo/ggnetwork
+License: GPL-3
 Encoding: UTF-8
 biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray,
     RNASeq, Network, NetworkEnrichment
