@@ -28,7 +28,7 @@ setMethod('include_interactions', signature('CEMiTool'),
               genes_by_module <- split(cem@module$genes, cem@module$modules)
               cem@interactions <- lapply(genes_by_module, function(x) {
                                                  rows <- which(int_df[,1] %in% x | int_df[, 2] %in% x)
-                                                 ig <- igraph::graph_from_data_frame(int_df[rows,], directed=FALSE)
+                                                 ig <- igraph::simplify(igraph::graph_from_data_frame(int_df[rows,], directed=FALSE))
                                                  return(ig)
               })
               return(cem)
