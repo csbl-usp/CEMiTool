@@ -24,6 +24,8 @@ Depends:
     R (>= 3.3.1)
 Imports:
     methods,
+    scales,
+    gRbase,
     data.table (>= 1.9.4),
     WGCNA,
     ggplot2,
@@ -44,7 +46,9 @@ Imports:
     grDevices
 Suggests:
     testthat
-Remotes: ctlab/fgsea
+Remotes:
+    ctlab/fgsea
+    briatte/ggnetwork
 License: What license is it under?
 Encoding: UTF-8
 biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray,

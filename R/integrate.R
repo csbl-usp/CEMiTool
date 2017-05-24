@@ -1,12 +1,13 @@
+#' @importFrom gRbase combnPrim
+#'
+NULL
+
 #' Integrates CEMiTool analyses
 #'
 #' Returns the occurence of edges between different analyses
 #'
 #' @param analyses List of objects of class \code{CEMiTool}
 #'
-#' @examples
-#' studies <- list('GSE12345'=cem1, 'GSE54321'=cem2)
-#' overlaps <- cemoverlap(studies)
 #'
 #' @export
 cemoverlap <- function(analyses) {

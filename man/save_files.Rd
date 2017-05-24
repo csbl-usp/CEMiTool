@@ -13,14 +13,17 @@ write_files(cem, ...)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
+\item{...}{Optional parameters}
+
 \item{directory}{a directory}
 
 \item{force}{if the directory exists the execution will not stop}
 }
-\value{
-
-}
 \description{
 Save the CEMiTool object in files
+}
+\examples{
+write_files(cem, directory=".", force=TRUE)
+
 }
 

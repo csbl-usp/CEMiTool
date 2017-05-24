@@ -3,6 +3,7 @@
 #' @importFrom igraph degree
 #' @importFrom igraph set_vertex_attr 
 #' @import intergraph
+#' @importFrom scales squish
 NULL
 
 #' Expression profile visualization
@@ -362,6 +363,8 @@ plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
 #' Creates a graph showing each possible soft-threshold value and its corresponding R squared value
 #' 
 #' @param cem Object of class \code{CEMiTool}.
+#' @param title title of the graph
+#' @param ... Optional parameters.
 #' 
 #' @return Object of class \code{CEMiTool} with beta x R squared plot
 #' 
@@ -397,6 +400,8 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
 #' Creates a graph showing the mean connectivity of genes in the network
 #' 
 #' @param cem Object of class \code{CEMiTool}.
+#' @param title title of the graph
+#' @param ... Optional parameters.
 #' 
 #' @return Object of class \code{CEMiTool} with connectivity plot
 #' 

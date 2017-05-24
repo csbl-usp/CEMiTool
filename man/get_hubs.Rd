@@ -24,6 +24,8 @@ A \code{list} containing hub genes.
 Returns \code{n} genes in each module with high connectivity.
 }
 \examples{
-
+\dontrun{
+hubs <- get_hubs(cem, n=10)
+}
 }
 

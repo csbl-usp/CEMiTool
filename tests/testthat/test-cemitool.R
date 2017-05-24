@@ -5,7 +5,7 @@ data(sample_annot)
 
 cem_base <- new('CEMiTool',
            expression=expr,
-           sample_name_column='Sample')
+           sample_name_column='SampleName')
 
 sample_annotation(cem_base) <- sample_annot
 

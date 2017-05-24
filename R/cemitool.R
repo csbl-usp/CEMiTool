@@ -58,6 +58,7 @@ setMethod("initialize", signature="CEMiTool",
 #' @param value Object of class \code{data.frame} with gene
 #'        expression data
 #' @param filtered logical. If TRUE retrieves filtered expression data
+#' @param ... Optional parameters.
 #'
 #' @return Object of class \code{data.frame} with gene expression data
 #'
@@ -99,9 +100,7 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @param cem Object of class \code{CEMiTool}
 #' @param value a character vector containing colors for each module
 #'              the names should match with module names
-#'
-#' @return
-#'
+#' 
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors", function(cem) {
@@ -225,7 +224,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
-#' @return a cemitool object
+#' @return Object of class \code{CEMiTool}
 #'
 #' @examples
 #' cemitool(expr=expr)
@@ -475,8 +474,10 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}
 #' @param directory a directory
 #' @param force if the directory exists the execution will not stop
+#' @param ... Optional parameters
 #'
-#' @return
+#' @examples 
+#' write_files(cem, directory=".", force=TRUE)
 #'
 #' @rdname save_files
 #' @export

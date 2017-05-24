@@ -60,7 +60,7 @@ Default \code{0.8}.}
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-a cemitool object
+Object of class \code{CEMiTool}
 }
 \description{
 Defines co-expression modules and functionally characterizes

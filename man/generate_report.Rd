@@ -26,6 +26,8 @@ generate_report(cem, ...)
 Creates report for CEMiTool results
 }
 \examples{
-
+\dontrun{
+generate_report(cem, output <- format=c("pdf_document", "html_document"))
+}
 }
 

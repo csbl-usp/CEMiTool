@@ -19,6 +19,8 @@ expr_data(cem) <- value
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
+\item{...}{Optional parameters.}
+
 \item{filtered}{logical. If TRUE retrieves filtered expression data}
 
 \item{value}{Object of class \code{data.frame} with gene

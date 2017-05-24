@@ -13,6 +13,10 @@ plot_beta_r2(cem, ...)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
+
+\item{...}{Optional parameters.}
+
+\item{title}{title of the graph}
 }
 \value{
 Object of class \code{CEMiTool} with beta x R squared plot

@@ -20,6 +20,8 @@ filter_expr(cem, ...)
 
 \item{n_genes}{Number of genes to be selected.}
 
+\item{pct}{.}
+
 \item{dtype}{Type of experiment. One of \code{'microarray'} or
 \code{'rnaseq'}. Default is \code{'microarray'}.}
 }
@@ -30,6 +32,8 @@ Object of class \code{CEMiTool} with selected genes
 Filter gene expression table
 }
 \examples{
+filtered_cem <- filter_expr(cem)
+
 
 }
 

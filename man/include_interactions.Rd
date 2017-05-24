@@ -26,6 +26,9 @@ Object of class \code{CEMiTool}
 Includes interaction information to CEMiTool object
 }
 \examples{
-
+\dontrun{
+int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
+cem_with_interactions <- include_interactions(cem, int_df)
+}
 }
 

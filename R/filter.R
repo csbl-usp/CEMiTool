@@ -1,4 +1,6 @@
 #' @import pracma
+#' @import stats
+#'
 NULL
 
 #' Filter gene expression table
@@ -6,14 +8,15 @@ NULL
 #' @param cem Object of class \code{CEMiTool}. 
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
+#' @param pct .
 #' @param dtype Type of experiment. One of \code{'microarray'} or
 #'           \code{'rnaseq'}. Default is \code{'microarray'}.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
 #'
-#' @example
-#  filtered_cem <- filter_expr(cem)
+#' @examples
+#' filtered_cem <- filter_expr(cem)
 #'
 #'
 #' @rdname filter_expr
@@ -92,7 +95,7 @@ vst <- function(expr) {
     gene_mean <- apply(expr, 1, mean)
     gene_var  <- apply(expr, 1, var)
     
-    if(cor(gene_mean, gene_var, method="spearman") > 0.5){
+    if(stats::cor(gene_mean, gene_var, method="spearman") > 0.5){
         r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
         return(sqrt(r)*asinh(sqrt(expr/r)))
     }else{

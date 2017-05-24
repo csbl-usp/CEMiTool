@@ -13,7 +13,7 @@ NULL
 #' This dataset, together with \code{expr}
 #' can be used as input for CEMiTool functions
 #'
-#' @name sample_annotation_data
+#' @name sample_annot
 #' @docType data
 #' @keywords datasets
 NULL

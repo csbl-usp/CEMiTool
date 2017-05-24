@@ -15,8 +15,10 @@ NULL
 #' @param title Character string with the title of the report.
 #' @param ... parameters to rmarkdown::render
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' generate_report(cem, output <- format=c("pdf_document", "html_document"))
+#' }
 #' @rdname generate_report
 #' @export
 setGeneric('generate_report', function(cem, ...) {

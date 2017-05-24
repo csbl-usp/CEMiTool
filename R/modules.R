@@ -162,7 +162,7 @@ setMethod('find_modules', signature('CEMiTool'),
         me_eigen <- me_list$eigengenes
 
         # Calculates dissimilarity of module eigengenes
-        me_diss <- 1 - cor(me_eigen)
+        me_diss <- 1 - stats::cor(me_eigen)
 
         # Clustering module eigengenes
         me_tree <- hclust(as.dist(me_diss), method='average')
@@ -244,7 +244,7 @@ setMethod('split_modules', signature(cem='CEMiTool'),
                 mod_expr <- expr_data(cem)[genes,]
         
                 # recalculates the correlation matrix for genes in module mod
-                gene_cors <- cor(t(mod_expr), use='everything', method='pearson')
+                gene_cors <- stats::cor(t(mod_expr), use='everything', method='pearson')
 
                 test_obj <- diptest::dip.test(gene_cors[lower.tri(gene_cors)])
                 bimod_pval <- test_obj$p.value
@@ -392,10 +392,10 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #'
 #' @return A \code{list} containing hub genes.
 #'
-#'
-#'
 #' @examples
-#'
+#' \dontrun{
+#' hubs <- get_hubs(cem, n=10)
+#' }
 #' @rdname get_hubs
 #' @export
 setGeneric('get_hubs', function(cem, ...) {

@@ -12,6 +12,10 @@ plot_mean_k(cem, ...)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
+
+\item{...}{Optional parameters.}
+
+\item{title}{title of the graph}
 }
 \value{
 Object of class \code{CEMiTool} with connectivity plot
