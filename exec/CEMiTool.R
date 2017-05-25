@@ -2,7 +2,7 @@
 
 "CEMiTool - Co-Expression Modules Identification Tool - Co-Expression Module analysis made easy
 
-Usage: cemitool.R EXPRSFILE  --output=<DIR> [--gene-column=<GENECOL> --sample-annot=<ANNOT> --samples-column=<SAMPLECOL> --class-column=<CLASSCOL> --dontfilter (--filter-pval=<p>|--genenum=<GENNUM>) --network-type=<NETTYPE> --tom-type=<NETTYPE> --gmtfile=<GMT> --interact=<INT> --correlation=<COR> --dontmerge --dontsplit --ora-pvalue=<p> --min-module=<MIN> --diss-thresh=<THRESH> --directed --verbose]
+Usage: cemitool.R EXPRSFILE  --output=<DIR> [--gene-column=<GENECOL> --sample-annot=<ANNOT> --samples-column=<SAMPLECOL> --class-column=<CLASSCOL> --dontfilter (--filter-pval=<p>|--genenum=<GENNUM>) --network-type=<NETTYPE> --tom-type=<NETTYPE> --gmtfile=<GMT> --interact=<INT> --correlation=<COR> --dontmerge --ora-pvalue=<p> --min-module=<MIN> --diss-thresh=<THRESH> --directed --verbose]
 
 Input:
   EXPRSFILE                         a normalized expression file .tsv format
@@ -23,7 +23,6 @@ Options:
   -i <INT> --interact=<INT>         gene interaction file, must have two columns
   -c <COR> --correlation=<COR>      correlation method (spearman or pearson) [default: pearson]
   --dontmerge                       merge related modules based on eigengene similarity
-  --dontsplit                       refines modules by splitting them into submodules based on correlation sign.
   --ora-pvalue=<p>                  p-value cutoff to be used on over representation analysis [default: 0.05]
   --min-module=<MIN>                minimum module size [default: 30]
   --diss-thresh=<THRESH>             module merging correlation threshold for eigengene similarity [default: 0.8]
@@ -149,9 +148,6 @@ if (!interactive()) {
       
     # should similar modules be merged ?
     p$merge_similar <- !parameters[["dontmerge"]]
-
-    # should split modules with genes containing inverse correlation
-    p$split_modules <- !parameters[["dontsplit"]]
 
     # p-value cutoff to be used on over representation analysis
     p$ora_pval <- as.numeric(parameters[["ora_pvalue"]])

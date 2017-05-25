@@ -245,7 +245,6 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param class_column A character string indicating the class column name of the
 #'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
-#' @param split_modules Logical. If \code{TRUE}, splits modules by correlation sign.
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
@@ -273,7 +272,6 @@ cemitool <- function(expr,
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
-                     split_modules=FALSE,
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
@@ -313,15 +311,6 @@ cemitool <- function(expr,
                             network_type=network_type,
                             tom_type=tom_type,
                             verbose=verbose)
-
-    # if user wants splitted modules
-    if (split_modules) {
-        if(verbose){
-            message("Spliting modules ...")
-        }
-        results <- split_modules(results, min_ngen=min_ngen,
-                                 verbose=verbose)
-    }
 
     if (!missing(interactions)){
         if(verbose){
