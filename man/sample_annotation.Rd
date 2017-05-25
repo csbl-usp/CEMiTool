@@ -19,7 +19,7 @@ sample_annotation(cem) <- value
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
-\item{value}{a data.frame containing the sample annotation,
+\item{value}{A data.frame containing the sample annotation,
 should have at least two columns containing the Class
 and the Sample Name that should match with samples in
 expression}

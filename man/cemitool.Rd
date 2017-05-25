@@ -7,9 +7,9 @@
 cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
   n_genes, cor_method = c("pearson", "spearman"), network_type = "unsigned",
   tom_type = "signed", sample_name_column = "SampleName",
-  class_column = "Class", merge_similar = TRUE, split_modules = FALSE,
-  ora_pval = 0.05, min_ngen = 30, diss_thresh = 0.8, plot = FALSE,
-  directed = FALSE, verbose = FALSE)
+  class_column = "Class", merge_similar = TRUE, ora_pval = 0.05,
+  min_ngen = 30, diss_thresh = 0.8, plot = FALSE, directed = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -43,8 +43,6 @@ name of the annotation table.}
 annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
-
-\item{split_modules}{Logical. If \code{TRUE}, splits modules by correlation sign.}
 
 \item{ora_pval}{P-value for overrepresentation analysis. Default \code{0.05}.}
 
