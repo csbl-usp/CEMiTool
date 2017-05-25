@@ -14,16 +14,50 @@ An S4 class to represent the CEMiTool analysis.
 
 \item{\code{sample_annotation}}{Sample annotation \code{data.frame}.}
 
+\item{\code{fit_indices}}{\code{data.frame} containing scale-free model fit, 
+soft-threshold and network parameters.}
+
+\item{\code{selected_genes}}{Character \code{vector} containing the names of genes 
+selected for analysis}
+
 \item{\code{module}}{Genes in modules information \code{data.frame}.}
 
 \item{\code{enrichment}}{\code{list} with modules enrichment results for sample classes.}
 
 \item{\code{ora}}{Over-representation analysis results \code{data.frame}.}
 
+\item{\code{interactions}}{\code{list} containing gene interactions present in
+modules.}
+
+\item{\code{interaction_plot}}{list of ggplot graphs with module gene interactions.}
+
 \item{\code{profile_plot}}{list of ggplot graphs with gene expression profile per module.}
 
 \item{\code{enrichment_plot}}{ggplot graph for enrichment analysis results}
 
-\item{\code{barplot_ora}}{list of ggplot graphs with over-representation analysis resultsper module}
+\item{\code{beta_r2_plot}}{ggplot graph with scale-free topology fit results for each
+soft-threshold}
+
+\item{\code{mean_k_plot}}{ggplot graph with mean network connectivity}
+
+\item{\code{barplot_ora}}{list of ggplot graphs with over-representation analysis results per module}
+
+\item{\code{sample_name_column}}{character string containing the name of the column with sample names
+in the annotation file.}
+
+\item{\code{class_column}}{character string containing the name of the column with class names
+in the annotation file.}
+
+\item{\code{mod_colors}}{character \code{vector} containing colors associated with each network module.}
+
+\item{\code{parameters}}{\code{list} containing analysis parameters.}
+
+\item{\code{adjacency}}{\code{matrix} containing gene adjacency values based on correlation}
 }}
+\examples{
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression 
+cem <- new("CEMiTool", expression=expr) 
+}
 

@@ -32,4 +32,14 @@ Object of class \code{data.frame} with gene expression data
 \description{
 Retrieve and set expression attribute
 }
+\examples{
+# Initialize an empty CEMiTool object
+cem <- new("CEMiTool")
+# Get example expression data
+data(expr)
+# Add expression file to CEMiTool object
+expr_data(cem) <- expr
+# Check expression file
+head(cem@expression)
+}
 

@@ -8,12 +8,34 @@ setOldClass('ggplot')
 #'
 #' @slot expression Gene expression \code{data.frame}.
 #' @slot sample_annotation Sample annotation \code{data.frame}.
+#' @slot fit_indices \code{data.frame} containing scale-free model fit, 
+#'   soft-threshold and network parameters.
+#' @slot selected_genes Character \code{vector} containing the names of genes 
+#'   selected for analysis
 #' @slot module Genes in modules information \code{data.frame}.
 #' @slot enrichment \code{list} with modules enrichment results for sample classes.
 #' @slot ora Over-representation analysis results \code{data.frame}.
+#' @slot interactions \code{list} containing gene interactions present in
+#'   modules.
+#' @slot interaction_plot list of ggplot graphs with module gene interactions.
 #' @slot profile_plot list of ggplot graphs with gene expression profile per module.
 #' @slot enrichment_plot ggplot graph for enrichment analysis results
-#' @slot barplot_ora list of ggplot graphs with over-representation analysis resultsper module
+#' @slot beta_r2_plot ggplot graph with scale-free topology fit results for each
+#'   soft-threshold
+#' @slot mean_k_plot ggplot graph with mean network connectivity
+#' @slot barplot_ora list of ggplot graphs with over-representation analysis results per module
+#' @slot sample_name_column character string containing the name of the column with sample names
+#'   in the annotation file.
+#' @slot class_column character string containing the name of the column with class names
+#'   in the annotation file.
+#' @slot mod_colors character \code{vector} containing colors associated with each network module.
+#' @slot parameters \code{list} containing analysis parameters.
+#' @slot adjacency \code{matrix} containing gene adjacency values based on correlation
+#' @examples
+#' # Get example expression data
+#' data(expr)
+#' # Initialize CEMiTool object with expression 
+#' cem <- new("CEMiTool", expression=expr) 
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
                                 fit_indices='data.frame',
@@ -61,7 +83,15 @@ setMethod("initialize", signature="CEMiTool",
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{data.frame} with gene expression data
-#'
+#' @examples 
+#' # Initialize an empty CEMiTool object
+#' cem <- new("CEMiTool")
+#' # Get example expression data
+#' data(expr)
+#' # Add expression file to CEMiTool object
+#' expr_data(cem) <- expr
+#' # Check expression file
+#' head(cem@expression)
 #' @rdname expr_data
 #' @export
 setGeneric("expr_data", function(cem, ...) {
@@ -98,8 +128,8 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' Retrieve and set mod_colors attribute
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param value a character vector containing colors for each module
-#'              the names should match with module names
+#' @param value a character vector containing colors for each module. 
+#'Names should match with module names
 #' 
 #' @rdname mod_colors
 #' @export
@@ -147,7 +177,7 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #' Retrive or set the sample_annotation attribute
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param value a data.frame containing the sample annotation,
+#' @param value A data.frame containing the sample annotation,
 #'              should have at least two columns containing the Class
 #'              and the Sample Name that should match with samples in
 #'              expression

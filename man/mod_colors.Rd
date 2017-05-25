@@ -19,8 +19,8 @@ mod_colors(cem) <- value
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
-\item{value}{a character vector containing colors for each module
-the names should match with module names}
+\item{value}{a character vector containing colors for each module. 
+Names should match with module names}
 }
 \description{
 Retrieve and set mod_colors attribute
