@@ -256,7 +256,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
-#' cemitool(expr=expr)
+#' # Get example expression data
+#' data(expr)
+#' cem <- cemitool(expr=expr)
 #'
 #' @export
 cemitool <- function(expr,
