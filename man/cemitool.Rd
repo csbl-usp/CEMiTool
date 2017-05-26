@@ -67,6 +67,7 @@ each one of them.
 \examples{
 # Get example expression data
 data(expr)
+# Run CEMiTool analyses
 cem <- cemitool(expr=expr)
 
 }

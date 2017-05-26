@@ -258,6 +258,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @examples
 #' # Get example expression data
 #' data(expr)
+#' # Run CEMiTool analyses
 #' cem <- cemitool(expr=expr)
 #'
 #' @export
