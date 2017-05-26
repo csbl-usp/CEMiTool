@@ -40,8 +40,14 @@ Object of class \code{CEMiTool}
 Defines co-expression modules
 }
 \examples{
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression
 cem <- new('CEMiTool', expression=expr)
+# Define network modules
 cem <- find_modules(cem)
+# Check results
+head(cem@module)
 
 }
 

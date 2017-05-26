@@ -8,16 +8,21 @@ NULL
 #' @param cem Object of class \code{CEMiTool}. 
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
-#' @param pct .
-#' @param dtype Type of experiment. One of \code{'microarray'} or
-#'           \code{'rnaseq'}. Default is \code{'microarray'}.
+#' @param pct Percentage of most expressed genes to keep (before variance filter).
+#' @param apply_vst Whether or not to apply variance stabilizing transform.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 
 #'
 #' @examples
-#' filtered_cem <- filter_expr(cem)
-#'
+#' # Get example expression data
+#' data(expr)
+#' # Initialize CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=expr)
+#' # Filter genes
+#' cem <- filter_expr(cem)
+#' # Check selected genes
+#' cem@selected_genes
 #'
 #' @rdname filter_expr
 #' @export
@@ -29,7 +34,7 @@ setGeneric('filter_expr', function(cem, ...) {
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-        function(cem, pval=0.1, n_genes, pct=0.75, dtype=c('microarray', 'rnaseq')){
+        function(cem, pval=0.1, n_genes, pct=0.75, apply_vst=FALSE){
               if(!missing(n_genes)){
                   if(!missing(pval)){
                       stop("Please specify exclusively pval or n_genes.")
@@ -47,10 +52,7 @@ setMethod('filter_expr', signature('CEMiTool'),
                   n_genes <- min(n_genes, nrow(expr))
               }
               
-              dtype <- match.arg(dtype)
-              
-              if (dtype == 'rnaseq') {
-                  message("New filter")
+              if (apply_vst){
                   expr <- vst(expr)
                   expr_data(cem) <- expr
               }
@@ -91,6 +93,13 @@ setMethod('filter_expr', signature('CEMiTool'),
               return(cem)
           })
 
+# Perform variance stabilizing transformation on expression file.
+#
+# @keywords internal
+#
+# @param expr expression file containing genes in the rows and samples in the columns
+#
+# @return  A data.frame containing the results.
 vst <- function(expr) {
     gene_mean <- apply(expr, 1, mean)
     gene_var  <- apply(expr, 1, var)
@@ -103,6 +112,14 @@ vst <- function(expr) {
     }
 }
 
+# Filter genes based on expression.
+#
+# @keywords internal
+#
+# @param expr expression file containing genes in the rows and samples in the columns
+# @param pct percentage of most expressed genes to maintain
+#
+# @return A data.frame containing the results
 expr_pct_filter <- function(expr, pct=0.75){
     rows <- floor(pct*nrow(expr))
     val <- apply(expr, 1, mean)

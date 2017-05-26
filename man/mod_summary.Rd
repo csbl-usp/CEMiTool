@@ -25,9 +25,16 @@ is to be used. Default 'mean'.}
 A \code{data.frame} with summarized values.
 }
 \description{
-Summarizes modules using some statistics.
+Summarizes modules using mean or eigengene expression.
 }
 \examples{
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression
+cem <- new('CEMiTool', expression=expr)
+# Define network modules
+cem <- find_modules(cem)
+# Summarize results
 mod_summary <- mod_summary(cem)
 
 }

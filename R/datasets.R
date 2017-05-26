@@ -20,7 +20,7 @@ NULL
 
 #' CEMiTool Object 
 #'
-#' This object, can be used as input for CEMiTool functions
+#' This object can be used as input for CEMiTool functions.
 #'
 #' @name cem
 #' @docType data

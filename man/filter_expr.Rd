@@ -9,7 +9,7 @@
 filter_expr(cem, ...)
 
 \S4method{filter_expr}{CEMiTool}(cem, pval = 0.1, n_genes, pct = 0.75,
-  dtype = c("microarray", "rnaseq"))
+  apply_vst = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -20,10 +20,9 @@ filter_expr(cem, ...)
 
 \item{n_genes}{Number of genes to be selected.}
 
-\item{pct}{.}
+\item{pct}{Percentage of most expressed genes to keep (before variance filter).}
 
-\item{dtype}{Type of experiment. One of \code{'microarray'} or
-\code{'rnaseq'}. Default is \code{'microarray'}.}
+\item{apply_vst}{Whether or not to apply variance stabilizing transform.}
 }
 \value{
 Object of class \code{CEMiTool} with selected genes
@@ -32,8 +31,14 @@ Object of class \code{CEMiTool} with selected genes
 Filter gene expression table
 }
 \examples{
-filtered_cem <- filter_expr(cem)
-
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression
+cem <- new("CEMiTool", expression=expr)
+# Filter genes
+cem <- filter_expr(cem)
+# Check selected genes
+cem@selected_genes
 
 }
 

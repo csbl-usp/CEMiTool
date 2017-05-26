@@ -16,6 +16,10 @@ NULL
 #' @param ... parameters to rmarkdown::render
 #'
 #' @examples
+#' # Get example expression data
+#' data(expr)
+#' # Run CEMiTool with analysis plots
+#' cem <- cemitool(expr, plot=TRUE)
 #' \dontrun{
 #' generate_report(cem, output <- format=c("pdf_document", "html_document"))
 #' }

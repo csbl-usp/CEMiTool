@@ -21,10 +21,26 @@ plot_profile(cem, ...)
 Object of class \code{CEMiTool} with profile plots
 }
 \description{
-Creates a line plot of each gene inside the module through the samples
+Creates a plot with module gene expression profiles along samples
 }
 \examples{
-plot_profile(cem)
+# Get example expression data
+data(expr)
+# Get example sample annotation data
+data(sample_annot)
+# Initialize CEMiTool object only with expression 
+cem <- new("CEMiTool", expression=expr)
+# Find modules in the data
+cem <- find_modules(cem)
+# Plot module gene expression profiles
+cem <- plot_profile(cem)
+
+# Initialize CEMiTool object with expression and sample annotation
+cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+# Find modules in the data
+cem <- find_modules(cem)
+# Plot module gene expression profiles with group classes as defined in sample_annot
+cem <- plot_profile(cem)
 
 }
 

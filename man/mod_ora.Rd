@@ -15,7 +15,7 @@ mod_ora(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{gmt_in}{Output of CEMiTool::read_gmt function.}
+\item{gmt_in}{gmt file as outputted by \link{CEMiTool::read_gmt} function.}
 
 \item{verbose}{logical. Report analysis steps.}
 }
@@ -23,12 +23,25 @@ mod_ora(cem, ...)
 Object of class \code{CEMiTool}
 }
 \description{
-Perfoms overrepresentation analysis for each co-expression module found.
+Performs overrepresentation analysis for each co-expression module found.
 }
 \examples{
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression 
+cem <- new("CEMiTool", expression=expr)
+# Read gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
-mod_ora(cem, gmt)
+# Find modules in the data
+cem <- find_modules(cem)
+# Run module overrepresentation analysis
+cem <- mod_ora(cem, gmt)
+# Check results
+cem@ora
 
+}
+\seealso{
+\code{\link{CEMiTool::plot_ora}}
 }
 

@@ -5,7 +5,7 @@
 \alias{cem}
 \title{CEMiTool Object}
 \description{
-This object, can be used as input for CEMiTool functions
+This object can be used as input for CEMiTool functions.
 }
 \keyword{data}
 

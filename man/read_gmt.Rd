@@ -2,7 +2,7 @@
 % Please edit documentation in R/enrichment.R
 \name{read_gmt}
 \alias{read_gmt}
-\title{Reads a GMT file}
+\title{Read a GMT file}
 \usage{
 read_gmt(fname)
 }
@@ -10,9 +10,15 @@ read_gmt(fname)
 \item{fname}{GMT file name.}
 }
 \value{
-a list containing genes and description of each pathway
+A list containing genes and description of each pathway
 }
 \description{
-Reads a GMT file
+Read a GMT file
+}
+\examples{
+# Read example gmt file
+gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+gmt_in <- read_gmt(gmt_fname)
+
 }
 

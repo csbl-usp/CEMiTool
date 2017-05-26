@@ -24,7 +24,18 @@ Object of class \code{CEMiTool} with GSEA plots
 Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-expression modules
 }
 \examples{
-plot_gsea(enrichment)
+# Get example expression data
+data(expr)
+# Get example sample annotation data
+data(sample_annot)
+# Initialize CEMiTool object with expression and sample_annotation
+cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+# Find modules in the data
+cem <- find_modules(cem)
+# Run GSEA on network modules
+cem <- mod_gsea(cem)
+# Plot GSEA results
+cem <- plot_gsea(cem)
 
 }
 

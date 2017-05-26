@@ -24,6 +24,13 @@ A \code{list} containing hub genes.
 Returns \code{n} genes in each module with high connectivity.
 }
 \examples{
+# Get example expression data
+data(expr)
+# Initialize CEMiTool object with expression
+cem <- new('CEMiTool', expression=expr)
+# Define network modules
+cem <- find_modules(cem)
+# Get module hubs
 \dontrun{
 hubs <- get_hubs(cem, n=10)
 }
