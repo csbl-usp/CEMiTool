@@ -65,7 +65,9 @@ Defines co-expression modules and functionally characterizes
 each one of them.
 }
 \examples{
-cemitool(expr=expr)
+# Get example expression data
+data(expr)
+cem <- cemitool(expr=expr)
 
 }
 
