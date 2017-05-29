@@ -47,6 +47,25 @@ To see a summary of the slots inside the `CEMiTool` object we can use `print`. T
 ```{r}
 print(cem)
 ```
+For a more extensive analysis, CEMiTool can also include files such as a sample annotation file, a pathways file (.gmt files) and gene interaction files. These can be included in the analyses as follows:
+
+```{r}
+library("CEMiTool")
+# load expression data
+data(expr)
+# load sample annotation data
+data(sample_annot)
+# load and read pathways data
+gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+gmt_in <- read_gmt(gmt_fname)
+# load and read gene interactions data
+int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
+
+# run CEMiTool with all files
+cem <- cemitool(expr, sample_annot, gmt_in, int_df)
+```
+
+The `cemitool()` function automatically executes some common analyses, depending on the input data. The following sections describes how to perform each of these analyses separately.
 
 ## Gene filtering
 
