@@ -4,12 +4,14 @@
 \alias{cemoverlap}
 \title{Integrates CEMiTool analyses}
 \usage{
-cemoverlap(analyses)
+cemoverlap(..., analyses_list = NULL, fraction = 1)
 }
 \arguments{
+\item{fraction}{of objects an edge pair must be present to be selected}
+
 \item{analyses}{List of objects of class \code{CEMiTool}}
 }
 \description{
-Returns the occurence of edges between different analyses
+Returns the occurrence of edges between different analyses
 }
 
