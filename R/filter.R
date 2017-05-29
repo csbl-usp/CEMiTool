@@ -20,9 +20,13 @@ NULL
 #' # Initialize CEMiTool object with expression
 #' cem <- new("CEMiTool", expression=expr)
 #' # Filter genes
-#' cem <- filter_expr(cem)
+#' cem1 <- filter_expr(cem)
 #' # Check selected genes
-#' cem@selected_genes
+#' cem1@selected_genes
+#' # Filter genes and apply variance stabilizing transformation
+#' cem2 <- filter_expr(cem, apply_vst=TRUE)
+#' # Check results
+#' head(expr_data(cem2))
 #'
 #' @rdname filter_expr
 #' @export
