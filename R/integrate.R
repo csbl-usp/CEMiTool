@@ -4,13 +4,17 @@ NULL
 
 #' Integrates CEMiTool analyses
 #'
-#' Returns the occurence of edges between different analyses
+#' Returns the occurrence of edges between different analyses
 #'
 #' @param analyses List of objects of class \code{CEMiTool}
+#' @param fraction of objects an edge pair must be present \code{CEMiTool}
 #'
 #'
 #' @export
-cemoverlap <- function(analyses) {
+cemoverlap <- function(..., analyses_list = NULL, fraction = 1){
+    # Several different metrics can be derived from this analysis.
+    # See if it is interesting to retrieve the 
+    analyses <- c(list(...), analyses_list)
     edgelist <- lapply(seq_along(analyses), function(index) {
         cem <- analyses[[index]]
         cem_name <- names(analyses[index])
@@ -42,10 +46,14 @@ cemoverlap <- function(analyses) {
     setDF(out)
     # Sum of cemitool objects containing pair and
     #   order dataframe by sum of occurrences 
-    out_presentin <- apply(out[,!colnames(out) %in% c('gene1', 'gene2')], 1, sum)
-    out_order <- order(out_presentin, decreasing=TRUE)
-    out$presentin <- out_presentin
+    study_names <- colnames(out)[!colnames(out) %in% c('gene1', 'gene2')] 
+    presentin <- apply(out[,study_names], 1, sum)
+    out_order <- order(presentin, decreasing=TRUE)
+    out$presentin <- presentin
     out <- out[out_order,]
+    # Keep only edges present in at least the proportion of cemitool objects specified in 'fraction' variable
+    out <- subset(out, presentin >= (fraction * length(study_names)))
 
     return(out)
 }
+
