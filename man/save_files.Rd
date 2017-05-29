@@ -23,6 +23,11 @@ write_files(cem, ...)
 Save the CEMiTool object in files
 }
 \examples{
+# Get example expression data
+data(expr)
+# Run CEMiTool analyses
+cem <- cemitool(expr)
+# Save CEMiTool results in files
 write_files(cem, directory=".", force=TRUE)
 
 }

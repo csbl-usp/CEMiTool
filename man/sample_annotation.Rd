@@ -27,4 +27,17 @@ expression}
 \description{
 Retrive or set the sample_annotation attribute
 }
+\examples{
+# Get example expression data
+data(expr)
+# Get example sample_annotation data
+data(sample_annot)
+# Initialize CEMiTool object with expression
+cem <- new("CEMiTool", expression=sample_annot)
+# Add sample annotation file to CEMiTool object
+sample_annotation(cem) <- sample_annot
+# Check annotation file
+head(cem@sample_annotation)
+
+}
 

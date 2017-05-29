@@ -19,4 +19,14 @@ number of modules
 \description{
 Get the number of modules on a cemitool object
 }
+\examples{
+# Get example expression data
+data(expr)
+cem <- new("CEMiTool", expression=expr)
+# Find modules in the data
+cem <- find_modules(cem)
+# Get the number of modules
+nmodules(cem)
+
+}
 

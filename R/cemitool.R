@@ -130,7 +130,17 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @param cem Object of class \code{CEMiTool}
 #' @param value a character vector containing colors for each module. 
 #'Names should match with module names
-#' 
+#'
+#' @examples 
+#' # Get example expression data
+#' data(expr) 
+#' # Initialize CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=expr)
+#' # Find modules in the data
+#' cem <- find_modules(cem)
+#' # See module colors
+#' mod_colors(cem)
+#'
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors", function(cem) {
@@ -181,6 +191,17 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #'              should have at least two columns containing the Class
 #'              and the Sample Name that should match with samples in
 #'              expression
+#' @examples
+#' # Get example expression data
+#' data(expr)
+#' # Get example sample_annotation data
+#' data(sample_annot)
+#' # Initialize CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=sample_annot)
+#' # Add sample annotation file to CEMiTool object
+#' sample_annotation(cem) <- sample_annot
+#' # Check annotation file
+#' head(cem@sample_annotation)
 #'
 #' @rdname sample_annotation
 #' @export
@@ -393,6 +414,16 @@ cemitool <- function(expr,
 #' @return number of modules
 #'
 #' @rdname nmodules
+#' @examples
+#' # Get example expression data
+#' data(expr)
+#" # Initialize CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=expr)
+#' # Find modules in the data
+#' cem <- find_modules(cem)
+#' # Get the number of modules
+#' nmodules(cem)
+#' 
 #' @export
 setGeneric('nmodules', function(cem) {
     standardGeneric('nmodules')
@@ -499,6 +530,11 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param ... Optional parameters
 #'
 #' @examples 
+#' # Get example expression data
+#' data(expr)
+#' # Run CEMiTool analyses
+#' cem <- cemitool(expr)
+#' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
 #'
 #' @rdname save_files

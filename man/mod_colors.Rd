@@ -25,4 +25,15 @@ Names should match with module names}
 \description{
 Retrieve and set mod_colors attribute
 }
+\examples{
+# Get example expression data
+data(expr) 
+# Initialize CEMiTool object with expression
+cem <- new("CEMiTool", expression=expr)
+# Find modules in the data
+cem <- find_modules(cem)
+# See module colors
+mod_colors(cem)
+
+}
 
