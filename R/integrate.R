@@ -6,8 +6,8 @@ NULL
 #'
 #' Returns the occurrence of edges between different analyses
 #'
-#' @param analyses List of objects of class \code{CEMiTool}
-#' @param fraction of objects an edge pair must be present to be selected 
+#' @param Analyses List of objects of class \code{CEMiTool}
+#' @param Fraction of objects an edge pair must be present to be selected 
 #'
 #'
 #' @export

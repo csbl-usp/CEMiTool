@@ -316,9 +316,9 @@ cemitool <- function(expr,
 
     if (filter) {
         if(!missing(n_genes)){
-            results <- filter_expr(results, n=n_genes, apply_vst)
+            results <- filter_expr(results, n_genes=n_genes, apply_vst=apply_vst)
         } else {
-            results <- filter_expr(results, filter_pval, apply_vst)
+            results <- filter_expr(results, pval=filter_pval, apply_vst=apply_vst)
         }
         if (length(results@selected_genes) <= 0) {
             stop('Stopping analysis, no gene left for analysis, try to change the filter parameters.')

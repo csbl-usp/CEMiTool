@@ -43,7 +43,8 @@ Imports:
     modes,
     diptest,
     stats,
-    grDevices
+    grDevices,
+    utils
 Suggests:
     testthat
 Remotes:
