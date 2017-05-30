@@ -19,6 +19,9 @@ write_files(cem, ...)
 
 \item{force}{if the directory exists the execution will not stop}
 }
+\value{
+A directory containing CEMiTool results in files.
+}
 \description{
 Save the CEMiTool object in files
 }
