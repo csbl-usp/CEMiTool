@@ -31,6 +31,7 @@ setOldClass('ggplot')
 #' @slot mod_colors character \code{vector} containing colors associated with each network module.
 #' @slot parameters \code{list} containing analysis parameters.
 #' @slot adjacency \code{matrix} containing gene adjacency values based on correlation
+#' 
 #' @examples
 #' # Get example expression data
 #' data(expr)
@@ -131,6 +132,7 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @param value a character vector containing colors for each module. 
 #'Names should match with module names
 #'
+#' @return A vector with color names.
 #' @examples 
 #' # Get example expression data
 #' data(expr) 
@@ -191,6 +193,8 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #'              should have at least two columns containing the Class
 #'              and the Sample Name that should match with samples in
 #'              expression
+#' @return A data.frame containing characteristics of each sample
+#'
 #' @examples
 #' # Get example expression data
 #' data(expr)
@@ -446,6 +450,8 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #' Print a cemitool object
 #'
 #' @param object Object of class CEMiTool
+#' 
+#' @return A CEMiTool object.
 #'
 #' @export
 setMethod('show', signature(object='CEMiTool'),

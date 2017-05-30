@@ -14,6 +14,8 @@ NULL
 #' @param max_rows_ora maximum number of rows in Over Representation Analysis table results
 #' @param title Character string with the title of the report.
 #' @param ... parameters to rmarkdown::render
+#' 
+#' @return An HTML file with an interactive report of CEMiTool analyses.
 #'
 #' @examples
 #' # Get example expression data
