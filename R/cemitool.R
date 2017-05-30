@@ -535,7 +535,7 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param directory a directory
 #' @param force if the directory exists the execution will not stop
 #' @param ... Optional parameters
-#'
+#' @return A directory containing CEMiTool results in files.
 #' @examples 
 #' # Get example expression data
 #' data(expr)
