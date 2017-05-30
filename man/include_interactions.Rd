@@ -31,3 +31,4 @@ int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiT
 cem_with_interactions <- include_interactions(cem, int_df)
 }
 }
+

@@ -22,6 +22,9 @@ generate_report(cem, ...)
 
 \item{directory}{Directory name for results.}
 }
+\value{
+An HTML file with an interactive report of CEMiTool analyses.
+}
 \description{
 Creates report for CEMiTool results
 }
@@ -34,3 +37,4 @@ cem <- cemitool(expr, plot=TRUE)
 generate_report(cem, output <- format=c("pdf_document", "html_document"))
 }
 }
+

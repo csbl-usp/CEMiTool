@@ -22,6 +22,9 @@ mod_colors(cem) <- value
 \item{value}{a character vector containing colors for each module. 
 Names should match with module names}
 }
+\value{
+A vector with color names.
+}
 \description{
 Retrieve and set mod_colors attribute
 }
@@ -36,3 +39,4 @@ cem <- find_modules(cem)
 mod_colors(cem)
 
 }
+

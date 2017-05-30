@@ -24,6 +24,9 @@ should have at least two columns containing the Class
 and the Sample Name that should match with samples in
 expression}
 }
+\value{
+A data.frame containing characteristics of each sample
+}
 \description{
 Retrive or set the sample_annotation attribute
 }
@@ -40,3 +43,4 @@ sample_annotation(cem) <- sample_annot
 head(cem@sample_annotation)
 
 }
+

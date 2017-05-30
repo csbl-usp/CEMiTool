@@ -10,6 +10,10 @@
 \arguments{
 \item{object}{Object of class CEMiTool}
 }
+\value{
+A CEMiTool object.
+}
 \description{
 Print a cemitool object
 }
+
