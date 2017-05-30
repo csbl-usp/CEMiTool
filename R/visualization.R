@@ -4,6 +4,7 @@
 #' @importFrom igraph set_vertex_attr 
 #' @import intergraph
 #' @importFrom scales squish
+#' @import stringr
 NULL
 
 #' Expression profile visualization

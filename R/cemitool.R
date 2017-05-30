@@ -1,5 +1,5 @@
 #' @importFrom grDevices rainbow
-#' @importFrom utils head write.table
+#' @importFrom utils write.table
 #' @importFrom methods new 'slot<-' show
 
 setOldClass('gg')

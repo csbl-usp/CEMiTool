@@ -1,5 +1,6 @@
 #' @import data.table
 #' @import fgsea
+#' @import clusterProfiler
 NULL
 
 #' Read a GMT file
