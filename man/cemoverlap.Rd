@@ -7,11 +7,10 @@
 cemoverlap(..., analyses_list = NULL, fraction = 1)
 }
 \arguments{
-\item{fraction}{of objects an edge pair must be present to be selected}
+\item{Analyses}{List of objects of class \code{CEMiTool}}
 
-\item{analyses}{List of objects of class \code{CEMiTool}}
+\item{Fraction}{of objects an edge pair must be present to be selected}
 }
 \description{
 Returns the occurrence of edges between different analyses
 }
-
