@@ -9,7 +9,7 @@ NULL
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
 #' @param pct Percentage of most expressed genes to keep (before variance filter).
-#' @param apply_vst Whether or not to apply variance stabilizing transform.
+#' @param apply_vst Logical. If TRUE, will apply variance stabilizing transform before filtering data.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with selected genes 

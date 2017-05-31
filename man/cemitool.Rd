@@ -24,6 +24,9 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 
 \item{filter_pval}{P-value threshold for filtering.Default \code{0.1}.}
 
+\item{apply_vst}{Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
+Currently ignored if parameter \code{filter} is FALSE.}
+
 \item{n_genes}{Number of genes left after filtering.}
 
 \item{cor_method}{A character string indicating which correlation coefficient is
@@ -69,6 +72,21 @@ each one of them.
 data(expr)
 # Run CEMiTool analyses
 cem <- cemitool(expr=expr)
+# Run CEMiTool applying Variance Stabilizing Transformation to data
+cem <- cemitool(expr=expr, apply_vst=TRUE)
+# Run CEMiTool with additional processing messages
+cem <- cemitool(expr=expr, verbose=TRUE)
 
+# Run full CEMiTool analysis
+## Get example sample annotation data
+data(sample_annot)
+## Get example pathways file
+gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+gmt_in <- read_gmt(gmt_fname)
+## Get example interactions file
+int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
+cem <- include_interactions(cem, int_df)
+## Run CEMiTool
+cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, interactions=int_df, verbose=TRUE, plot=TRUE)
 }
 
