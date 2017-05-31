@@ -1,18 +1,16 @@
 ---
-
-title: "CEMiTool: Co-expression Modules Identification Tool"
-output: 
-  prettydoc::html_pretty:
-    toc: true
-    theme: cayman
-    highlight: github
+title: 'CEMiTool: Co-expression Modules Identification Tool'
+output:
+  html_document:
+    toc: yes
   pdf_document:
-    toc: true
-vignette: >
-  %\VignetteIndexEntry{CEMiTool: Co-expression Modules Identification Tool}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
-
+    toc: yes
+  prettydoc::html_pretty:
+    highlight: github
+    theme: cayman
+    toc: yes
+vignette: |
+  %\VignetteIndexEntry{CEMiTool: Co-expression Modules Identification Tool} %\VignetteEngine{knitr::rmarkdown} \usepackage[utf8]{inputenc}
 ---
 
 
@@ -26,8 +24,7 @@ knitr::opts_chunk$set(tidy = FALSE,
 # Basic usage
 
 The `CEMiTool` `R` package provides users with an easy-to-use method to automatically
-implement `WGCNA` analyses with optimized parameters. In addition it performs gene set enrichment analysis and
-over representation analysis.
+implement `WGCNA` analyses with optimized parameters. In addition it performs gene set enrichment analysis and over representation analysis.
 
 For the most basic usage of `CEMiTool` you only need a `data.frame` containing expression data,
 with gene symbols in the rows and sample names in the columns, as following:
@@ -39,30 +36,13 @@ data(expr)
 head(expr[,1:4])
 ```
 
-The `cemitool` function receives the expression data, performs the `WGCNA` analysis and returns a `CEMiTool` object:
+In this usage, the `cemitool` function receives the expression data, performs the `WGCNA` analysis and returns a `CEMiTool` object:
 ```{r, results='hide'}
 cem <- cemitool(expr)
 ```
 To see a summary of the slots inside the `CEMiTool` object we can use `print`. The slots can be accessed with  `cem@...`.
 ```{r}
 print(cem)
-```
-For a more extensive analysis, CEMiTool can also include files such as a sample annotation file, a pathways file (.gmt files) and gene interaction files. These can be included in the analyses as follows:
-
-```{r}
-library("CEMiTool")
-# load expression data
-data(expr)
-# load sample annotation data
-data(sample_annot)
-# load and read pathways data
-gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_in <- read_gmt(gmt_fname)
-# load and read gene interactions data
-int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
-
-# run CEMiTool with all files
-cem <- cemitool(expr, sample_annot, gmt_in, int_df)
 ```
 
 The `cemitool()` function automatically executes some common analyses, depending on the input data. The following sections describes how to perform each of these analyses separately.
@@ -103,7 +83,7 @@ generate_report(cem, output_format=c("pdf_document", "html_document"))
 
 The report will written to the directory `./reports`.
 
-Alternatively you can generate reports with: 
+Also, you can create tables with the analyses results using: 
 ```{r}
 write_files(cem, directory="./reports", force=TRUE)
 ```
