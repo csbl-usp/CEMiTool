@@ -22,7 +22,7 @@ filter_expr(cem, ...)
 
 \item{pct}{Percentage of most expressed genes to keep (before variance filter).}
 
-\item{apply_vst}{Whether or not to apply variance stabilizing transform.}
+\item{apply_vst}{Logical. If TRUE, will apply variance stabilizing transform before filtering data.}
 }
 \value{
 Object of class \code{CEMiTool} with selected genes
