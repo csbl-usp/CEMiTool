@@ -12,8 +12,14 @@ NULL
 #'
 #' @examples
 #' \dontrun{
+#' # Read example interactions data
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
-#' cem_with_interactions <- include_interactions(cem, int_df)
+#' # Get example expression data
+#' data(expr)
+#' # Create new CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=expr)
+#' # Insert interactions data
+#' cem <- include_interactions(cem, int_df)
 #' }
 #' @rdname include_interactions
 #' @export
