@@ -6,15 +6,37 @@ NULL
 #'
 #' Returns the occurrence of edges between different analyses
 #'
-#' @param Analyses List of objects of class \code{CEMiTool}
-#' @param Fraction of objects an edge pair must be present to be selected 
+#' @param ... any number of objects of class \code{CEMiTool}
+#' @param analyses_list of objects of class \code{CEMiTool}
+#' @param fraction of objects that an edge pair must be present to be selected 
 #'
+#' @return Dataframe containing edgelist containing common edges between
+#'    the networks defined in module slots from \code{CEMiTool} objects
 #'
+#' @details Method assumes that all genes inside each module are connected to
+#'    every other gene from the same module
+#'
+#' @examples
+#' \dontrun{
+#' # Run cemitool twice on expr dataset. In each time, one sample will be removed
+#' data(expr)
+#' set.seed(10)
+#' dset1 <- expr[,-sample(1:ncol(expr), 1)]
+#' dset2 <- expr[,-sample(1:ncol(expr), 1)]
+#' cem1 <- cemitool(dset1) 
+#' cem2 <- cemitool(dset2) 
+#' cemoverlap_df <- cemoverlap(cem1, cem2)
+#' # Can also run with list: cemoverlap_df <- cemoverlap(list(cem1, cem2))
+#'  
+#' }
 #' @export
 cemoverlap <- function(..., analyses_list = NULL, fraction = 1){
     # Several different metrics can be derived from this analysis.
     # See if it is interesting to retrieve the 
     analyses <- c(list(...), analyses_list)
+    if(is.null(names(analyses))){
+      names(analyses) <- paste0('cem',seq_along(analyses)) 
+    }
     edgelist <- lapply(seq_along(analyses), function(index) {
         cem <- analyses[[index]]
         cem_name <- names(analyses[index])
