@@ -7,11 +7,11 @@
 cemoverlap(..., analyses_list = NULL, fraction = 1)
 }
 \arguments{
-\item{...}{any number of objects of class \code{CEMiTool}}
+\item{...}{Any number of objects of class \code{CEMiTool}}
 
-\item{analyses_list}{of objects of class \code{CEMiTool}}
+\item{analyses_list}{List of objects of class \code{CEMiTool}}
 
-\item{fraction}{of objects that an edge pair must be present to be selected}
+\item{fraction}{The fraction of objects that an edge pair must be present to be selected (default = 1, accept values from 0-1)}
 }
 \value{
 Dataframe containing edgelist describing common edges between

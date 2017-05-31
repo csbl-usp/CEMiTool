@@ -6,9 +6,9 @@ NULL
 #'
 #' Returns the occurrence of edges between different analyses
 #'
-#' @param ... any number of objects of class \code{CEMiTool}
-#' @param analyses_list of objects of class \code{CEMiTool}
-#' @param fraction of objects that an edge pair must be present to be selected 
+#' @param ... Any number of objects of class \code{CEMiTool}
+#' @param analyses_list List of objects of class \code{CEMiTool}
+#' @param fraction The fraction of objects that an edge pair must be present to be selected (default = 1, accept values from 0-1)
 #'
 #' @return Dataframe containing edgelist describing common edges between
 #'    the networks defined in module slots from \code{CEMiTool} objects
