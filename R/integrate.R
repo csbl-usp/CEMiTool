@@ -10,7 +10,7 @@ NULL
 #' @param analyses_list of objects of class \code{CEMiTool}
 #' @param fraction of objects that an edge pair must be present to be selected 
 #'
-#' @return Dataframe containing edgelist containing common edges between
+#' @return Dataframe containing edgelist describing common edges between
 #'    the networks defined in module slots from \code{CEMiTool} objects
 #'
 #' @details Method assumes that all genes inside each module are connected to
