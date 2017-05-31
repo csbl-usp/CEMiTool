@@ -257,6 +257,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param interactions A data.frame containing two columns with gene names.
 #' @param filter Logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
+#' @param apply_vst Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
+#' Currently ignored if parameter \code{filter} is FALSE.
 #' @param n_genes Number of genes left after filtering.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
@@ -285,7 +287,22 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' data(expr)
 #' # Run CEMiTool analyses
 #' cem <- cemitool(expr=expr)
+#' # Run CEMiTool applying Variance Stabilizing Transformation to data
+#' cem <- cemitool(expr=expr, apply_vst=TRUE)
+#' # Run CEMiTool with additional processing messages
+#' cem <- cemitool(expr=expr, verbose=TRUE)
 #'
+#' # Run full CEMiTool analysis
+#' ## Get example sample annotation data
+#' data(sample_annot)
+#' ## Get example pathways file
+#' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+#' gmt_in <- read_gmt(gmt_fname)
+#' ## Get example interactions file
+#' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
+#' cem <- include_interactions(cem, int_df)
+#' ## Run CEMiTool
+#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, interactions=int_df, verbose=TRUE, plot=TRUE)
 #' @export
 cemitool <- function(expr,
                      annot,
