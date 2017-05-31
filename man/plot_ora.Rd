@@ -40,4 +40,3 @@ cem <- plot_ora(cem)
 cem@barplot_ora
 
 }
-

@@ -45,4 +45,3 @@ cem2 <- filter_expr(cem, apply_vst=TRUE)
 head(expr_data(cem2))
 
 }
-

@@ -7,11 +7,34 @@
 cemoverlap(..., analyses_list = NULL, fraction = 1)
 }
 \arguments{
-\item{Analyses}{List of objects of class \code{CEMiTool}}
+\item{...}{any number of objects of class \code{CEMiTool}}
 
-\item{Fraction}{of objects an edge pair must be present to be selected}
+\item{analyses_list}{of objects of class \code{CEMiTool}}
+
+\item{fraction}{of objects that an edge pair must be present to be selected}
+}
+\value{
+Dataframe containing edgelist describing common edges between
+   the networks defined in module slots from \code{CEMiTool} objects
 }
 \description{
 Returns the occurrence of edges between different analyses
 }
-
+\details{
+Method assumes that all genes inside each module are connected to
+   every other gene from the same module
+}
+\examples{
+\dontrun{
+# Run cemitool twice on expr dataset. In each time, one sample will be removed
+data(expr)
+set.seed(10)
+dset1 <- expr[,-sample(1:ncol(expr), 1)]
+dset2 <- expr[,-sample(1:ncol(expr), 1)]
+cem1 <- cemitool(dset1) 
+cem2 <- cemitool(dset2) 
+cemoverlap_df <- cemoverlap(cem1, cem2)
+# Can also run with list: cemoverlap_df <- cemoverlap(list(cem1, cem2))
+ 
+}
+}

@@ -54,10 +54,10 @@ in the annotation file.}
 
 \item{\code{adjacency}}{\code{matrix} containing gene adjacency values based on correlation}
 }}
+
 \examples{
 # Get example expression data
 data(expr)
 # Initialize CEMiTool object with expression 
 cem <- new("CEMiTool", expression=expr) 
 }
-
