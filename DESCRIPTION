@@ -29,6 +29,8 @@ Imports:
     data.table (>= 1.9.4),
     WGCNA,
     ggplot2,
+    ggrepel,
+    sna,
     clusterProfiler,
     fgsea,
     stringr,
@@ -46,7 +48,6 @@ Imports:
     utils
 Suggests:
     testthat
-Remotes: lecardozo/ggnetwork
 License: GPL-3
 Encoding: UTF-8
 biocViews: GeneExpression, Transcriptomics, GraphAndNetwork, mRNAMicroarray,
