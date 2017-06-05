@@ -41,3 +41,4 @@ cem@enrichment
 \seealso{
 \code{\link{plot_gsea}}
 }
+

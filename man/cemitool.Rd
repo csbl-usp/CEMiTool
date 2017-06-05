@@ -89,3 +89,4 @@ cem <- include_interactions(cem, int_df)
 ## Run CEMiTool
 cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, interactions=int_df, verbose=TRUE, plot=TRUE)
 }
+

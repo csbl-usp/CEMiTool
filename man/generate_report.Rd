@@ -37,3 +37,4 @@ cem <- cemitool(expr, plot=TRUE)
 generate_report(cem, output <- format=c("pdf_document", "html_document"))
 }
 }
+
