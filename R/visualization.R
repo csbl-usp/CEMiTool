@@ -1,5 +1,4 @@
 #' @import ggplot2
-#' @import ggnetwork
 #' @importFrom igraph degree
 #' @importFrom igraph set_vertex_attr 
 #' @import intergraph
@@ -372,7 +371,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
               }              
               res <- lapply(mod_names, function(name){
                                 plot_interaction(ig_obj=cem@interactions[[name]], 
-                                                 n=n, color=mod_cols[name], title=name,
+                                                 n=n, color=mod_cols[name], name=name,
                                                  coexp_hubs=hubs[[name]])
                                        })
               names(res) <- mod_names
@@ -381,36 +380,68 @@ setMethod('plot_interactions', signature('CEMiTool'),
               return(cem)
           })
 
-plot_interaction <- function(ig_obj, n, color, title, coexp_hubs){
+plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     degrees <- igraph::degree(ig_obj, normalized=FALSE)
-    max_n <- min(n, length(degrees))
     ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
-    net <- ggnetwork::ggnetwork(ig_obj)
-    net[, "shouldLabel"] <- FALSE
-    net[, "Hub"] <- ""
+    max_n <- min(n, length(degrees))
+    net_obj <- intergraph::asNetwork(ig_obj)
+    m <- network::as.matrix.network.adjacency(net_obj) # get sociomatrix
+    # get coordinates from Fruchterman and Reingold's force-directed placement algorithm.
+    plotcord <- data.frame(sna::gplot.layout.fruchtermanreingold(m, NULL)) 
+    # or get it them from Kamada-Kawai's algorithm: 
+    # plotcord <- data.frame(sna::gplot.layout.kamadakawai(m, NULL)) 
+    colnames(plotcord) = c("X1","X2")
+    edglist <- network::as.matrix.network.edgelist(net_obj)
+    edges <- data.frame(plotcord[edglist[,1],], plotcord[edglist[,2],])
+    plotcord$vertex.names <- as.factor(network::get.vertex.attribute(net_obj, "vertex.names"))
+    plotcord$Degree <- network::get.vertex.attribute(net_obj, "degree")
+    plotcord[, "shouldLabel"] <- FALSE
+    plotcord[, "Hub"] <- ""
     int_hubs <- names(sort(degrees, decreasing=TRUE))[1:max_n]
-    int_bool <- net[, "vertex.names"] %in% int_hubs
-    net[which(int_bool), "Hub"] <- "Interaction"
+    int_bool <- plotcord[, "vertex.names"] %in% int_hubs
+    plotcord[which(int_bool), "Hub"] <- "Interaction"
     sel_vertex <- int_hubs
     if(!missing(coexp_hubs)){
-        coexp_bool <- net[, "vertex.names"] %in% coexp_hubs
+        coexp_bool <- plotcord[, "vertex.names"] %in% coexp_hubs
         coexp_and_int <- coexp_bool & int_bool
-        net[which(coexp_bool), "Hub"] <- "Co-expression"
-        net[which(coexp_and_int), "Hub"] <- "Co-expression + Interaction"
+        plotcord[which(coexp_bool), "Hub"] <- "Co-expression"
+        plotcord[which(coexp_and_int), "Hub"] <- "Co-expression + Interaction"
         sel_vertex <- c(sel_vertex, coexp_hubs)
     }
-    net[which(net[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
-    pl <- ggplot(net, aes_(x = ~x, y = ~y, xend = ~xend, yend = ~yend)) +
-        geom_edges(color = "#DDDDDD", alpha=0.5) +
-        geom_nodes(aes_(alpha=~degree, size=~degree), color=color) +
-        geom_nodelabel_repel(aes_(label = ~vertex.names, color=~Hub),
-                             box.padding = unit(1, "lines"),
-                             data = function(x) { x[ x$shouldLabel, ]}) + 
+    
+    colnames(edges) <-  c("X1","Y1","X2","Y2")
+    #edges$midX  <- (edges$X1 + edges$X2) / 2
+    #edges$midY  <- (edges$Y1 + edges$Y2) / 2
+    plotcord[which(plotcord[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
+    plotcord$Degree_cut <- cut(plotcord$Degree, breaks=3, labels=FALSE)
+    plotcord$in_mod <- TRUE
+    mod_genes <- cem@module[cem@module$modules==name,]$genes
+    not_in <- setdiff(plotcord[,"vertex.names"], mod_genes)
+    plotcord[which(plotcord[, "vertex.names"] %in% not_in), "in_mod"] <- FALSE
+    
+    pl <- ggplot(plotcord)  + 
+        geom_segment(data=edges, aes_(x=~X1, y=~Y1, xend=~X2, yend=~Y2), 
+                     size = 0.5, alpha=0.5, colour="#DDDDDD") +
+        #geom_point(aes_(x=~X1, y=~X2, size=~Degree, alpha=~Degree, color=~in_mod)) +
+        geom_point(aes_(x=~X1, y=~X2, size=~Degree, alpha=~Degree), color=color) +
+        #ggnetwork::geom_nodes(aes_(x=~X1, y=~X2, alpha=~Degree, size=~Degree), color=color) +
+        geom_label_repel(aes_(x=~X1, y=~X2, label=~vertex.names, color=~Hub), 
+                         box.padding=unit(1, "lines"),
+                         data=function(x){x[x$shouldLabel, ]}) +
         scale_colour_manual(values=c("Co-expression" = "#005E87",
                                      "Interaction" = "#540814",
-                                     "Co-expression + Interaction" = "#736E0B")) +
-        labs(title=title) +
-        theme_blank()
+                                     "Co-expression + Interaction" = "#736E0B")) +                
+        labs(title=name) +
+        ggplot2::theme_bw(base_size = 12, base_family = "") + 
+        ggplot2::theme(axis.text = ggplot2::element_blank(), 
+                       axis.ticks = ggplot2::element_blank(), 
+                       axis.title = ggplot2::element_blank(), 
+                       legend.key = ggplot2::element_blank(), 
+                       panel.background = ggplot2::element_rect(fill = "white",
+                                                                colour = NA), 
+                       panel.border = ggplot2::element_blank(), 
+                       panel.grid = ggplot2::element_blank()) 
+    
     return(pl)
 }
 
