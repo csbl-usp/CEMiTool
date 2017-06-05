@@ -36,4 +36,3 @@ cem <- plot_mean_k(cem)
 cem@mean_k_plot
 
 }
-

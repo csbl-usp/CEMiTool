@@ -37,4 +37,3 @@ cem <- plot_beta_r2(cem)
 cem@beta_r2_plot
 
 }
-

@@ -50,4 +50,3 @@ cem <- find_modules(cem)
 head(cem@module)
 
 }
-

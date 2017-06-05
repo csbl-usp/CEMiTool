@@ -16,4 +16,3 @@ A CEMiTool object.
 \description{
 Print a cemitool object
 }
-
