@@ -1,4 +1,6 @@
 #' @import ggplot2
+#' @import sna
+#' @import ggrepel
 #' @importFrom igraph degree
 #' @importFrom igraph set_vertex_attr 
 #' @import intergraph
