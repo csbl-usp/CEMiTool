@@ -331,7 +331,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' data(expr)
 #' # Get example gene interactions data
 #' int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
-#' int <- read.delim(int_fname)
+#' int <- read.delim(int)
 #' # Initialize CEMiTool object with expression data
 #' cem <- new("CEMiTool", expression=expr)
 #' # Find modules in the data
