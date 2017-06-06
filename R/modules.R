@@ -1,6 +1,5 @@
 #' @importFrom grDevices pdf
 #' @importFrom grDevices colorRampPalette
-#' @import stats
 #' @import data.table
 #' @import WGCNA
 #' @import diptest
@@ -132,7 +131,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
     # Calculating Topological Overlap Matrix
     if (tom_type == 'signed') {
-        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(stats::cor(expr_t)), TOMType=tom_type)
+        our_tom <- WGCNA::TOMsimilarity(our_adj*sign(WGCNA::cor(expr_t)), TOMType=tom_type)
     } else if (tom_type == 'unsigned') {
         our_tom <- WGCNA::TOMsimilarity(our_adj, TOMType=tom_type)
     }

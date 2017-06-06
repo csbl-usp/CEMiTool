@@ -43,7 +43,6 @@ Imports:
     intergraph,
     modes,
     diptest,
-    stats,
     grDevices,
     utils
 Suggests:
