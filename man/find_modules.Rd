@@ -40,13 +40,17 @@ Object of class \code{CEMiTool}
 Defines co-expression modules
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Initialize CEMiTool object with expression
 cem <- new('CEMiTool', expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Define network modules
 cem <- find_modules(cem)
 # Check results
 head(cem@module)
+}
 
 }

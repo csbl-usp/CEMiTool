@@ -24,15 +24,19 @@ Object of class \code{CEMiTool} with connectivity plot
 Creates a graph showing the mean connectivity of genes in the network
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Initialize CEMiTool object with expression data
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 cem <- plot_mean_k(cem)
 # Check result 
 cem@mean_k_plot
+}
 
 }

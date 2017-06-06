@@ -25,14 +25,18 @@
 #' @return Object of class \code{CEMiTool} 
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Initialize CEMiTool object with expression
 #' cem <- new('CEMiTool', expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Define network modules
 #' cem <- find_modules(cem)
 #' # Check results
 #' head(cem@module)
+#' }
 #'
 #' @rdname find_modules
 #' @export
@@ -224,15 +228,19 @@ setMethod('find_modules', signature('CEMiTool'),
 #' @return A \code{data.frame} with summarized values.
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Initialize CEMiTool object with expression
 #' cem <- new('CEMiTool', expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Define network modules
 #' cem <- find_modules(cem)
 #' # Summarize results
 #' mod_summary <- mod_summary(cem)
-#'
+#' }
+#' 
 #' @rdname mod_summary
 #' @export
 setGeneric('mod_summary', function(cem, ...) {
@@ -294,14 +302,16 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #' @return A \code{list} containing hub genes.
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Initialize CEMiTool object with expression
 #' cem <- new('CEMiTool', expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Define network modules
 #' cem <- find_modules(cem)
 #' # Get module hubs
-#' \dontrun{
 #' hubs <- get_hubs(cem, n=10)
 #' }
 #' @rdname get_hubs

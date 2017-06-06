@@ -44,7 +44,8 @@ Imports:
     modes,
     diptest,
     grDevices,
-    utils
+    utils,
+    network
 Suggests:
     testthat
 License: GPL-3

@@ -24,12 +24,15 @@ Object of class \code{CEMiTool} with profile plots
 Creates a plot with module gene expression profiles along samples
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Get example sample annotation data
 data(sample_annot)
 # Initialize CEMiTool object only with expression 
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # Plot module gene expression profiles
@@ -41,5 +44,6 @@ cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
 cem <- find_modules(cem)
 # Plot module gene expression profiles with group classes as defined in sample_annot
 cem <- plot_profile(cem)
+}
 
 }

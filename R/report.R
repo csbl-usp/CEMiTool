@@ -18,11 +18,11 @@ NULL
 #' @return An HTML file with an interactive report of CEMiTool analyses.
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Run CEMiTool with analysis plots
 #' cem <- cemitool(expr, plot=TRUE)
-#' \dontrun{
 #' generate_report(cem, output <- format=c("pdf_document", "html_document"))
 #' }
 #' @rdname generate_report

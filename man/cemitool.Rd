@@ -68,6 +68,7 @@ Defines co-expression modules and functionally characterizes
 each one of them.
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Run CEMiTool analyses
@@ -87,5 +88,7 @@ gmt_in <- read_gmt(gmt_fname)
 int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 cem <- include_interactions(cem, int_df)
 ## Run CEMiTool
-cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, interactions=int_df, verbose=TRUE, plot=TRUE)
+cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, 
+    interactions=int_df, verbose=TRUE, plot=TRUE)
+}
 }

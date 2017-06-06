@@ -24,6 +24,7 @@ Object of class \code{CEMiTool} with profile plots
 Creates a graph based on interactions provided
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Get example gene interactions data
@@ -31,6 +32,8 @@ int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 int <- read.delim(int)
 # Initialize CEMiTool object with expression data
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # Include interaction data into CEMiTool object
@@ -39,5 +42,5 @@ cem <- include_interactions(cem, int)
 cem <- plot_interactions(cem)
 # Check results
 cem@interaction_plot
-
+}
 }

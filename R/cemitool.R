@@ -134,15 +134,18 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #'
 #' @return A vector with color names.
 #' @examples 
+#' \dontrun{
 #' # Get example expression data
 #' data(expr) 
 #' # Initialize CEMiTool object with expression
 #' cem <- new("CEMiTool", expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Find modules in the data
 #' cem <- find_modules(cem)
 #' # See module colors
 #' mod_colors(cem)
-#'
+#' }
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors", function(cem) {
@@ -283,6 +286,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Run CEMiTool analyses
@@ -302,7 +306,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' cem <- include_interactions(cem, int_df)
 #' ## Run CEMiTool
-#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, interactions=int_df, verbose=TRUE, plot=TRUE)
+#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, 
+#'     interactions=int_df, verbose=TRUE, plot=TRUE)
+#' }
 #' @export
 cemitool <- function(expr,
                      annot,
@@ -437,15 +443,19 @@ cemitool <- function(expr,
 #'
 #' @rdname nmodules
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #" # Initialize CEMiTool object with expression
 #' cem <- new("CEMiTool", expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Find modules in the data
 #' cem <- find_modules(cem)
 #' # Get the number of modules
 #' nmodules(cem)
-#' 
+#' }
+#'
 #' @export
 setGeneric('nmodules', function(cem) {
     standardGeneric('nmodules')
@@ -554,13 +564,15 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param ... Optional parameters
 #' @return A directory containing CEMiTool results in files.
 #' @examples 
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Run CEMiTool analyses
 #' cem <- cemitool(expr)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#'
+#' }
+#' 
 #' @rdname save_files
 #' @export
 setGeneric('write_files', function(cem, ...) {

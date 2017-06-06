@@ -79,17 +79,20 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' Performs overrepresentation analysis for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param gmt_in gmt file as outputted by \link{CEMiTool::read_gmt} function.
+#' @param gmt_in gmt file as outputted by \code{read_gmt} function.
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Initialize CEMiTool object with expression 
 #' cem <- new("CEMiTool", expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Read gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
@@ -99,8 +102,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' cem <- mod_ora(cem, gmt)
 #' # Check results
 #' cem@ora
-#'
-#' @seealso \code{\link{CEMiTool::plot_ora}}
+#' }
 #'
 #' @rdname mod_ora
 #' @export
@@ -145,18 +147,22 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' @return GSEA results.
 #'
 #' @examples
+#' \dontrun{
 #' # Get example expression data
 #' data(expr)
 #' # Get example sample annotation data
 #' data(sample_annot)
 #' # Initialize CEMiTool object with expression and sample annotation
 #' cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Find modules in the data
 #' cem <- find_modules(cem)
 #' # Run GSEA on network modules
 #' cem <- mod_gsea(cem)
 #' # Check results
 #' cem@enrichment
+#' }
 #'
 #' @seealso \code{\link{plot_gsea}}
 #'

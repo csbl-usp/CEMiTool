@@ -18,6 +18,8 @@ NULL
 #' data(expr)
 #' # Create new CEMiTool object with expression
 #' cem <- new("CEMiTool", expression=expr)
+#' # Filter data
+#' cem <- filter_expr(cem)
 #' # Insert interactions data
 #' cem <- include_interactions(cem, int_df)
 #' }

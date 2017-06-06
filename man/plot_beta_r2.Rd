@@ -25,15 +25,19 @@ Object of class \code{CEMiTool} with beta x R squared plot
 Creates a graph showing each possible soft-threshold value and its corresponding R squared value
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 # Initialize CEMiTool object with expression data
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 cem <- plot_beta_r2(cem)
 # Check result 
 cem@beta_r2_plot
+}
 
 }

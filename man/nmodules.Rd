@@ -20,12 +20,16 @@ number of modules
 Get the number of modules on a cemitool object
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr)
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # Get the number of modules
 nmodules(cem)
+}
 
 }

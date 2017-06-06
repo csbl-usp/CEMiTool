@@ -29,13 +29,16 @@ A vector with color names.
 Retrieve and set mod_colors attribute
 }
 \examples{
+\dontrun{
 # Get example expression data
 data(expr) 
 # Initialize CEMiTool object with expression
 cem <- new("CEMiTool", expression=expr)
+# Filter data
+cem <- filter_expr(cem)
 # Find modules in the data
 cem <- find_modules(cem)
 # See module colors
 mod_colors(cem)
-
+}
 }

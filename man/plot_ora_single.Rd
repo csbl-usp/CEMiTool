@@ -26,7 +26,4 @@ a list with ggplot2 object and the number of significant gene sets
 \description{
 ORA visualization for one module
 }
-\examples{
-plot_ora_single(test)
-
-}
+\keyword{internal}
