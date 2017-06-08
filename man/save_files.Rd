@@ -26,13 +26,10 @@ A directory containing CEMiTool results in files.
 Save the CEMiTool object in files
 }
 \examples{
-\dontrun{
-# Get example expression data
-data(expr)
-# Run CEMiTool analyses
-cem <- cemitool(expr)
+# Get example CEMiTool object
+cem <- CEMiTool::cem
 # Save CEMiTool results in files
 write_files(cem, directory=".", force=TRUE)
-}
+
 
 }

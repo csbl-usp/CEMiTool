@@ -134,18 +134,10 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #'
 #' @return A vector with color names.
 #' @examples 
-#' \dontrun{
-#' # Get example expression data
-#' data(expr) 
-#' # Initialize CEMiTool object with expression
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # See module colors
 #' mod_colors(cem)
-#' }
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors", function(cem) {
@@ -443,18 +435,10 @@ cemitool <- function(expr,
 #'
 #' @rdname nmodules
 #' @examples
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#" # Initialize CEMiTool object with expression
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Get the number of modules
 #' nmodules(cem)
-#' }
 #'
 #' @export
 setGeneric('nmodules', function(cem) {
@@ -564,14 +548,11 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param ... Optional parameters
 #' @return A directory containing CEMiTool results in files.
 #' @examples 
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#' # Run CEMiTool analyses
-#' cem <- cemitool(expr)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#' }
+#' 
 #' 
 #' @rdname save_files
 #' @export

@@ -26,16 +26,11 @@ Object of class \code{CEMiTool}
 Includes interaction information to CEMiTool object
 }
 \examples{
-\dontrun{
+# Get example CEMiTool object
+cem <- CEMiTool::cem
 # Read example interactions data
 int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
-# Get example expression data
-data(expr)
-# Create new CEMiTool object with expression
-cem <- new("CEMiTool", expression=expr)
-# Filter data
-cem <- filter_expr(cem)
 # Insert interactions data
 cem <- include_interactions(cem, int_df)
-}
+
 }

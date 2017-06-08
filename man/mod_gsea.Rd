@@ -24,22 +24,13 @@ GSEA results.
 Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 }
 \examples{
-\dontrun{
-# Get example expression data
-data(expr)
-# Get example sample annotation data
-data(sample_annot)
-# Initialize CEMiTool object with expression and sample annotation
-cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
-# Filter data
-cem <- filter_expr(cem)
-# Find modules in the data
-cem <- find_modules(cem)
+# Get example CEMiTool object with expression and sample annotation data
+cem <- CEMiTool::cem
 # Run GSEA on network modules
 cem <- mod_gsea(cem)
 # Check results
 cem@enrichment
-}
+
 
 }
 \seealso{

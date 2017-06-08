@@ -26,22 +26,14 @@ Object of class \code{CEMiTool}
 Performs overrepresentation analysis for each co-expression module found.
 }
 \examples{
-\dontrun{
-# Get example expression data
-data(expr)
-# Initialize CEMiTool object with expression 
-cem <- new("CEMiTool", expression=expr)
-# Filter data
-cem <- filter_expr(cem)
+# Get example CEMiTool object
+cem <- CEMiTool::cem
 # Read gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
-# Find modules in the data
-cem <- find_modules(cem)
 # Run module overrepresentation analysis
 cem <- mod_ora(cem, gmt)
 # Check results
 cem@ora
-}
 
 }

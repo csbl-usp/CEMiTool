@@ -24,23 +24,16 @@ Object of class \code{CEMiTool} with ORA plots
 Creates a bar plot with the results of module overrepresentation analysis
 }
 \examples{
-\dontrun{
-# Get example expression data
-data(expr)
+# Get example CEMiTool object
+cem <- CEMiTool::cem
 # Read example gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
-# Initialize CEMiTool object with expression data
-cem <- new("CEMiTool", expression=expr)
-# Filter data
-cem <- filter_expr(cem)
-# Find modules in the data
-cem <- find_modules(cem)
 # Run overrepresentation analysis 
+cem <- mod_ora(cem, gmt)
 # Plot module gene expression profiles
 cem <- plot_ora(cem)
 # Check results
 cem@barplot_ora
-}
 
 }

@@ -14,33 +14,16 @@ NULL
 #' Creates a plot with module gene expression profiles along samples
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param order Logical. If TRUE, sorts samples by class.
+#' @param order Logical. If TRUE, sorts samples by class (only if CEMiTool object contains sample_annotation data.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#' # Get example sample annotation data
-#' data(sample_annot)
-#' # Initialize CEMiTool object only with expression 
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Plot module gene expression profiles
 #' cem <- plot_profile(cem)
-#'
-#' # Initialize CEMiTool object with expression and sample annotation
-#' cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
-#' # Plot module gene expression profiles with group classes as defined in sample_annot
-#' cem <- plot_profile(cem)
-#' }
 #'
 #' @rdname plot_profile
 #' @export
@@ -139,25 +122,17 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' @return Object of class \code{CEMiTool} with ORA plots
 #'
 #' @examples
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Read example gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
-#' # Initialize CEMiTool object with expression data
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
 #' # Run overrepresentation analysis 
-#  cem <- mod_ora(cem, gmt)
+#' cem <- mod_ora(cem, gmt)
 #' # Plot module gene expression profiles
 #' cem <- plot_ora(cem)
 #' # Check results
 #' cem@barplot_ora
-#' }
 #'
 #' @rdname plot_ora
 #' @export
@@ -246,22 +221,13 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' @return Object of class \code{CEMiTool} with GSEA plots
 #'
 #' @examples
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#' # Get example sample annotation data
-#' data(sample_annot)
-#' # Initialize CEMiTool object with expression and sample_annotation
-#' cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Run GSEA on network modules
 #' cem <- mod_gsea(cem)
 #' # Plot GSEA results
 #' cem <- plot_gsea(cem)
-#' }
+#' 
 #' @rdname plot_gsea
 #' @export
 setGeneric('plot_gsea', function(cem, ...) {
@@ -337,25 +303,18 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' @return Object of class \code{CEMiTool} with profile plots 
 #'
 #' @examples
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
 #' # Get example gene interactions data
 #' int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 #' int <- read.delim(int)
-#' # Initialize CEMiTool object with expression data
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
 #' # Include interaction data into CEMiTool object
 #' cem <- include_interactions(cem, int)
 #' # Plot resulting networks
 #' cem <- plot_interactions(cem)
 #' # Check results
 #' cem@interaction_plot
-#' }
+#'
 #' @rdname plot_interactions
 #' @export
 setGeneric('plot_interactions', function(cem, ...) {
@@ -460,7 +419,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     return(pl)
 }
 
-#' Soft-threshold beta selection
+#' Soft-threshold beta selection graph
 #' 
 #' Creates a graph showing each possible soft-threshold value and its corresponding R squared value
 #' 
@@ -470,21 +429,14 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
 #' 
 #' @return Object of class \code{CEMiTool} with beta x R squared plot
 #' 
-#' @examples 
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#' # Initialize CEMiTool object with expression data
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' @examples
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem 
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_beta_r2(cem)
 #' # Check result 
 #' cem@beta_r2_plot
-#' }
+#' 
 #'
 #' @rdname plot_beta_r2
 #' @export
@@ -521,20 +473,12 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
 #' @return Object of class \code{CEMiTool} with connectivity plot
 #' 
 #' @examples 
-#' \dontrun{
-#' # Get example expression data
-#' data(expr)
-#' # Initialize CEMiTool object with expression data
-#' cem <- new("CEMiTool", expression=expr)
-#' # Filter data
-#' cem <- filter_expr(cem)
-#' # Find modules in the data
-#' cem <- find_modules(cem)
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem 
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_mean_k(cem)
 #' # Check result 
 #' cem@mean_k_plot
-#' }
 #'
 #' @rdname plot_mean_k
 #' @export
