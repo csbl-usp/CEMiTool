@@ -46,6 +46,7 @@ setGeneric('find_modules', function(cem, ...) {
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
           function(cem, cor_method=c('pearson', 'spearman'),
+		   	     cor_function='cor',
                              min_ngen=20, merge_similar=TRUE,
                              network_type='unsigned', tom_type='signed',
                              diss_thresh=0.8, verbose=FALSE)
@@ -73,12 +74,18 @@ setMethod('find_modules', signature('CEMiTool'),
     }
     
     powers <- c(c(1:10), seq(12, powers_end, 2))
+
+    if(cor_function == 'cor'){
+	cor_options <- list(use="p", method=cor_method)
+    }else if (cor_function == 'bicor'){
+	cor_options <- list(use="p")
+    }
     
     ## Automatic selection of soft-thresholding power beta ##
     beta <- WGCNA::pickSoftThreshold(expr_t, powerVector=powers,
                               networkType=network_type, moreNetworkConcepts=TRUE,
-                              corOptions=list(use='p',
-                                              method=cor_method),
+			      corFnc=get('cor_function'),
+                              corOptions=cor_options,
                               verbose=verbosity)
 
     fit <- -sign(beta$fitIndices[, 3])*beta$fitIndices[, 2]
