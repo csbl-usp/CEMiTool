@@ -6,7 +6,7 @@
 \usage{
 cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
   apply_vst = FALSE, n_genes, cor_method = c("pearson", "spearman"),
-  network_type = "unsigned", tom_type = "signed",
+  cor_function = "cor", network_type = "unsigned", tom_type = "signed",
   sample_name_column = "SampleName", class_column = "Class",
   merge_similar = TRUE, ora_pval = 0.05, min_ngen = 30,
   diss_thresh = 0.8, plot = FALSE, directed = FALSE, verbose = FALSE)

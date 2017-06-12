@@ -9,8 +9,9 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  min_ngen = 20, merge_similar = TRUE, network_type = "unsigned",
-  tom_type = "signed", diss_thresh = 0.8, verbose = FALSE)
+  cor_function = "cor", min_ngen = 20, merge_similar = TRUE,
+  network_type = "unsigned", tom_type = "signed", diss_thresh = 0.8,
+  verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -18,20 +19,22 @@ find_modules(cem, ...)
 \item{...}{Optional parameters.}
 
 \item{cor_method}{A character string indicating which correlation coefficient
-is to be computed.}
+is to be computed. Default \code{"pearson"}}
+
+\item{cor_function}{A character string indicating the correlation function to be used. Default \code{'cor'}}
 
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 
-\item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
+\item{merge_similar}{Logical. If \code{TRUE}, (the default) merge similar modules.}
 
-\item{network_type}{A character string indicating to use either "unsigned" (default) or "signed" networks.}
+\item{network_type}{A character string indicating to use either "unsigned" (default) or "signed" networks. Default \code{"unsigned"}}
 
 \item{tom_type}{A character string indicating to use either "unsigned" or "signed" (default) TOM similarity measure.}
 
 \item{diss_thresh}{Module merging correlation threshold for eigengene similarity.
 Default \code{0.8}.}
 
-\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}}
 }
 \value{
 Object of class \code{CEMiTool}
