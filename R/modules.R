@@ -12,14 +12,15 @@
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param cor_method A character string indicating which correlation coefficient
-#'                   is to be computed.
+#'                   is to be computed. Default \code{"pearson"}
+#' @param cor_function A character string indicating the correlation function to be used. Default \code{'cor'}
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
-#' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
-#' @param network_type A character string indicating to use either "unsigned" (default) or "signed" networks.
+#' @param merge_similar Logical. If \code{TRUE}, (the default) merge similar modules.
+#' @param network_type A character string indicating to use either "unsigned" (default) or "signed" networks. Default \code{"unsigned"}
 #' @param tom_type A character string indicating to use either "unsigned" or "signed" (default) TOM similarity measure.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
-#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} 
