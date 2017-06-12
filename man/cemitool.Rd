@@ -59,6 +59,9 @@ Default \code{0.8}.}
 \item{directed}{Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
+
+\item{A}{character string indicating the correlation function to be used. Supported functions are
+currently 'cor' and 'bicor'. Default is \code{"cor"}}
 }
 \value{
 Object of class \code{CEMiTool}
