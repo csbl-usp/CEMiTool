@@ -258,7 +258,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default is \code{"pearson"}.
-#' @param cor_method A character string indicating the correlation function to be used. Supported functions are
+#' @param cor_function A character string indicating the correlation function to be used. Supported functions are
 #' currently 'cor' and 'bicor'. Default is \code{"cor"}
 #' @param network_type A character string indicating if network type should be computed 
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}

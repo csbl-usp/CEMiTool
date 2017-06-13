@@ -33,6 +33,9 @@ Currently ignored if parameter \code{filter} is FALSE.}
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
 Default is \code{"pearson"}.}
 
+\item{cor_function}{A character string indicating the correlation function to be used. Supported functions are
+currently 'cor' and 'bicor'. Default is \code{"cor"}}
+
 \item{network_type}{A character string indicating if network type should be computed 
 as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}}
 
@@ -59,9 +62,6 @@ Default \code{0.8}.}
 \item{directed}{Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
-
-\item{cor_method}{A character string indicating the correlation function to be used. Supported functions are
-currently 'cor' and 'bicor'. Default is \code{"cor"}}
 }
 \value{
 Object of class \code{CEMiTool}
