@@ -17,8 +17,8 @@ Options:
   --dontfilter                      filter the expression data.frame
   --filter-pval=<p>                 p-value to be used in the filtering step [default: 0.1]
   --genenum=<GENNUM>                number of genes remaining after filtering
-  --network-type=<NETTYPE>          network type, 'signed' or 'unsigned' [default: 'unsigned']
-  --tom-type=<NETTYPE>              TOM type, 'signed' or 'unsigned' [default: 'signed']
+  --network-type=<NETTYPE>          network type, 'signed' or 'unsigned' [default: unsigned]
+  --tom-type=<NETTYPE>              TOM type, 'signed' or 'unsigned' [default: signed]
   --gmtfile=<GMT>                   GMT file name (Gene Matrix Transposed format)
   -i <INT> --interact=<INT>         gene interaction file, must have two columns
   -c <COR> --correlation=<COR>      correlation method (spearman or pearson) [default: pearson]
