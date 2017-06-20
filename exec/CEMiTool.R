@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-"CEMiTool - Co-Expression Modules Identification Tool - Co-Expression Module analysis made easy
+"CEMiTool - Co-Expression Modules identification Tool
 
 Usage: cemitool.R EXPRSFILE  --output=<DIR> [--gene-column=<GENECOL> --sample-annot=<ANNOT> --samples-column=<SAMPLECOL> --class-column=<CLASSCOL> --dontfilter (--filter-pval=<p>|--genenum=<GENNUM>) --network-type=<NETTYPE> --tom-type=<NETTYPE> --gmtfile=<GMT> --interact=<INT> --correlation=<COR> --dontmerge --ora-pvalue=<p> --min-module=<MIN> --diss-thresh=<THRESH> --directed --verbose]
 
@@ -31,11 +31,16 @@ Options:
   -v --verbose                      display progress messages [default: TRUE]
 
 Authors:
-  Gustavo R Ferreira - gustavo.rodrigues.ferreira at usp.br
   Pedro S T Russo - pedro.russo at usp.br
+  Gustavo R Ferreira - gustavo.rodrigues.ferreira at usp.br
+  Lucas E Cardozo - lucasecardozo at usp.br
   Matheus C Burger - burger at usp.br
   Thiago D C Hirata - thiagodch at gmail.com
-  Lucas E Cardozo - lucasecardozo at usp.br
+  Diogenes S Lima - diogenes.lima at usp.br
+  Fernando M Passos - fmarcon at usp.br
+  Raul A Carrasco 
+  Melissa Lever - melissalever at gmail.com 
+  Vinicius Maracaja-Coutinho
   Helder I Nakaya - hnakaya at usp.br
 
 More information:
