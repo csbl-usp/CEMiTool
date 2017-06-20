@@ -94,7 +94,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
 #' # Check results
-#' cem@ora
+#' ora_data(cem)
 #'
 #' @rdname mod_ora
 #' @export
@@ -128,6 +128,33 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
           }
 )
 
+#' Retrieve over representation analysis (ORA) results
+#'
+#' @param cem Object of class \code{CEMiTool}
+#'
+#' @return Object of class \code{data.frame} with ORA data
+#' @examples 
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
+#' # Read gmt file
+#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+#'                    package='CEMiTool'))
+#' # Run module overrepresentation analysis
+#' cem <- mod_ora(cem, gmt)
+#' # Check results
+#' ora_data(cem)
+#' @rdname ora_data
+#' @export
+setGeneric("ora_data", function(cem) {
+    standardGeneric("ora_data")
+})
+
+#' @rdname ora_data
+setMethod("ora_data", signature("CEMiTool"),
+          function(cem){
+                  return(cem@ora)
+              })
+
 #' Module Gene Set Enrichment Analysis 
 #'
 #' Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
@@ -139,13 +166,14 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' @return GSEA results.
 #'
 #' @examples
-#' # Get example CEMiTool object with expression and sample annotation data
+#' # Get example CEMiTool object
 #' cem <- CEMiTool::cem
+#' # Look at example annotation file
+#' sample_annotation(cem)
 #' # Run GSEA on network modules
 #' cem <- mod_gsea(cem)
 #' # Check results
-#' cem@enrichment
-#' 
+#' gsea_data(cem)
 #'
 #' @seealso \code{\link{plot_gsea}}
 #'
@@ -249,4 +277,30 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               names(out_gsea) <- names(patterns)
               cem@enrichment <- out_gsea 
               return(cem)
+          })
+
+#' Retrieve Gene Set Enrichment Analysis (GSEA) results
+#'
+#' @param cem Object of class \code{CEMiTool}
+#'
+#' @return Object of class \code{list} with GSEA data
+#' @examples 
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
+#' # Look at example annotation file
+#' sample_annotation(cem)
+#' # Run GSEA on network modules
+#' cem <- mod_gsea(cem)
+#' # Check results
+#' gsea_data(cem)
+#' @rdname gsea_data
+#' @export
+setGeneric("gsea_data", function(cem) {
+    standardGeneric("gsea_data")
+})
+
+#' @rdname gsea_data
+setMethod("gsea_data", signature("CEMiTool"),
+          function(cem){
+              return(cem@enrichment)
           })

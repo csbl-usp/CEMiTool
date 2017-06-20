@@ -1,7 +1,7 @@
 #' @importFrom igraph graph_from_data_frame
 NULL
 
-#' Includes interaction information to CEMiTool object
+#' Retrieve and set interaction data to CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param int_df a data.frame or matrix containing two columns
@@ -16,17 +16,19 @@ NULL
 #' # Read example interactions data
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' # Insert interactions data
-#' cem <- include_interactions(cem, int_df)
+#' cem <- interactions_data(cem, int_df)
+#' # Check interactions data
+#' interactions_data(cem)
 #' 
-#' @rdname include_interactions
+#' @rdname interactions_data
 #' @export
-setGeneric('include_interactions', function(cem, ...) {
-    standardGeneric('include_interactions')
+setGeneric('interactions_data', function(cem, ...) {
+    standardGeneric('interactions_data')
 })
 
-#' @rdname include_interactions
+#' @rdname interactions_data
 #' @export
-setMethod('include_interactions', signature('CEMiTool'), 
+setMethod('interactions_data', signature('CEMiTool'), 
           function(cem, int_df, directed=FALSE, ...) {
               genes_by_module <- split(cem@module$genes, cem@module$modules)
               cem@interactions <- lapply(genes_by_module, function(x) {
