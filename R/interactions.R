@@ -41,6 +41,9 @@ setGeneric("interactions_data<-", function(cem, value) {
 #' @rdname interactions_data
 setReplaceMethod("interactions_data", signature("CEMiTool"),
                  function(cem, value){
+                     if(nrow(cem@module) == 0){
+                         stop("No genes in modules! Did you run find_modules?")
+                     }
                      genes_by_module <- split(cem@module$genes, cem@module$modules)
                      cem@interactions <- lapply(genes_by_module, function(x) {
                          rows <- which(value[,1] %in% x | value[, 2] %in% x)
