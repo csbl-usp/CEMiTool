@@ -34,6 +34,6 @@ gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 # Run module overrepresentation analysis
 cem <- mod_ora(cem, gmt)
 # Check results
-ora_data(cem)
+head(ora_data(cem))
 
 }
