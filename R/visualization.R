@@ -225,6 +225,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' @examples
 #' # Get example CEMiTool object
 #' cem <- CEMiTool::cem
+#' # Get example sample annotation file
 #' # Run GSEA on network modules
 #' cem <- mod_gsea(cem)
 #' # Plot GSEA results
@@ -310,10 +311,10 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' # Get example CEMiTool object
 #' cem <- CEMiTool::cem
 #' # Get example gene interactions data
-#' int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
-#' int <- read.delim(int)
+#' int_df <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
+#' int_df <- read.delim(int)
 #' # Include interaction data into CEMiTool object
-#' cem <- include_interactions(cem, int)
+#' interactions_data(cem) <- int_df
 #' # Plot resulting networks
 #' cem <- plot_interactions(cem)
 #' # Check resulting plot
