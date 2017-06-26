@@ -24,7 +24,7 @@ test_that('all methods of signature CEMiTool returns CEMiTool objects', {
     
     expect_equal(class(cem_fm)[1], 'CEMiTool') 
    
-    cem <- include_interactions(cem_fm, ppi)
+    interactions_data(cem) <- ppi
     expect_equal(class(cem)[1], 'CEMiTool') 
 
     cem <- mod_gsea(cem)
