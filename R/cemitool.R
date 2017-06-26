@@ -430,7 +430,7 @@ cemitool <- function(expr,
 }
 
 
-#' Get the number of modules on a cemitool object
+#' Get the number of modules in a CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}
 #'
@@ -460,6 +460,39 @@ setMethod('nmodules', signature(cem='CEMiTool'),
               return(n)
           }
 )
+
+#' Get the module genes in a CEMiTool object
+#'
+#' @param cem Object of class \code{CEMiTool}
+#'
+#' @return Object of class \code{data.frame} containing genes and their
+#' respective module
+#'
+#' @rdname module_genes
+#' @examples
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
+#' # Get the module genes
+#' module_genes(cem)
+#'
+#' @export
+setGeneric('module_genes', function(cem) {
+    standardGeneric('module_genes')
+})
+
+#' @rdname module_genes
+setMethod('module_genes', signature(cem='CEMiTool'),
+          function(cem) {
+              res <- NULL
+              if(!is.null(cem@module)){
+                  res <- cem@module
+              } else {
+                  message("Run cemitool function to get modules!")
+              }
+              return(res)
+          }
+)
+
 
 #' Print a cemitool object
 #'
