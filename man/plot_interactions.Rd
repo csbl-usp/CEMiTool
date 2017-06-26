@@ -27,10 +27,10 @@ Creates a graph based on interactions provided
 # Get example CEMiTool object
 cem <- CEMiTool::cem
 # Get example gene interactions data
-int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
-int <- read.delim(int)
+int_df <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
+int_df <- read.delim(int)
 # Include interaction data into CEMiTool object
-cem <- include_interactions(cem, int)
+interactions_data(cem) <- int_df
 # Plot resulting networks
 cem <- plot_interactions(cem)
 # Check resulting plot
