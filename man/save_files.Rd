@@ -31,5 +31,4 @@ cem <- CEMiTool::cem
 # Save CEMiTool results in files
 write_files(cem, directory=".", force=TRUE)
 
-
 }
