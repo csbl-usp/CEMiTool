@@ -28,7 +28,7 @@ Creates a graph showing the mean connectivity of genes in the network
 cem <- CEMiTool::cem 
 # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 cem <- plot_mean_k(cem)
-# Check result 
-cem@mean_k_plot
+# Check resulting plot
+show_plot(cem, "mean_k")
 
 }

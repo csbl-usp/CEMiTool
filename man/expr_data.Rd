@@ -40,5 +40,5 @@ data(expr)
 # Add expression file to CEMiTool object
 expr_data(cem) <- expr
 # Check expression file
-head(cem@expression)
+head(expr_data(cem))
 }

@@ -30,5 +30,7 @@ cem <- CEMiTool::cem
 cem <- mod_gsea(cem)
 # Plot GSEA results
 cem <- plot_gsea(cem)
+# Check resulting plot
+show_plot(cem, "gsea")
 
 }

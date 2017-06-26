@@ -33,7 +33,7 @@ int <- read.delim(int)
 cem <- include_interactions(cem, int)
 # Plot resulting networks
 cem <- plot_interactions(cem)
-# Check results
-cem@interaction_plot
+# Check resulting plot
+show_plot(cem, "interaction")
 
 }

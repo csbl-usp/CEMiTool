@@ -29,8 +29,7 @@ Creates a graph showing each possible soft-threshold value and its corresponding
 cem <- CEMiTool::cem 
 # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 cem <- plot_beta_r2(cem)
-# Check result 
-cem@beta_r2_plot
-
+# Check resulting plot
+show_plot(cem, "beta_r2")
 
 }

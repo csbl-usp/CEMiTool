@@ -33,7 +33,7 @@ gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 cem <- mod_ora(cem, gmt)
 # Plot module gene expression profiles
 cem <- plot_ora(cem)
-# Check results
-cem@barplot_ora
+# Check resulting plot
+show_plot(cem, "ora")
 
 }
