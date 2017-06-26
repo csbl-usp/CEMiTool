@@ -92,7 +92,7 @@ setMethod("initialize", signature="CEMiTool",
 #' # Add expression file to CEMiTool object
 #' expr_data(cem) <- expr
 #' # Check expression file
-#' head(cem@expression)
+#' head(expr_data(cem))
 #' @rdname expr_data
 #' @export
 setGeneric("expr_data", function(cem, ...) {
@@ -200,7 +200,7 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #' # Add sample annotation file to CEMiTool object
 #' sample_annotation(cem) <- sample_annot
 #' # Check annotation file
-#' head(cem@sample_annotation)
+#' head(sample_annotation(cem))
 #'
 #' @rdname sample_annotation
 #' @export
@@ -540,9 +540,6 @@ setMethod('show', signature(object='CEMiTool'),
               }
           }
 )
-
-
-
 
 #' Save the CEMiTool object in files
 #'

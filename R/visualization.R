@@ -24,6 +24,8 @@ NULL
 #' cem <- CEMiTool::cem
 #' # Plot module gene expression profiles
 #' cem <- plot_profile(cem)
+#' # Check resulting plot
+#' show_plot(cem, "profile")
 #'
 #' @rdname plot_profile
 #' @export
@@ -131,8 +133,8 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' cem <- mod_ora(cem, gmt)
 #' # Plot module gene expression profiles
 #' cem <- plot_ora(cem)
-#' # Check results
-#' cem@barplot_ora
+#' # Check resulting plot
+#' show_plot(cem, "ora")
 #'
 #' @rdname plot_ora
 #' @export
@@ -227,6 +229,8 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' cem <- mod_gsea(cem)
 #' # Plot GSEA results
 #' cem <- plot_gsea(cem)
+#' # Check resulting plot
+#' show_plot(cem, "gsea")
 #' 
 #' @rdname plot_gsea
 #' @export
@@ -312,8 +316,8 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' cem <- include_interactions(cem, int)
 #' # Plot resulting networks
 #' cem <- plot_interactions(cem)
-#' # Check results
-#' cem@interaction_plot
+#' # Check resulting plot
+#' show_plot(cem, "interaction")
 #'
 #' @rdname plot_interactions
 #' @export
@@ -434,9 +438,8 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
 #' cem <- CEMiTool::cem 
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_beta_r2(cem)
-#' # Check result 
-#' cem@beta_r2_plot
-#' 
+#' # Check resulting plot
+#' show_plot(cem, "beta_r2")
 #'
 #' @rdname plot_beta_r2
 #' @export
@@ -477,8 +480,8 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
 #' cem <- CEMiTool::cem 
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_mean_k(cem)
-#' # Check result 
-#' cem@mean_k_plot
+#' # Check resulting plot
+#' show_plot(cem, "mean_k")
 #'
 #' @rdname plot_mean_k
 #' @export
@@ -498,4 +501,41 @@ setMethod('plot_mean_k', signature('CEMiTool'),
                   labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
               cem@mean_k_plot <- pl
               return(cem)
+          })
+
+#' Retrieve CEMiTool object plots
+#'
+#' @param cem Object of class \code{CEMiTool}.
+#' @param value A character string containing the name of the plot to be shown.
+#' One of "profile", "gsea", "ora", "interaction", "beta_r2" or "mean_k".
+#'
+#' @return A plot corresponding to a CEMiTool analysis
+#'
+#' @examples
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
+#' # Plot ORA results
+#' cem <- plot_ora(cem)
+#' # Check ORA results plots
+#' show_plot(cem, "ora")
+#' @rdname show_plot
+#' @export
+setGeneric('show_plot', function(cem, value, ...) {
+    standardGeneric('show_plot')
+})
+
+#' @rdname interactions_data
+#' @export
+setMethod('show_plot', signature('CEMiTool'), 
+          function(cem, value=c("profile", "gsea", "ora", "interaction", 
+                                "beta_r2", "mean_k")) {
+              value <- match.arg(value)
+              x_plot <- switch(value,
+                profile=cem@profile_plot,
+                gsea=cem@enrichment_plot,
+                ora=cem@barplot_ora,
+                interaction=cem@interaction_plot,
+                beta_r2=cem@beta_r2_plot,
+                mean_k=cem@mean_k_plot)
+              return(x_plot)
           })

@@ -4,7 +4,7 @@ NULL
 #' Retrieve and set interaction data to CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param int_df a data.frame or matrix containing two columns
+#' @param value a data.frame or matrix containing two columns
 #' @param directed Is the graph directed ? Default is FALSE
 #' @param ... parameters for igraph::graph_from_data_frame
 #'
@@ -29,12 +29,23 @@ setGeneric('interactions_data', function(cem, ...) {
 #' @rdname interactions_data
 #' @export
 setMethod('interactions_data', signature('CEMiTool'), 
-          function(cem, int_df, directed=FALSE, ...) {
-              genes_by_module <- split(cem@module$genes, cem@module$modules)
-              cem@interactions <- lapply(genes_by_module, function(x) {
-                                                 rows <- which(int_df[,1] %in% x | int_df[, 2] %in% x)
-                                                 ig <- igraph::simplify(igraph::graph_from_data_frame(int_df[rows,], directed=FALSE))
-                                                 return(ig)
-              })
-              return(cem)
+          function(cem) {
+              return(cem@interactions)
           })
+#' @rdname interactions_data
+#' @export
+setGeneric("interactions_data<-", function(cem, value) {
+    standardGeneric("interactions_data<-")
+})
+
+#' @rdname interactions_data
+setReplaceMethod("interactions_data", signature("CEMiTool"),
+                 function(cem, value){
+                     genes_by_module <- split(cem@module$genes, cem@module$modules)
+                     cem@interactions <- lapply(genes_by_module, function(x) {
+                         rows <- which(value[,1] %in% x | value[, 2] %in% x)
+                         ig <- igraph::simplify(igraph::graph_from_data_frame(value[rows,], directed=FALSE))
+                         return(ig)
+                     })
+                     return(cem)
+                 })
