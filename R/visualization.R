@@ -521,11 +521,11 @@ setMethod('plot_mean_k', signature('CEMiTool'),
 #' show_plot(cem, "ora")
 #' @rdname show_plot
 #' @export
-setGeneric('show_plot', function(cem, value, ...) {
+setGeneric('show_plot', function(cem, value) {
     standardGeneric('show_plot')
 })
 
-#' @rdname interactions_data
+#' @rdname show_plot
 #' @export
 setMethod('show_plot', signature('CEMiTool'), 
           function(cem, value=c("profile", "gsea", "ora", "interaction", 

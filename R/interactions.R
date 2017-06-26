@@ -5,7 +5,6 @@ NULL
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value a data.frame or matrix containing two columns
-#' @param directed Is the graph directed ? Default is FALSE
 #' @param ... parameters for igraph::graph_from_data_frame
 #'
 #' @return Object of class \code{CEMiTool} 
