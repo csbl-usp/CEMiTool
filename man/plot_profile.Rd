@@ -28,5 +28,7 @@ Creates a plot with module gene expression profiles along samples
 cem <- CEMiTool::cem
 # Plot module gene expression profiles
 cem <- plot_profile(cem)
+# Check resulting plot
+show_plot(cem, "profile")
 
 }

@@ -40,6 +40,6 @@ cem <- new("CEMiTool", expression=sample_annot)
 # Add sample annotation file to CEMiTool object
 sample_annotation(cem) <- sample_annot
 # Check annotation file
-head(cem@sample_annotation)
+head(sample_annotation(cem))
 
 }
