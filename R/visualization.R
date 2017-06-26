@@ -311,7 +311,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' # Get example CEMiTool object
 #' cem <- CEMiTool::cem
 #' # Get example gene interactions data
-#' int_df <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
+#' int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 #' int_df <- read.delim(int)
 #' # Include interaction data into CEMiTool object
 #' interactions_data(cem) <- int_df
