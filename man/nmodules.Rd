@@ -4,7 +4,7 @@
 \name{nmodules}
 \alias{nmodules}
 \alias{nmodules,CEMiTool-method}
-\title{Get the number of modules on a cemitool object}
+\title{Get the number of modules in a CEMiTool object}
 \usage{
 nmodules(cem)
 
@@ -17,7 +17,7 @@ nmodules(cem)
 number of modules
 }
 \description{
-Get the number of modules on a cemitool object
+Get the number of modules in a CEMiTool object
 }
 \examples{
 # Get example CEMiTool object
