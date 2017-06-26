@@ -364,8 +364,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Including interactions ...")
         }
-        results <- include_interactions(results, int_df=interactions,
-                                        directed=directed)
+        interactions_data(results) <- interactions
     }
 
     # if user provides annot file
@@ -553,7 +552,6 @@ setMethod('show', signature(object='CEMiTool'),
 #' cem <- CEMiTool::cem
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#' 
 #' 
 #' @rdname save_files
 #' @export

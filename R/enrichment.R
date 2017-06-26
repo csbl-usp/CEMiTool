@@ -94,7 +94,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
 #' # Check results
-#' ora_data(cem)
+#' head(ora_data(cem))
 #'
 #' @rdname mod_ora
 #' @export
@@ -142,7 +142,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
 #' # Check results
-#' ora_data(cem)
+#' head(ora_data(cem))
 #' @rdname ora_data
 #' @export
 setGeneric("ora_data", function(cem) {

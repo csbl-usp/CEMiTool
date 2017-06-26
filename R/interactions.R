@@ -14,9 +14,10 @@ NULL
 #' # Get example CEMiTool object
 #' cem <- CEMiTool::cem
 #' # Read example interactions data
-#' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
+#' int_df <- read.delim(system.file("extdata", "interactions.tsv", 
+#'     package = "CEMiTool"))
 #' # Insert interactions data
-#' cem <- interactions_data(cem, int_df)
+#' interactions_data(cem) <- int_df
 #' # Check interactions data
 #' interactions_data(cem)
 #' 
