@@ -6,12 +6,16 @@
 \alias{module_genes,CEMiTool-method}
 \title{Get the module genes in a CEMiTool object}
 \usage{
-module_genes(cem)
+module_genes(cem, module = NULL)
 
-\S4method{module_genes}{CEMiTool}(cem)
+\S4method{module_genes}{CEMiTool}(cem, module = NULL)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
+
+\item{module}{A character string with the name of the module of which
+genes are to be returned. Defaults to \code{NULL}, which returns the full
+list of genes and modules.}
 }
 \value{
 Object of class \code{data.frame} containing genes and their
@@ -25,5 +29,6 @@ Get the module genes in a CEMiTool object
 cem <- CEMiTool::cem
 # Get the module genes
 module_genes(cem)
-
+# Get genes for module M1
+module_genes(cem, module="M1")
 }

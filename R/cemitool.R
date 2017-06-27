@@ -461,9 +461,49 @@ setMethod('nmodules', signature(cem='CEMiTool'),
           }
 )
 
+#' Get module names in a CEMiTool object
+#'
+#' @param cem Object of class \code{CEMiTool}
+#' @param include_NC Logical. Whether or not to include "Not.Correlated" 
+#' module. Defaults to \code{TRUE}.
+#'
+#' @return Module names
+#'
+#' @rdname module_names
+#' @examples
+#' # Get example CEMiTool object
+#' cem <- CEMiTool::cem
+#' # Get module names
+#' module_names(cem)
+#'
+#' @export
+setGeneric('module_names', function(cem, include_NC=TRUE) {
+    standardGeneric('module_names')
+})
+
+#' @rdname module_names
+setMethod('module_names', signature(cem='CEMiTool'),
+          function(cem, include_NC=TRUE) {
+              mods <- NULL
+              if(!is.null(cem@module)){
+                  mods <- unique(cem@module$modules)
+                  if(!include_NC && ("Not.Correlated" %in% mods)){
+                      mods <- mods[mods != "Not.Correlated"]
+                  }
+              } else {
+                  message("Run cemitool function to get modules!")
+              }
+              return(mods)
+          }
+)
+
+
 #' Get the module genes in a CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}
+#' @param module A character string with the name of the module of which
+#' genes are to be returned. Defaults to \code{NULL}, which returns the full
+#' list of genes and modules.
 #'
 #' @return Object of class \code{data.frame} containing genes and their
 #' respective module
@@ -474,25 +514,33 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #' cem <- CEMiTool::cem
 #' # Get the module genes
 #' module_genes(cem)
-#'
+#' # Get genes for module M1
+#' module_genes(cem, module="M1")
 #' @export
-setGeneric('module_genes', function(cem) {
+setGeneric('module_genes', function(cem, module=NULL) {
     standardGeneric('module_genes')
 })
 
 #' @rdname module_genes
 setMethod('module_genes', signature(cem='CEMiTool'),
-          function(cem) {
+          function(cem, module=NULL){
+              mod_names <- unique(cem@module[, "modules"])
               res <- NULL
               if(!is.null(cem@module)){
                   res <- cem@module
-              } else {
+              }else{
                   message("Run cemitool function to get modules!")
+              }
+              if(!is.null(module)){
+                  if(module %in% mod_names){
+                      res <- res[res$modules==module,]
+                  }else{
+                      stop("Undefined module!")
+                  }
               }
               return(res)
           }
 )
-
 
 #' Print a cemitool object
 #'
