@@ -56,12 +56,12 @@ As a default, the `cemitool` function  performs a filtering of the gene expressi
 The filtering parameters can be adjusted in the `cemitool` functon or you can refilter an existing `CEMiTool` object with the `filter_expr(cem)` function.
 
 ## Module inspection
-The WGCNA analysis has produced `r nmodules(cem)` modules and the allocation of genes to modules can be seen in the `cem@module` slot:
+The WGCNA analysis has produced `r CEMiTool::nmodules(cem)` modules and the allocation of genes to modules can be seen with the `module_genes` function:
 
 ```{r}
 # inspect modules
 nmodules(cem)
-head(cem@module)
+head(module_genes(cem))
 ```
 
 Genes that are allocated to `Not.Correlated` are genes that are not clustered into any module.
@@ -180,7 +180,7 @@ You can add the interaction data to your `CEMiTool` object using the `interactio
 ```{r}
 # plot interactions
 library(ggplot2)
-cem <- include_interactions(cem, int_df) # add interactions
+interactions_data(cem) <- int_df # add interactions
 cem <- plot_interactions(cem) # generate plot
 plots <- show_plot(cem, "interaction") # view the plot for the first module
 ```
