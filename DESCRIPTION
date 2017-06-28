@@ -21,7 +21,7 @@ Description: CEMiTool improves WGCNA gene co-expression module discovery by
     optimizing network parameter selection. This package also perfoms enrichment
     analysis with the discovered modules.
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.4)
 Imports:
     methods,
     scales,
