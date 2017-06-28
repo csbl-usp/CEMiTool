@@ -96,13 +96,19 @@ setMethod('filter_expr', signature('CEMiTool'),
               return(cem)
           })
 
-# Perform variance stabilizing transformation on expression file.
-#
-# @keywords internal
-#
-# @param expr expression file containing genes in the rows and samples in the columns
-#
-# @return  A data.frame containing the results.
+#' Perform variance stabilizing transformation on expression file.
+#'
+#' @keywords internal
+#'
+#' @param expr expression file containing genes in the rows and samples in the columns
+#'
+#' @return  A data.frame containing the results.
+#'
+#' @examples
+#' # Get example expression data
+#' data(expr)
+#' # Apply variance stabilizing transformation
+#' vst_expr <- vst(expr)
 vst <- function(expr) {
     gene_mean <- apply(expr, 1, mean)
     gene_var  <- apply(expr, 1, var)
@@ -115,14 +121,20 @@ vst <- function(expr) {
     }
 }
 
-# Filter genes based on expression.
-#
-# @keywords internal
-#
-# @param expr expression file containing genes in the rows and samples in the columns
-# @param pct percentage of most expressed genes to maintain
-#
-# @return A data.frame containing the results
+#' Filter genes based on expression.
+#'
+#' @keywords internal
+#'
+#' @param expr expression file containing genes in the rows and samples in the columns
+#' @param pct percentage of most expressed genes to maintain
+#'
+#' @return A data.frame containing the results
+#'
+#' @examples
+#' # Get example expression data
+#' data(expr)
+#' # Filter 80% most expressed genes
+#' filt_expr <- expr_pct_filter(expr, pct=0.8)
 expr_pct_filter <- function(expr, pct=0.75){
     rows <- floor(pct*nrow(expr))
     val <- apply(expr, 1, mean)

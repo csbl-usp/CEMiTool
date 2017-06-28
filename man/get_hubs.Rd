@@ -4,7 +4,7 @@
 \name{get_hubs}
 \alias{get_hubs}
 \alias{get_hubs,CEMiTool-method}
-\title{Get Hubs}
+\title{Get hubs}
 \usage{
 get_hubs(cem, ...)
 
@@ -25,7 +25,7 @@ Returns \code{n} genes in each module with high connectivity.
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get module hubs
 hubs <- get_hubs(cem, n=10)
 

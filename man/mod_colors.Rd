@@ -30,7 +30,7 @@ Retrieve and set mod_colors attribute
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # See module colors
 mod_colors(cem)
 }

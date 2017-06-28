@@ -25,7 +25,7 @@ Creates a heatmap with the results of gene set enrichment analysis (GSEA) of co-
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get example sample annotation file
 # Run GSEA on network modules
 cem <- mod_gsea(cem)

@@ -25,7 +25,7 @@ Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Look at example annotation file
 sample_annotation(cem)
 # Run GSEA on network modules

@@ -25,7 +25,7 @@ Creates a graph based on interactions provided
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get example gene interactions data
 int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 int_df <- read.delim(int)

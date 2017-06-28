@@ -26,7 +26,7 @@ Get the module genes in a CEMiTool object
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get the module genes
 module_genes(cem)
 # Get genes for module M1

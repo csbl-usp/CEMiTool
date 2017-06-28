@@ -25,7 +25,7 @@ Retrieve CEMiTool object plots
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Plot ORA results
 cem <- plot_ora(cem)
 # Check ORA results plots

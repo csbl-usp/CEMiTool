@@ -38,7 +38,7 @@ cem <- new("CEMiTool", expression=expr)
 # Filter genes
 cem1 <- filter_expr(cem)
 # Check selected genes
-cem1@selected_genes
+head(expr_data(cem1))
 # Filter genes and apply variance stabilizing transformation
 cem2 <- filter_expr(cem, apply_vst=TRUE)
 # Check results

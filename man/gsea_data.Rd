@@ -21,7 +21,7 @@ Retrieve Gene Set Enrichment Analysis (GSEA) results
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Look at example annotation file
 sample_annotation(cem)
 # Run GSEA on network modules

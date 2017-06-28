@@ -27,7 +27,7 @@ Save the CEMiTool object in files
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Save CEMiTool results in files
 write_files(cem, directory=".", force=TRUE)
 

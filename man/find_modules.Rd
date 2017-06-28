@@ -52,6 +52,6 @@ cem <- filter_expr(cem)
 # Define network modules
 cem <- find_modules(cem)
 # Check results
-head(cem@module)
+head(module_genes(cem))
 
 }

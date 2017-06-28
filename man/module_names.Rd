@@ -24,7 +24,7 @@ Get module names in a CEMiTool object
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get module names
 module_names(cem)
 

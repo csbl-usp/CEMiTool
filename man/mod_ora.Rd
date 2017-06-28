@@ -27,7 +27,7 @@ Performs overrepresentation analysis for each co-expression module found.
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Read gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))

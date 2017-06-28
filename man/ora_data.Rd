@@ -21,7 +21,7 @@ Retrieve over representation analysis (ORA) results
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Read gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))

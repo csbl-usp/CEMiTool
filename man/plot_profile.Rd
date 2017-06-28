@@ -25,7 +25,7 @@ Creates a plot with module gene expression profiles along samples
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Plot module gene expression profiles
 cem <- plot_profile(cem)
 # Check resulting plot

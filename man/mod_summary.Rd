@@ -29,7 +29,7 @@ Summarizes modules using mean or eigengene expression.
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Summarize results
 mod_summary <- mod_summary(cem)
 

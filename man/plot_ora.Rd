@@ -25,7 +25,7 @@ Creates a bar plot with the results of module overrepresentation analysis
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Read example gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))

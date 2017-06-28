@@ -21,7 +21,7 @@ Get the number of modules in a CEMiTool object
 }
 \examples{
 # Get example CEMiTool object
-cem <- CEMiTool::cem
+data(cem)
 # Get the number of modules
 nmodules(cem)
 
