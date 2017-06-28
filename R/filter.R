@@ -103,12 +103,6 @@ setMethod('filter_expr', signature('CEMiTool'),
 #' @param expr expression file containing genes in the rows and samples in the columns
 #'
 #' @return  A data.frame containing the results.
-#'
-#' @examples
-#' # Get example expression data
-#' data(expr)
-#' # Apply variance stabilizing transformation
-#' vst_expr <- vst(expr)
 vst <- function(expr) {
     gene_mean <- apply(expr, 1, mean)
     gene_var  <- apply(expr, 1, var)
@@ -129,12 +123,6 @@ vst <- function(expr) {
 #' @param pct percentage of most expressed genes to maintain
 #'
 #' @return A data.frame containing the results
-#'
-#' @examples
-#' # Get example expression data
-#' data(expr)
-#' # Filter 80% most expressed genes
-#' filt_expr <- expr_pct_filter(expr, pct=0.8)
 expr_pct_filter <- function(expr, pct=0.75){
     rows <- floor(pct*nrow(expr))
     val <- apply(expr, 1, mean)
