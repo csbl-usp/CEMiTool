@@ -15,10 +15,4 @@ A data.frame containing the results.
 \description{
 Perform variance stabilizing transformation on expression file.
 }
-\examples{
-# Get example expression data
-data(expr)
-# Apply variance stabilizing transformation
-vst_expr <- vst(expr)
-}
 \keyword{internal}

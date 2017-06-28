@@ -17,10 +17,4 @@ A data.frame containing the results
 \description{
 Filter genes based on expression.
 }
-\examples{
-# Get example expression data
-data(expr)
-# Filter 80\% most expressed genes
-filt_expr <- expr_pct_filter(expr, pct=0.8)
-}
 \keyword{internal}
