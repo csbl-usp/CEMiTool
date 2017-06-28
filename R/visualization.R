@@ -21,7 +21,7 @@ NULL
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Plot module gene expression profiles
 #' cem <- plot_profile(cem)
 #' # Check resulting plot
@@ -125,7 +125,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Read example gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
@@ -224,7 +224,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get example sample annotation file
 #' # Run GSEA on network modules
 #' cem <- mod_gsea(cem)
@@ -309,7 +309,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get example gene interactions data
 #' int <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
 #' int_df <- read.delim(int)
@@ -436,7 +436,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
 #' 
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem 
+#' data(cem)
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_beta_r2(cem)
 #' # Check resulting plot
@@ -514,7 +514,7 @@ setMethod('plot_mean_k', signature('CEMiTool'),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Plot ORA results
 #' cem <- plot_ora(cem)
 #' # Check ORA results plots

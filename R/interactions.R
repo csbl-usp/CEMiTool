@@ -11,7 +11,7 @@ NULL
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Read example interactions data
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", 
 #'     package = "CEMiTool"))

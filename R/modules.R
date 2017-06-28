@@ -35,7 +35,7 @@
 #' # Define network modules
 #' cem <- find_modules(cem)
 #' # Check results
-#' head(cem@module)
+#' head(module_genes(cem))
 #'
 #' @rdname find_modules
 #' @export
@@ -235,7 +235,7 @@ setMethod('find_modules', signature('CEMiTool'),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Summarize results
 #' mod_summary <- mod_summary(cem)
 #' 
@@ -290,7 +290,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 )
 
 
-#' Get Hubs 
+#' Get hubs 
 #'
 #' Returns \code{n} genes in each module with high connectivity. 
 #'
@@ -302,7 +302,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get module hubs
 #' hubs <- get_hubs(cem, n=10)
 #' 

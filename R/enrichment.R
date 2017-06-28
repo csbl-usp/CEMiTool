@@ -87,7 +87,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Read gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
@@ -135,7 +135,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' @return Object of class \code{data.frame} with ORA data
 #' @examples 
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Read gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
@@ -167,7 +167,7 @@ setMethod("ora_data", signature("CEMiTool"),
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Look at example annotation file
 #' sample_annotation(cem)
 #' # Run GSEA on network modules
@@ -286,7 +286,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
 #' @return Object of class \code{list} with GSEA data
 #' @examples 
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Look at example annotation file
 #' sample_annotation(cem)
 #' # Run GSEA on network modules

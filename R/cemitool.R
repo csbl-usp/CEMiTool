@@ -135,7 +135,7 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @return A vector with color names.
 #' @examples 
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # See module colors
 #' mod_colors(cem)
 #' @rdname mod_colors
@@ -439,7 +439,7 @@ cemitool <- function(expr,
 #' @rdname nmodules
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get the number of modules
 #' nmodules(cem)
 #'
@@ -472,7 +472,7 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #' @rdname module_names
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get module names
 #' module_names(cem)
 #'
@@ -511,7 +511,7 @@ setMethod('module_names', signature(cem='CEMiTool'),
 #' @rdname module_genes
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Get the module genes
 #' module_genes(cem)
 #' # Get genes for module M1
@@ -630,7 +630,7 @@ setMethod('show', signature(object='CEMiTool'),
 #' @return A directory containing CEMiTool results in files.
 #' @examples 
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
 #' 

@@ -19,7 +19,7 @@ NULL
 #'
 #' @examples
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem
+#' data(cem)
 #' generate_report(cem, output_format=c("pdf_document", "html_document"))
 #' 
 #' @rdname generate_report
