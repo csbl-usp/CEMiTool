@@ -4,16 +4,24 @@ knitr::opts_chunk$set(tidy = FALSE,
                       message = FALSE,
                       cache=TRUE)
 
+## ------------------------------------------------------------------------
+library("CEMiTool")
+# load expression data
+data(expr)
+head(expr[,1:4])
+
 ## ---- results='hide'-----------------------------------------------------
 cem <- cemitool(expr)
 
 ## ------------------------------------------------------------------------
 print(cem)
+# or, more conveniently, just call `cem`
+cem
 
 ## ------------------------------------------------------------------------
 # inspect modules
 nmodules(cem)
-head(cem@module)
+head(module_genes(cem))
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  generate_report(cem, output_format=c("pdf_document", "html_document"))
@@ -32,8 +40,9 @@ cem <- cemitool(expr,sample_annot)
 
 ## ------------------------------------------------------------------------
 # generate heatmap of gene set enrichment analysis
+cem <- mod_gsea(cem)
 cem <- plot_gsea(cem)
-print(cem@enrichment_plot)
+show_plot(cem, "gsea")
 
 ## ------------------------------------------------------------------------
 # perform GSEA of modules across your experimental classes
@@ -42,7 +51,8 @@ cem <- mod_gsea(cem)
 ## ------------------------------------------------------------------------
 # plot gene expression within each module
 cem <- plot_profile(cem)
-print(cem@profile_plot[[1]])
+plots <- show_plot(cem, "profile")
+plots[1]
 
 ## ------------------------------------------------------------------------
 # read GMT file
@@ -56,7 +66,8 @@ cem <- mod_ora(cem, gmt_in)
 ## ------------------------------------------------------------------------
 # plot ora results
 cem <- plot_ora(cem)
-print(cem@barplot_ora[[1]][["pl"]]) # Plot for module 1
+plots <- show_plot(cem, "ora")
+plots[1]
 
 ## ------------------------------------------------------------------------
 # read interactions
@@ -67,23 +78,18 @@ head(int_df)
 ## ------------------------------------------------------------------------
 # plot interactions
 library(ggplot2)
-cem <- include_interactions(cem, int_df) # add interactions
+interactions_data(cem) <- int_df # add interactions
 cem <- plot_interactions(cem) # generate plot
-cem@interaction_plot[[1]] # view the plot for the first module
+plots <- show_plot(cem, "interaction") # view the plot for the first module
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  # run cemitool
 #  library(ggplot2)
 #  cem <- cemitool(expr, sample_annot, gmt_in, interactions=int_df,
 #                  filter=TRUE, plot=TRUE)
+#  # create report
 #  generate_report(cem, output_format=c("pdf_document", "html_document"))
-
-## ------------------------------------------------------------------------
-# create a new CEMiTool object
-cem <- new("CEMiTool", expression=expr, 
-               sample_annotation=sample_annot)
-
-## ------------------------------------------------------------------------
-ncores <- parallel::detectCores()
-doParallel::registerDoParallel(cores=ncores)
+#  
+#  # write analysis results into files
+#  write_files(cem, directory=".", force=TRUE)
 
