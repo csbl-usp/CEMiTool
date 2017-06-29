@@ -2,7 +2,7 @@
 
 ##### The official Docker image for CEMiTool is publicly available on [Docker Hub](https://hub.docker.com/r/csblusp/cemitool/).
 This example shows how to use _csblusp/cemitool_ Docker image with a complete R environment for running CEMiTool.
-For more information about the CEMiTool analysis workflow, check the vignette.
+For more information about the CEMiTool analysis workflow, check the vignette. If you don't have Docker installed, follow the steps for you platform [here](https://docs.docker.com/engine/installation/)
 
 ### Initial consideration
 All the examples here shown will consider a hypothetical `/home/me/myanalysis` directory which contains your _gene
