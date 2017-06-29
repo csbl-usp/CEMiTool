@@ -16,7 +16,7 @@ Just to make things more practical, we will store this directory in a shell vari
 $ export ANALYSIS_DIR=/home/me/myanalysis
 ```
 
-### Running CEMiTool in interactive mode
+## Running CEMiTool in interactive mode
 With the following command you will be able to access the container in an interactive shell.
 ```bash
 $ docker run --rm -it -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
@@ -35,29 +35,24 @@ root@1asd8asf1rf3:/home/me/myanalysis/$ R -q # Inside the container
 > expression_data <- read.table('expression.tsv', sep='\t')
 > sample_annotation_data <- read.table('sample_annotation.tsv', sep='\t')
 ```
-#### Output Files
-As you are using [Docker volumes](https://docs.docker.com/engine/tutorials/dockervolumes/) (the **`-v`** flag), every file created
-on `$ANALYSIS_DIR` directory inside the container will be available outside the container, in the same location. Let's first see
-the files on our analysis directory
+---
+## Running CEMiTool from command line
+*CEMiTool* can also be run from the command line, with no need to enter inside the container. The following command will show the documentation for the command line version of *CEMiTool*
 ```bash
-$ ls /home/me/myanalysis/
-expression.tsv  sample_annotation.tsv
+$ docker run --rm  -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" csblusp/cemitool --help
 ```
-We just have two files, for now. Now we will create a new container and put a new file inside our `$ANALYSIS_DIR` inside the container
-
+The simplest way to run *CEMiTool* cli is providing the **expression file** and **--output** parameters.
 ```bash
-$ docker run --rm -it -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
-root@4a2t3aasd3t4:/home/me/myanalysis/$ cat > output.txt
-¯\_(ツ)_/¯
-root@4a2t3aasd3t4:/home/me/myanalysis/$ exit
+$ docker run --rm  -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" csblusp/cemitool expression.tsv --output=output_directory
 ```
-When you exit the container, everything is lost, except for the data persisted on volumes. Let's see if our _output.txt_ file 
-created inside the killed container still exists.
-
+Yeah, I know, it's a little verbose. If you are running on Linux or MacOS, you can set an alias like this:
 ```bash
-$ ls $ANALYSIS_DIR
-expression.tsv  sample_annotation.tsv  output.txt
-$ cat $ANALYSIS_DIR/output.txt
-¯\_(ツ)_/¯
+$ alias cemitool="docker run --rm  -v "$(pwd):$(pwd)" -w "$(pwd)" csblusp/cemitool"
 ```
-Nice! You are now able to run your full co-expression analysis inside the _CEMiTool_ container.
+With this alias, you can run *CEMiTool* container just by calling `cemitool` on the command line. The alias command is a little different. We changed `$ANALYSIS_DIR` to `$(pwd)` just to make the command more general. Said that, in order to run the analysis using this alias you have to go to your analysis directory:
+```bash
+$ cd $ANALYSIS_DIR
+$ cemitool expression.tsv --output=output_directory
+```
+---
+Have fun! :smiley:
