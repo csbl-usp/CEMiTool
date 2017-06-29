@@ -45,7 +45,7 @@ The simplest way to run *CEMiTool* cli is providing the **expression file** and 
 ```bash
 $ docker run --rm  -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" csblusp/cemitool expression.tsv --output=output_directory
 ```
-Yeah, I know, it's a little verbose. If you are running on Linux or MacOS, you can set an alias like this:
+Yeah, I know, this command is lenghty. If you are running on Linux or MacOS, you can set an alias like this:
 ```bash
 $ alias cemitool="docker run --rm  -v "$(pwd):$(pwd)" -w "$(pwd)" csblusp/cemitool"
 ```
