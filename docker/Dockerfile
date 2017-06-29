@@ -9,4 +9,4 @@ RUN R --slave -e "install.packages('devtools');\
                   biocLite(c('WGCNA', 'gRbase'));\
                   devtools::install_github('csbl-usp/CEMiTool')"
 
-ENTRYPOINT ["/usr/bin/Rscript", "/usr/local/bin/CEMiTool"]
+ENTRYPOINT ["/usr/bin/Rscript", "/usr/local/lib/R/site-library/CEMiTool/exec/CEMiTool.R"]
