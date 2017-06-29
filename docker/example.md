@@ -19,7 +19,7 @@ $ export ANALYSIS_DIR=/home/me/myanalysis
 ### Running CEMiTool in interactive mode
 With the following command you will be able to access the container in an interactive shell.
 ```bash
-$ docker run --rm -it -v $ANALYSIS_DIR -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
+$ docker run --rm -it -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
 root@1asd8asf1rf3:/home/me/myanalysis/$ 
 ```
 Just to make sure you are in the right directory inside the container, take a look at the files in your current directory.
@@ -46,7 +46,7 @@ expression.tsv  sample_annotation.tsv
 We just have two files, for now. Now we will create a new container and put a new file inside our `$ANALYSIS_DIR` inside the container
 
 ```bash
-$ docker run --rm -it -v $ANALYSIS_DIR -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
+$ docker run --rm -it -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR csblusp/cemitool /bin/bash
 root@4a2t3aasd3t4:/home/me/myanalysis/$ cat > output.txt
 ¯\_(ツ)_/¯
 root@4a2t3aasd3t4:/home/me/myanalysis/$ exit
