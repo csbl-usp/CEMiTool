@@ -49,7 +49,13 @@ Yeah, I know, this command is lenghty. If you are running on Linux or MacOS, you
 ```bash
 $ alias cemitool="docker run --rm  -v "$(pwd):$(pwd)" -w "$(pwd)" csblusp/cemitool"
 ```
-With this alias, you can run *CEMiTool* container just by calling `cemitool` on the command line. The alias command is a little different. We changed `$ANALYSIS_DIR` to `$(pwd)` just to make the command more general. Said that, in order to run the analysis using this alias you have to go to your analysis directory:
+Alternativelly, you can download [this file](cemitool) and put it into your `/usr/local/bin` directory.
+```bash
+$ wget https://raw.githubusercontent.com/csbl-usp/CEMiTool/master/docker/cemitool
+$ chmod +x cemitool
+$ mv cemitool /usr/local/bin
+```
+With this you can run *CEMiTool* container just by calling `cemitool` on the command line. As you can see, the command is a little different. We changed `$ANALYSIS_DIR` to `$(pwd)` just to make the command more general. Having said that, in order to run the analysis using this alias you have to go to your analysis directory:
 ```bash
 $ cd $ANALYSIS_DIR
 $ cemitool expression.tsv --output=output_directory
