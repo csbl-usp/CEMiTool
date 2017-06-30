@@ -61,4 +61,4 @@ $ cd $ANALYSIS_DIR
 $ cemitool expression.tsv --output=output_directory
 ```
 ---
-Have fun! :smiley:
+Have fun! :whale:
