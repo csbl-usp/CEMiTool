@@ -28,6 +28,7 @@ Options:
   --diss-thresh=<THRESH>             module merging correlation threshold for eigengene similarity [default: 0.8]
   --directed                        the interactions are directed
   -o <DIR> --output=<DIR>           output directory
+  --rdata                           save .RData file for debugging
   -v --verbose                      display progress messages [default: TRUE]
 
 Authors:
@@ -76,7 +77,7 @@ if (!interactive()) {
     if(p$verbose){
         message("Reading expression file ...")
     }
-    p$expr <- read.delim(parameters[["exprsfile"]], row.names=NULL)
+    p$expr <- data.table::fread(parameters[["exprsfile"]], data.table=FALSE)
     if(!gene_column %in% colnames(p$expr)) {
         stop("Please give a valid column containing gene symbols.")
     }
@@ -99,7 +100,7 @@ if (!interactive()) {
         if(p$verbose){
             message("Reading sample annotation file...")
         }
-        p$annot <- read.delim(parameters[["sample_annot"]], row.names=NULL)
+        p$annot <- data.table::fread(parameters[["sample_annot"]], data.table=FALSE)
 
         # sample name column in sample annotation file
         p$sample_name_column <- parameters[["samples_column"]]
@@ -139,7 +140,7 @@ if (!interactive()) {
         if(p$verbose){
             message("Reading interactions file ...")
         }
-        p$interactions <- read.delim(parameters[["interact"]], row.names=NULL)
+        p$interactions <- data.table::fread(parameters[["interact"]], data.table=FALSE)
     }
 
     # correlation method
@@ -173,8 +174,12 @@ if (!interactive()) {
     if(p$verbose){
         message("Running CEMiTool ...")
     }
-    save(file="CEMiTool.RData", list=ls())
+
     cem <- do.call(cemitool, p)
+
+    if(parameters[['rdata']]){
+        save(file="CEMiTool.RData", list=ls())
+    }
 
     # Save files
     if(p$verbose){
