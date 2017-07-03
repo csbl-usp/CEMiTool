@@ -2,7 +2,7 @@
 
 "CEMiTool - Co-Expression Modules identification Tool
 
-Usage: cemitool.R EXPRSFILE  --output=<DIR> [--gene-column=<GENECOL> --sample-annot=<ANNOT> --samples-column=<SAMPLECOL> --class-column=<CLASSCOL> --dontfilter (--filter-pval=<p>|--genenum=<GENNUM>) --network-type=<NETTYPE> --tom-type=<NETTYPE> --gmtfile=<GMT> --interact=<INT> --correlation=<COR> --dontmerge --ora-pvalue=<p> --min-module=<MIN> --diss-thresh=<THRESH> --directed --verbose]
+Usage: cemitool.R EXPRSFILE  --output=<DIR> [--gene-column=<GENECOL> --sample-annot=<ANNOT> --samples-column=<SAMPLECOL> --class-column=<CLASSCOL> --dontfilter (--filter-pval=<p>|--genenum=<GENNUM>) --network-type=<NETTYPE> --tom-type=<NETTYPE> --gmtfile=<GMT> --interact=<INT> --correlation=<COR> --dontmerge --ora-pvalue=<p> --min-module=<MIN> --diss-thresh=<THRESH> --directed --rdata --verbose]
 
 Input:
   EXPRSFILE                         a normalized expression file .tsv format
