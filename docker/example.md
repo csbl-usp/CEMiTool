@@ -19,18 +19,18 @@ $ export ANALYSIS_DIR=/home/me/myanalysis
 ## Running CEMiTool in interactive mode
 With the following command you will be able to access the container in an interactive shell.
 ```bash
-$ docker run --rm -it --entrypoint=/bin/bash -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR csblusp/cemitool
-root@1asd8asf1rf3:/home/me/myanalysis/$ 
+$ docker run --rm -it --entrypoint=/bin/bash -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w $ANALYSIS_DIR -u $(id -u) csblusp/cemitool
+docker@1asd8asf1rf3:/home/me/myanalysis/$ 
 ```
 Just to make sure you are in the right directory inside the container, take a look at the files in your current directory.
 
 ```bash
-root@1asd8asf1rf3:/home/me/myanalysis/$ ls
+docker@1asd8asf1rf3:/home/me/myanalysis/$ ls
 expression.tsv  sample_annotation.tsv
 ```
 Everything is just fine! Now you can start a R session, load the *CEMiTool* package and start your analysis.
 ```bash
-root@1asd8asf1rf3:/home/me/myanalysis/$ R -q # Inside the container
+docker@1asd8asf1rf3:/home/me/myanalysis/$ R -q # Inside the container
 > library(CEMiTool) # Load CEMiTool and perform your analysis
 > expression_data <- read.table('expression.tsv', sep='\t')
 > sample_annotation_data <- read.table('sample_annotation.tsv', sep='\t')
@@ -39,15 +39,15 @@ root@1asd8asf1rf3:/home/me/myanalysis/$ R -q # Inside the container
 ## Running CEMiTool from command line
 *CEMiTool* can also be run from the command line, with no need to enter the container. The following command will show the documentation for the command line version of *CEMiTool*
 ```bash
-$ docker run --rm -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" csblusp/cemitool --help
+$ docker run --rm -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" -u $(id -u) csblusp/cemitool --help
 ```
 The simplest way to run the *CEMiTool* cli is providing the **expression file** and **--output** parameters.
 ```bash
-$ docker run --rm -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" csblusp/cemitool expression.tsv --output=output_directory
+$ docker run --rm -v "$ANALYSIS_DIR:$ANALYSIS_DIR" -w "$ANALYSIS_DIR" -u $(id -u) csblusp/cemitool expression.tsv --output=output_directory
 ```
 Yeah, I know, this command is lengthy. If you are running on Linux or MacOS, you can set an alias like this:
 ```bash
-$ alias cemitool="docker run --rm  -v "$(pwd):$(pwd)" -w "$(pwd)" csblusp/cemitool"
+$ alias cemitool="docker run --rm  -v "$(pwd):$(pwd)" -w "$(pwd)" -u $(id -u) csblusp/cemitool"
 ```
 Alternativelly, you can download [this file](cemitool) and put it into your `/usr/local/bin` directory.
 ```bash
