@@ -1,5 +1,6 @@
 #' @import ggplot2
 #' @importFrom sna gplot.layout.fruchtermanreingold
+#' @importFrom reshape melt
 #' @import ggrepel
 #' @importFrom igraph degree
 #' @importFrom igraph set_vertex_attr 
