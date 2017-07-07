@@ -1,4 +1,4 @@
-#' @import pracma
+#' @importFrom pracma gammainc
 #'
 NULL
 

@@ -401,9 +401,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     pl <- ggplot(plotcord)  + 
         geom_segment(data=edges, aes_(x=~X1, y=~Y1, xend=~X2, yend=~Y2), 
                      size = 0.5, alpha=0.5, colour="#DDDDDD") +
-        #geom_point(aes_(x=~X1, y=~X2, size=~Degree, alpha=~Degree, color=~in_mod)) +
         geom_point(aes_(x=~X1, y=~X2, size=~Degree, alpha=~Degree), color=color) +
-        #ggnetwork::geom_nodes(aes_(x=~X1, y=~X2, alpha=~Degree, size=~Degree), color=color) +
         geom_label_repel(aes_(x=~X1, y=~X2, label=~vertex.names, color=~Hub), 
                          box.padding=unit(1, "lines"),
                          data=function(x){x[x$shouldLabel, ]}) +

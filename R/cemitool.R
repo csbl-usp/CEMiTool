@@ -298,7 +298,6 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' gmt_in <- read_gmt(gmt_fname)
 #' ## Get example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
-#' cem <- include_interactions(cem, int_df)
 #' ## Run CEMiTool
 #' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, 
 #'     interactions=int_df, verbose=TRUE, plot=TRUE)

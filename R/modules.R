@@ -1,9 +1,7 @@
 #' @importFrom grDevices pdf
 #' @importFrom grDevices colorRampPalette
-#' @import data.table
+#' @importFrom data.table fread
 #' @import WGCNA
-#' @import diptest
-#' @import modes
 
 .datatable.aware=TRUE
 #' Co-expression modules definition
