@@ -1,7 +1,7 @@
 #' @importFrom grDevices pdf
 #' @importFrom grDevices colorRampPalette
 #' @importFrom data.table fread setDF
-#' @importFrom reshape melt
+#' @importFrom reshape2 melt
 #' @import WGCNA
 
 .datatable.aware=TRUE
