@@ -1,4 +1,4 @@
-#' @importFrom data.table fread
+#' @importFrom data.table fread setDF
 #' @importFrom fgsea fgsea
 #' @importFrom clusterProfiler enricher
 NULL
