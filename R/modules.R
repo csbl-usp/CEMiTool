@@ -5,7 +5,7 @@
 #' @import diptest
 #' @import modes
 
-.datatable.aware=TRUE
+.datatable.aware <- TRUE
 #' Co-expression modules definition
 #'
 #' Defines co-expression modules

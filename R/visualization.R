@@ -369,7 +369,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     plotcord <- data.frame(sna::gplot.layout.fruchtermanreingold(m, NULL)) 
     # or get it them from Kamada-Kawai's algorithm: 
     # plotcord <- data.frame(sna::gplot.layout.kamadakawai(m, NULL)) 
-    colnames(plotcord) = c("X1","X2")
+    colnames(plotcord) <- c("X1","X2")
     edglist <- network::as.matrix.network.edgelist(net_obj)
     edges <- data.frame(plotcord[edglist[,1],], plotcord[edglist[,2],])
     plotcord$vertex.names <- as.factor(network::get.vertex.attribute(net_obj, "vertex.names"))
