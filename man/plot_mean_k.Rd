@@ -25,7 +25,7 @@ Creates a graph showing the mean connectivity of genes in the network
 }
 \examples{
 # Get example CEMiTool object
-cem <- data(cem)
+data(cem)
 # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 cem <- plot_mean_k(cem)
 # Check resulting plot
