@@ -477,7 +477,7 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
 #' 
 #' @examples 
 #' # Get example CEMiTool object
-#' cem <- CEMiTool::cem 
+#' cem <- data(cem)
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
 #' cem <- plot_mean_k(cem)
 #' # Check resulting plot

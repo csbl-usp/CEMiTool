@@ -74,6 +74,31 @@ setMethod("initialize", signature="CEMiTool",
               return(.Object)
           })
 
+#' Create a CEMiTool object
+#'
+#' @param expr Object of class \code{data.frame} with gene
+#'        expression data
+#' @param sample_annot Object of \code{data.frame} containing the sample annotation.
+#'        It should have at least two columns containing group Class
+#'        and the Sample Name that should match with samples in
+#'        expression file
+#' 
+#' @return Object of class \code{CEMiTool}
+#' @examples
+#' # Create new CEMiTool object
+#' cem <- new_cem()
+#' # Create new CEMiTool object with expression and sample_annotation data
+#' data(expr)
+#' data(sample_annot)
+#' cem <- new_cem(expr, sample_annot)
+#' # Equivalent to a call to new()
+#' cem2 <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+#' identical(cem, cem2)
+#' @export
+new_cem <- function(expr=data.frame(), sample_annot=data.frame()){
+	new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+}
+
 
 #' Retrieve and set expression attribute
 #'
@@ -86,7 +111,7 @@ setMethod("initialize", signature="CEMiTool",
 #' @return Object of class \code{data.frame} with gene expression data
 #' @examples 
 #' # Initialize an empty CEMiTool object
-#' cem <- new("CEMiTool")
+#' cem <- new_cem()
 #' # Get example expression data
 #' data(expr)
 #' # Add expression file to CEMiTool object
@@ -196,7 +221,7 @@ setReplaceMethod("mod_colors", signature("CEMiTool"),
 #' # Get example sample_annotation data
 #' data(sample_annot)
 #' # Initialize CEMiTool object with expression
-#' cem <- new("CEMiTool", expression=sample_annot)
+#' cem <- new_cem(expr)
 #' # Add sample annotation file to CEMiTool object
 #' sample_annotation(cem) <- sample_annot
 #' # Check annotation file

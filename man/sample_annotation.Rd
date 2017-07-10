@@ -36,7 +36,7 @@ data(expr)
 # Get example sample_annotation data
 data(sample_annot)
 # Initialize CEMiTool object with expression
-cem <- new("CEMiTool", expression=sample_annot)
+cem <- new_cem(expr)
 # Add sample annotation file to CEMiTool object
 sample_annotation(cem) <- sample_annot
 # Check annotation file
