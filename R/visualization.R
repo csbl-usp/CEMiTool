@@ -1,7 +1,7 @@
 #' @import ggplot2
 #' @importFrom sna gplot.layout.fruchtermanreingold
 #' @import data.table 
-#' @import ggrepel
+#' @importFrom ggrepel geom_label_repel 
 #' @importFrom igraph degree
 #' @importFrom igraph set_vertex_attr 
 #' @import intergraph
