@@ -8,13 +8,14 @@ NULL
 #'
 #' @param ... Any number of objects of class \code{CEMiTool}
 #' @param analyses_list List of objects of class \code{CEMiTool}
-#' @param fraction The fraction of objects that an edge pair must be present to be selected (default = 1, accepts values from 0-1)
+#' @param fraction The fraction of objects in which an edge pair must be present to 
+#' be selected (default = 1, accepts values from 0-1)
 #'
-#' @return Dataframe containing edgelist describing common edges between
-#'    the networks defined in module slots from \code{CEMiTool} objects
+#' @return Object of class \code{data.frame} containing edgelist describing common 
+#' edges between the networks defined in module slots from \code{CEMiTool} objects
 #'
-#' @details Method assumes that all genes inside each module are connected to
-#'    every other gene from the same module
+#' @details The method assumes that all genes inside each module are connected to
+#' every other gene from the same module
 #'
 #' @examples
 #' \dontrun{
@@ -26,7 +27,7 @@ NULL
 #' cem1 <- cemitool(dset1) 
 #' cem2 <- cemitool(dset2) 
 #' cemoverlap_df <- cemoverlap(cem1, cem2)
-#' # Can also run with list: cemoverlap_df <- cemoverlap(list(cem1, cem2))
+#' # Can also be run with a list: cemoverlap_df <- cemoverlap(list(cem1, cem2))
 #'  
 #' }
 #' @export

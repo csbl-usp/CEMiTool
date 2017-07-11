@@ -1,4 +1,4 @@
-#' @import rmarkdown
+#' @importFrom rmarkdown render
 #' @import knitr
 #' @importFrom DT datatable
 #' @import htmltools

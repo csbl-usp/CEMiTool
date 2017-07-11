@@ -1,6 +1,6 @@
-#' @import data.table
-#' @import fgsea
-#' @import clusterProfiler
+#' @importFrom data.table fread setDF
+#' @importFrom fgsea fgsea
+#' @importFrom clusterProfiler enricher
 NULL
 
 #' Read a GMT file

@@ -34,7 +34,7 @@ Filter gene expression table
 # Get example expression data
 data(expr)
 # Initialize CEMiTool object with expression
-cem <- new("CEMiTool", expression=expr)
+cem <- new_cem(expr)
 # Filter genes
 cem1 <- filter_expr(cem)
 # Check selected genes

@@ -34,7 +34,7 @@ Retrieve and set expression attribute
 }
 \examples{
 # Initialize an empty CEMiTool object
-cem <- new("CEMiTool")
+cem <- new_cem()
 # Get example expression data
 data(expr)
 # Add expression file to CEMiTool object

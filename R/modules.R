@@ -2,8 +2,6 @@
 #' @importFrom grDevices colorRampPalette
 #' @import data.table
 #' @import WGCNA
-#' @import diptest
-#' @import modes
 
 .datatable.aware <- TRUE
 #' Co-expression modules definition
@@ -29,7 +27,7 @@
 #' # Get example expression data
 #' data(expr)
 #' # Initialize CEMiTool object with expression
-#' cem <- new('CEMiTool', expression=expr)
+#' cem <- new_cem(expr)
 #' # Filter data
 #' cem <- filter_expr(cem)
 #' # Define network modules
