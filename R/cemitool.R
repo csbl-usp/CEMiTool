@@ -671,7 +671,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
                   if(!force){
                       stop("Stopping analysis: ", directory, " already exists!")
                   } else {
-                      warning(directory, " already exists!")
+                      warning(directory, " already exists! Use force=TRUE to overwrite.")
                   }
               } else {
                   dir.create(directory)
@@ -691,19 +691,14 @@ setMethod('write_files', signature(cem='CEMiTool'),
                   write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=FALSE)
               }
               if(length(cem@interactions) > 0){
-                  int_df <- data.frame(Module=character(),
-                                       Gene1=character(),
-                                       Gene2=character())
-                  for(n in names(cem@interactions)){
-                      mod_int <- igraph::get.edgelist(cem@interactions[[n]])
-                      if(nrow(mod_int) > 0 ){
-                          int_df <- rbind.data.frame(int_df,
-                                                 data.frame(Module=n,
-                                                            igraph::get.edgelist(cem@interactions[[n]])
-                                                            ))
-                      }
-                  }
-                  colnames(int_df) <- c("Module", "Gene1", "Gene2")
+		  mod_ints <- lapply(names(cem@interactions), function(x){
+	              mod_int <- igraph::get.edgelist(cem@interactions[[x]])
+	              if(nrow(mod_int) > 0 ){
+		          cbind(x, mod_int)
+       		      }
+		  }) 
+		  int_df <- do.call("rbind", mod_ints)
+		  colnames(int_df) <- c("Module", "Gene1", "Gene2")
                   write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)
               }
               if(length(cem@parameters) > 0){
