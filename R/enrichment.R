@@ -61,7 +61,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
         result <- enriched@result
     } else {
         if(mod_name != "Not.Correlated"){
-            warning(paste("Enrichment for module", mod_name, "is NULL"))    
+            warning("Enrichment for module ", mod_name, " is NULL")    
         }
         result <- data.frame(Module=character(), ID=character(),
                              Description=character(),
@@ -232,8 +232,8 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               gsea_list <- lapply(classes, function(class_group){
                   
                   if (verbose) {
-                      message(paste0('Calculating modules enrichment analysis for class ',
-                                     class_group))
+                      message('Calculating modules enrichment analysis for class ',
+                                     class_group)
                   }
                   # samples of class == class_group
                   class_samples <- annot[annot[, class_col]==class_group, sample_col]

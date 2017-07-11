@@ -91,10 +91,9 @@ setMethod('find_modules', signature('CEMiTool'),
     k <- beta$fitIndices[, 5]
     At  <- powers[length(powers)] - powers[1]
     A   <- 0.0
-    for(cont in 2:length(fit)) {
-        A <- A + 0.5*(fit[cont] +
-                      fit[cont-1])*(powers[cont] - powers[cont-1])
-    }
+    A <- sum(vapply(2:length(fit), function(cont)
+			0.5 * (fit[cont] + fit[cont-1]) * (powers[cont] - powers[cont-1]),
+		numeric(1))) 
 
     # Area under the curve/threshold
     phi <- A/At
