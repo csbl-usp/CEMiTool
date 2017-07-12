@@ -45,7 +45,8 @@ Imports:
     diptest,
     grDevices,
     utils,
-    network
+    network,
+    matrixStats
 Suggests:
     testthat
 License: GPL-3
