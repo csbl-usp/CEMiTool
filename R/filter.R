@@ -115,7 +115,7 @@ vst <- function(expr) {
     #gene_var  <- apply(expr, 1, var)
 
     gene_mean <- matrixStats::rowMeans2(expr)
-    gene_var <- matrixStats::rowvars(expr)
+    gene_var <- matrixStats::rowVars(expr)
 
     if(WGCNA::cor(gene_mean, gene_var, method="spearman") > 0.5){
         r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
