@@ -4,14 +4,14 @@ NULL
 
 #' Filter gene expression table
 #'
-#' @param cem Object of class \code{CEMiTool}. 
+#' @param cem Object of class \code{CEMiTool}.
 #' @param pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
 #' @param pct Percentage of most expressed genes to keep (before variance filter).
 #' @param apply_vst Logical. If TRUE, will apply variance stabilizing transform before filtering data.
 #' @param ... Optional parameters.
 #'
-#' @return Object of class \code{CEMiTool} with selected genes 
+#' @return Object of class \code{CEMiTool} with selected genes
 #'
 #' @examples
 #' # Get example expression data
@@ -44,53 +44,60 @@ setMethod('filter_expr', signature('CEMiTool'),
                   }
               }
               expr <- expr_data(cem, filtered=FALSE)
-              
+
               expr <- expr_pct_filter(expr, pct)
+
+              #expr_var <- apply(expr, 1, var)
+              temp <- as.matrix(expr)
+              rownames(temp) <- rownames(expr)
+              colnames(temp) <- names(expr)
+              expr <- temp
               
-              expr_var <- apply(expr, 1, var)
-              
+              expr_var <- matrixStats::rowVars(expr)
+
               expr <- expr[which(expr_var!=0),]
-              
+
               if(!missing(n_genes)){
                   n_genes <- min(n_genes, nrow(expr))
               }
-              
+
               if (apply_vst){
                   expr <- vst(expr)
                   expr_data(cem) <- expr
               }
-              
-              expr_var <- apply(expr, 1, var)
-              
+
+              expr_var <- matrixStats::rowVars(expr)
+              names(expr_var) <- rownames(expr)
+
               mean_var <- mean(expr_var)
               var_var <- var(expr_var)
-              
+
               ah <- mean_var^2/var_var + 2
               bh <- mean_var*(ah - 1)
-              
+
               p <- sapply(expr_var, function(x) {
                   ig <- pracma::gammainc(bh/x, ah)['uppinc']
                   g <- gamma(ah)
                   return(1 - ig/g)
               })
-              
+
               names(p) <- gsub('.uppinc', '', names(p))
-              
+
               if(!missing(n_genes)){
                   pval <- sort(p)[n_genes]
                   names(pval) <- NULL
               }
-              
+
               selected <- which(p <= pval)
-              
+
               if (length(selected) > 0) {
                   cem@selected_genes <- names(selected)
               } else {
                   cem@selected_genes <- selected
                   warning('No gene left after the filtering')
               }
-              
-              cem@parameters <- c(cem@parameters, 
+
+              cem@parameters <- c(cem@parameters,
                                   n_genes=length(selected),
                                   filter_pval=pval)
               return(cem)
@@ -104,9 +111,12 @@ setMethod('filter_expr', signature('CEMiTool'),
 #'
 #' @return  A data.frame containing the results.
 vst <- function(expr) {
-    gene_mean <- apply(expr, 1, mean)
-    gene_var  <- apply(expr, 1, var)
-    
+    #gene_mean <- apply(expr, 1, mean)
+    #gene_var  <- apply(expr, 1, var)
+
+    gene_mean <- matrixStats::rowMeans2(expr)
+    gene_var <- matrixStats::rowvars(expr)
+
     if(WGCNA::cor(gene_mean, gene_var, method="spearman") > 0.5){
         r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
         return(sqrt(r)*asinh(sqrt(expr/r)))
