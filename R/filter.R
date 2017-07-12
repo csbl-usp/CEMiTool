@@ -1,4 +1,5 @@
 #' @importFrom pracma gammainc
+#' @import matrixStats
 #'
 NULL
 
