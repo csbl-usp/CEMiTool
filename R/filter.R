@@ -63,7 +63,10 @@ setMethod('filter_expr', signature('CEMiTool'),
 
               if (apply_vst){
                   expr <- vst(expr)
-                  expr_data(cem) <- expr
+                  temp <- data.frame(expr)
+                  rownames(temp) <- rownames(expr)
+                  names(temp) <- colnames(expr)
+                  expr_data(cem) <- temp
               }
 
               expr_var <- matrixStats::rowVars(expr)
