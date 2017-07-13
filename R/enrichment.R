@@ -116,12 +116,15 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
                   message("Enrichment is NULL. Either your gmt file isn't good or your modules really aren't enriched for any of the pathways in the gmt file")
               }
               names(res_list) <- names(mods)
-              for(n in names(res_list)) {
-                  if (nrow(res_list[[n]]) > 0){
-                      res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]], stringsAsFactors=FALSE)
+
+              res <- lapply(names(res_list), function(x){
+                  if(nrow(res_list[[x]]) > 0){
+                      as.data.frame(cbind(x, res_list[[x]]))
                   }
-              }
-              res <- do.call(rbind, res_list)
+              })
+              res <- do.call(rbind, res)
+              names(res)[names(res) == "x"] <- "Module"
+              
               rownames(res) <- NULL
               cem@ora <- res
               return(cem)
