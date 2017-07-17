@@ -53,6 +53,9 @@ setMethod('find_modules', signature('CEMiTool'),
     cor_method <- match.arg(cor_method)
     
     expr <- expr_data(cem)
+    if(nrow(expr) == 0){
+        stop("CEMiTool object has no expression file!")
+    }
 
     expr_t <- t(expr)
     names(expr_t) <- rownames(expr)

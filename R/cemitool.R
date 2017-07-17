@@ -352,7 +352,7 @@ cemitool <- function(expr,
                      )
 {
     if (missing(expr)) {
-        stop('Must provide, at least, expression data')
+        stop('Please provide expression data!')
     }
 
     # initialize CEMiTool object to hold data, analysis results and plots
@@ -367,7 +367,7 @@ cemitool <- function(expr,
             results <- filter_expr(results, pval=filter_pval, apply_vst=apply_vst)
         }
         if (length(results@selected_genes) <= 0) {
-            stop('Stopping analysis, no gene left for analysis, try to change the filter parameters.')
+            stop('Stopping analysis, no gene left for analysis. Maybe try to change the filter parameters.')
         }
     }
 
@@ -548,13 +548,15 @@ setGeneric('module_genes', function(cem, module=NULL) {
 #' @rdname module_genes
 setMethod('module_genes', signature(cem='CEMiTool'),
           function(cem, module=NULL){
-              mod_names <- unique(cem@module[, "modules"])
+              #mod_names <- unique(cem@module[, "modules"])
               res <- NULL
-              if(!is.null(cem@module)){
+              if(nrow(cem@module) > 0){
                   res <- cem@module
               }else{
                   message("Run cemitool function to get modules!")
+		  return(res)
               }
+              mod_names <- unique(cem@module[, "modules"])
               if(!is.null(module)){
                   if(module %in% mod_names){
                       res <- res[res$modules==module,]

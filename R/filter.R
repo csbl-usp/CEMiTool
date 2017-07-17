@@ -44,6 +44,9 @@ setMethod('filter_expr', signature('CEMiTool'),
                   }
               }
               expr <- expr_data(cem, filtered=FALSE)
+	      if(nrow(expr) == 0){
+	          stop("CEMiTool object has no expression file!")
+	      }
               
               expr <- expr_pct_filter(expr, pct)
               
