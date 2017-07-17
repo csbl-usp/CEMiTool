@@ -61,7 +61,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
         result <- enriched@result
     } else {
         if(mod_name != "Not.Correlated"){
-            warning(paste("Enrichment for module", mod_name, "is NULL"))    
+            warning("Enrichment for module ", mod_name, " is NULL")    
         }
         result <- data.frame(Module=character(), ID=character(),
                              Description=character(),
@@ -110,18 +110,25 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
               }
               message("Using all genes in GMT file as universe.")
               allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
+	      if(is.null(module_genes(cem))){
+	          warning("No modules in CEMiTool object! Did you run find_modules()?")
+	          return(cem)
+	      }
               mods <- split(cem@module[, "genes"], cem@module[, "modules"])
               res_list <- lapply(names(mods), ora, gmt_in, allgenes, mods)
               if (all(lapply(res_list, nrow) == 0)){
-                  message("Enrichment is NULL. Either your gmt file isn't good or your modules really aren't enriched for any of the pathways in the gmt file")
+                  message("Enrichment is NULL. Either your gmt file is inadequate or your modules really aren't enriched for any of the pathways in the gmt file")
               }
               names(res_list) <- names(mods)
-              for(n in names(res_list)) {
-                  if (nrow(res_list[[n]]) > 0){
-                      res_list[[n]] <- cbind.data.frame(Module=n, res_list[[n]], stringsAsFactors=FALSE)
+
+              res <- lapply(names(res_list), function(x){
+                  if(nrow(res_list[[x]]) > 0){
+                      as.data.frame(cbind(x, res_list[[x]]))
                   }
-              }
-              res <- do.call(rbind, res_list)
+              })
+              res <- do.call(rbind, res)
+              names(res)[names(res) == "x"] <- "Module"
+              
               rownames(res) <- NULL
               cem@ora <- res
               return(cem)
@@ -186,11 +193,21 @@ setGeneric('mod_gsea', function(cem, ...) {
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
           function(cem, verbose=FALSE) {
+	      if(nrow(expr_data(cem)) == 0){
+		  warning("CEMiTool object has no expression file!")
+		  return(cem)
+	      }
+
               if (nrow(cem@sample_annotation)==0) {
                   warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
                   return(cem)
               }
               
+              if(is.null(module_genes(cem))){
+                  warning("No modules in CEMiTool object! Did you run find_modules()?")
+		  return(cem)
+              }
+
               if (verbose) {
                   message('Running GSEA')
               }
@@ -232,8 +249,8 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               gsea_list <- lapply(classes, function(class_group){
                   
                   if (verbose) {
-                      message(paste0('Calculating modules enrichment analysis for class ',
-                                     class_group))
+                      message('Calculating modules enrichment analysis for class ',
+                                     class_group)
                   }
                   # samples of class == class_group
                   class_samples <- annot[annot[, class_col]==class_group, sample_col]
