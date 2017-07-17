@@ -45,6 +45,9 @@ setMethod('filter_expr', signature('CEMiTool'),
                   }
               }
               expr <- expr_data(cem, filtered=FALSE)
+	      if(nrow(expr) == 0){
+	          stop("CEMiTool object has no expression file!")
+	      } 
 
               expr <- expr_pct_filter(expr, pct)
 
@@ -53,9 +56,10 @@ setMethod('filter_expr', signature('CEMiTool'),
               rownames(temp) <- rownames(expr)
               colnames(temp) <- names(expr)
               expr <- temp
+             
               
               expr_var <- matrixStats::rowVars(expr)
-
+              
               expr <- expr[which(expr_var!=0),]
 
               if(!missing(n_genes)){
@@ -117,7 +121,7 @@ setMethod('filter_expr', signature('CEMiTool'),
 vst <- function(expr) {
     #gene_mean <- apply(expr, 1, mean)
     #gene_var  <- apply(expr, 1, var)
-
+    
     gene_mean <- matrixStats::rowMeans2(expr)
     gene_var <- matrixStats::rowVars(expr)
 
