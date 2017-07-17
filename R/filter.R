@@ -1,4 +1,5 @@
 #' @importFrom pracma gammainc
+#' @import matrixStats
 #'
 NULL
 
@@ -50,7 +51,13 @@ setMethod('filter_expr', signature('CEMiTool'),
               
               expr <- expr_pct_filter(expr, pct)
               
-              expr_var <- apply(expr, 1, var)
+              #expr_var <- apply(expr, 1, var)
+	      temp <- as.matrix(expr)
+              rownames(temp) <- rownames(expr)
+              colnames(temp) <- names(expr)
+              expr <- temp
+              
+              expr_var <- matrixStats::rowVars(expr)
               
               expr <- expr[which(expr_var!=0),]
               
@@ -60,10 +67,14 @@ setMethod('filter_expr', signature('CEMiTool'),
               
               if (apply_vst){
                   expr <- vst(expr)
-                  expr_data(cem) <- expr
-              }
+                  temp <- data.frame(expr)
+                  rownames(temp) <- rownames(expr)
+                  names(temp) <- colnames(expr)
+                  expr_data(cem) <- temp
+	      }
               
-              expr_var <- apply(expr, 1, var)
+              expr_var <- matrixStats::rowVars(expr)
+	      names(expr_var) <- rownames(expr)
               
               mean_var <- mean(expr_var)
               var_var <- var(expr_var)
@@ -107,9 +118,12 @@ setMethod('filter_expr', signature('CEMiTool'),
 #'
 #' @return  A data.frame containing the results.
 vst <- function(expr) {
-    gene_mean <- apply(expr, 1, mean)
-    gene_var  <- apply(expr, 1, var)
+    #gene_mean <- apply(expr, 1, mean)
+    #gene_var  <- apply(expr, 1, var)
     
+    gene_mean <- matrixStats::rowMeans2(expr)
+    gene_var <- matrixStats::rowVars(expr)
+
     if(WGCNA::cor(gene_mean, gene_var, method="spearman") > 0.5){
         r <- sum(gene_mean^4)/(sum(gene_var*(gene_mean^2)) - sum(gene_mean^3))
         return(sqrt(r)*asinh(sqrt(expr/r)))
