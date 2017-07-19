@@ -120,6 +120,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n number of modules to show
+#' @param pv_cut p-value significance cutoff. Default is 0.01.
 #' @param ... paramaters to plot_ora_single
 #'
 #' @return Object of class \code{CEMiTool} with ORA plots
