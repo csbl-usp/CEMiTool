@@ -145,11 +145,12 @@ setGeneric('plot_ora', function(cem, ...) {
 
 #' @rdname plot_ora
 setMethod('plot_ora', signature('CEMiTool'),
-          function(cem, n=10, ...){
+          function(cem, n=10, pv_cut=0.01, ...){
               ora_splitted <- split(cem@ora, cem@ora$Module)
               mod_cols <- mod_colors(cem)
               res <- lapply(ora_splitted, function(x){
                                 plot_ora_single(head(x, n=n),
+						pv_cut=pv_cut,
                                                 graph_color=mod_cols[unique(x$Module)],
                                                 title=unique(x$Module),
                                                 ...)

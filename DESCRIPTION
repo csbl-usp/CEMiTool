@@ -41,8 +41,6 @@ Imports:
     htmltools,
     pracma,
     intergraph,
-    modes,
-    diptest,
     grDevices,
     utils,
     network,
