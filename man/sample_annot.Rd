@@ -3,9 +3,29 @@
 \docType{data}
 \name{sample_annot}
 \alias{sample_annot}
-\title{Sample Annotation Dataset}
+\title{Yellow Fever Sample Annotation data}
+\format{An object of class \code{data.frame}}
+\source{
+\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse13485}{GEO}
+}
+\usage{
+data(sample_annot)
+}
 \description{
-This dataset, together with \code{expr}
-can be used as input for CEMiTool functions
+Modified data from a yellow fever vaccination study by Querec et al, 
+2009. This dataset, together with \code{expr} can be used as input for 
+CEMiTool functions
+}
+\examples{
+data(expr)
+data(sample_annot)
+# Run CEMiTool analysis
+\dontrun{cemitool(expr, sample_annot)}
+}
+\references{
+Querec TD, Akondy RS, Lee EK, Cao W et al. Systems biology 
+approach predicts immunogenicity of the yellow fever vaccine in humans. 
+Nat Immunol 2009 Jan;10(1):116-25. PMID: 19029902
+\href{https://www.ncbi.nlm.nih.gov/pubmed/19029902}{PubMed}
 }
 \keyword{datasets}
