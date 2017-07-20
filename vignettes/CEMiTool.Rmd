@@ -133,12 +133,12 @@ plots[1]
 
 CEMiTool can determine which biological functions are associated with the modules by performing an over representation analysis (ORA). To do this you must provide a pathway list in the form of GMT file. CEMiTool will then use the `clusterProfiler` package to see how these pathways are represented in the modules.
 
-You can read in a pathway list formatted as a GMT file using the `read_gmt` function. This example uses a GMT file that comes as part of the `CEMiTool` example data:
+You can read in a pathway list formatted as a GMT file using a function such as the `read.gmt` function from package `clusterProfiler`. This example uses a GMT file that comes as part of the `CEMiTool` example data:
 
 ```{r}
 # read GMT file
 gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_in <- read_gmt(gmt_fname)
+gmt_in <- clusterProfiler::read.gmt(gmt_fname)
 ```
 
 You can then perform ORA analysis on the modules in your `CEMiTool` object with the `mod_ora` function:
