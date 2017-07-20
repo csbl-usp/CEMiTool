@@ -15,7 +15,6 @@ NULL
 #
 #
 ora <- function(mod_name, gmt_list, allgenes, mods){
-    print(mod_name)
     if(missing(allgenes)) {
         message("Using all genes in GMT file as universe.")
         allgenes <- unique(gmt_list[, "gene"])
