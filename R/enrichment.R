@@ -46,17 +46,18 @@ read_gmt <- function(fname){
 #
 #
 ora <- function(mod_name, gmt_list, allgenes, mods){
+    print(mod_name)
     if(missing(allgenes)) {
         message("Using all genes in GMT file as universe.")
-        allgenes <- unique(gmt_list[["term2gene"]][, "Gene"])
+        allgenes <- unique(gmt_list[, "gene"])
     }
     topgenes <- mods[[mod_name]]
     enriched <- clusterProfiler::enricher(gene = topgenes,
                                           pvalueCutoff = 1,
                                           qvalueCutoff = 1,
                                           universe = allgenes,
-                                          TERM2GENE = gmt_list[['term2gene']],
-                                          TERM2NAME = gmt_list[['term2name']])
+                                          TERM2GENE = gmt_list)
+                                         # TERM2NAME = gmt_list[['term2name']])
     if (!is.null(enriched) && !is.logical(enriched)) {
         result <- enriched@result
     } else {
@@ -109,7 +110,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
                   message('Running ORA')
               }
               message("Using all genes in GMT file as universe.")
-              allgenes <- unique(gmt_in[["term2gene"]][, "Gene"])
+              allgenes <- unique(gmt_in[, "gene"])
 	      if(is.null(module_genes(cem))){
 	          warning("No modules in CEMiTool object! Did you run find_modules()?")
 	          return(cem)
