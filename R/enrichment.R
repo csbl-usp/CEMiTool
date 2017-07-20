@@ -3,37 +3,6 @@
 #' @importFrom clusterProfiler enricher
 NULL
 
-#' Read a GMT file
-#'
-#' @param fname GMT file name. 
-#'
-#' @return A list containing genes and description of each pathway
-#' @examples 
-#' # Read example gmt file
-#' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-#' gmt_in <- read_gmt(gmt_fname)
-#'
-#' @export
-read_gmt <- function(fname){
-    res <- list(genes=list(), desc=list())
-    gmt <- file(fname)
-    gmt_lines <- readLines(gmt)
-    close(gmt)
-    gmt_list <- lapply(gmt_lines, function(x) unlist(strsplit(x, split="\t")))
-    gmt_names <- sapply(gmt_list, '[', 1)
-    gmt_desc <- lapply(gmt_list, '[', 2)
-    gmt_genes <- lapply(gmt_list, function(x){x[3:length(x)]})
-    names(gmt_desc) <- names(gmt_genes) <- gmt_names
-    res <- list()
-    res[["term2gene"]] <- do.call(rbind, lapply(names(gmt_genes),
-                                                function(n) cbind.data.frame(Term=n, Gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
-    res[["term2name"]] <- do.call(rbind, lapply(names(gmt_desc),
-                                                function(n) cbind.data.frame(Term=n, Name=gmt_desc[[n]], stringsAsFactors=FALSE)))
-    return(res)
-}
-
-
-
 # Performs Over Representation Analysis for a list of genes and a GMT
 #
 # @keywords internal
@@ -80,7 +49,8 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' Performs overrepresentation analysis for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param gmt_in gmt file as outputted by \code{read_gmt} function.
+#' @param gmt_in Object of class \code{data.frame} with 2 columns, one with
+#' pathways and one with genes
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #'
@@ -90,7 +60,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read gmt file
-#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+#' gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
@@ -145,7 +115,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read gmt file
-#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+#' gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)

@@ -15,7 +15,8 @@ mod_ora(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{gmt_in}{gmt file as outputted by \code{read_gmt} function.}
+\item{gmt_in}{Object of class \code{data.frame} with 2 columns, one with
+pathways and one with genes}
 
 \item{verbose}{logical. Report analysis steps.}
 }
@@ -29,7 +30,7 @@ Performs overrepresentation analysis for each co-expression module found.
 # Get example CEMiTool object
 data(cem)
 # Read gmt file
-gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
+gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
 # Run module overrepresentation analysis
 cem <- mod_ora(cem, gmt)
