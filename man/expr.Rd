@@ -3,9 +3,28 @@
 \docType{data}
 \name{expr}
 \alias{expr}
-\title{Gene Expression Dataset}
+\title{Yellow Fever gene expression data from GEO study GSE13485}
+\format{An object of class \code{data.frame}}
+\source{
+\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse13485}{GEO}
+}
+\usage{
+data(expr)
+}
 \description{
-This dataset, together with \code{sample_annotation_data}
-can be used as input for CEMiTool functions
+Modified data from a yellow fever vaccination study by Querec et al, 2009.
+In order to reduce package size, only the 4000 genes with the highest 
+variance were selected for this dataset.
+}
+\examples{
+data(expr)
+# Run CEMiTool analysis
+\dontrun{cemitool(expr)}
+}
+\references{
+Querec TD, Akondy RS, Lee EK, Cao W et al. Systems biology 
+approach predicts immunogenicity of the yellow fever vaccine in humans. 
+Nat Immunol 2009 Jan;10(1):116-25. PMID: 19029902
+\href{https://www.ncbi.nlm.nih.gov/pubmed/19029902}{PubMed}
 }
 \keyword{datasets}
