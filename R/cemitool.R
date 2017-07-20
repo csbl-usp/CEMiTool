@@ -273,7 +273,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'
 #' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
-#' @param gmt A list from function read_gmt containing the gene sets.
+#' @param gmt A data.frame containing two columns, one with pathways and one with genes
 #' @param interactions A data.frame containing two columns with gene names.
 #' @param filter Logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
@@ -318,9 +318,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' # Run full CEMiTool analysis
 #' ## Get example sample annotation data
 #' data(sample_annot)
-#' ## Get example pathways file
+#' ## Get example pathways file and read gmt with clusterProfiler package
 #' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-#' gmt_in <- read_gmt(gmt_fname)
+#' gmt_in <- clusterProfiler::read.gmt(gmt_fname)
 #' ## Get example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' ## Run CEMiTool
