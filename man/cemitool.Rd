@@ -16,7 +16,7 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 
 \item{annot}{Sample annotation \code{data.frame}.}
 
-\item{gmt}{A list from function read_gmt containing the gene sets.}
+\item{gmt}{A data.frame containing two columns, one with pathways and one with genes}
 
 \item{interactions}{A data.frame containing two columns with gene names.}
 
@@ -84,9 +84,9 @@ cem <- cemitool(expr=expr, verbose=TRUE)
 # Run full CEMiTool analysis
 ## Get example sample annotation data
 data(sample_annot)
-## Get example pathways file
+## Get example pathways file and read gmt with clusterProfiler package
 gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_in <- read_gmt(gmt_fname)
+gmt_in <- clusterProfiler::read.gmt(gmt_fname)
 ## Get example interactions file
 int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 ## Run CEMiTool
