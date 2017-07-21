@@ -71,22 +71,3 @@
 #' cem <- plot_ora(cem)
 #' \dontrun{generate_report(cem)}
 "cem"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
