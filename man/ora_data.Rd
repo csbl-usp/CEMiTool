@@ -23,7 +23,7 @@ Retrieve over representation analysis (ORA) results
 # Get example CEMiTool object
 data(cem)
 # Read gmt file
-gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
+gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
 # Run module overrepresentation analysis
 cem <- mod_ora(cem, gmt)

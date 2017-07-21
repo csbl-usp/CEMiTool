@@ -318,9 +318,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' # Run full CEMiTool analysis
 #' ## Get example sample annotation data
 #' data(sample_annot)
-#' ## Get example pathways file and read gmt with clusterProfiler package
+#' ## Read example pathways file
 #' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-#' gmt_in <- clusterProfiler::read.gmt(gmt_fname)
+#' gmt_in <- read_gmt(gmt_fname)
 #' ## Get example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' ## Run CEMiTool

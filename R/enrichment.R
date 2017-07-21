@@ -79,7 +79,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read gmt file
-#' gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
+#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
@@ -134,7 +134,7 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read gmt file
-#' gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
+#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
 #' # Run module overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)

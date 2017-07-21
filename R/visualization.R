@@ -129,7 +129,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read example gmt file
-#' gmt <- clusterProfiler::read.gmt(system.file('extdata', 'pathways.gmt',
+#' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
 #' # Run overrepresentation analysis 
 #' cem <- mod_ora(cem, gmt)
