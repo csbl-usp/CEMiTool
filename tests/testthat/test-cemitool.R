@@ -15,7 +15,7 @@ ppi <- system.file('extdata', 'interactions.tsv', package='CEMiTool')
 ppi <- fread(ppi, data.table=FALSE)
 
 gmt <- system.file('extdata', 'pathways.gmt', package='CEMiTool')
-gmt <- clusterProfiler::read.gmt(gmt)
+gmt <- read_gmt(gmt)
 
 cem_filt <- filter_expr(cem_base, 1)
 

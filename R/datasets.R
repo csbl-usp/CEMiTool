@@ -58,7 +58,7 @@
 #' data(cem)
 #' # Read example gmt file
 #' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-#' gmt_in <- clusterProfiler::read.gmt(gmt_fname)
+#' gmt_in <- read_gmt(gmt_fname)
 #' # Read example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", 
 #'         package = "CEMiTool"))
