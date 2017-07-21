@@ -1,7 +1,27 @@
 #' @importFrom data.table fread setDF
 #' @importFrom fgsea fgsea
 #' @importFrom clusterProfiler enricher
+#' @importFrom GSEABase geneIds getGmt
 NULL
+
+#' Read a GMT file
+#'
+#' @param fname GMT file name. 
+#'
+#' @return A list containing genes and description of each pathway
+#' @examples 
+#' # Read example gmt file
+#' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
+#' gmt_in <- read_gmt(gmt_fname)
+#'
+#' @export
+read_gmt <- function(fname){
+    gmt <- GSEABase::getGmt(con=fname)
+    ont2gene <- GSEABase::geneIds(gmt) %>% stack
+    ont2gene <- ont2gene[, c("ind", "values")]
+    colnames(ont2gene) <- c("term", "gene")
+    return(ont2gene)
+}
 
 # Performs Over Representation Analysis for a list of genes and a GMT
 #
