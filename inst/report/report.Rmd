@@ -28,7 +28,11 @@ cat("#", title, "{.tabset}")
     DT::datatable(mod_df[ord, ], rownames=FALSE)
 ```
 
-
+```{r echo=FALSE, cache=FALSE, label=mod-genes}
+    mod_genes <- module_genes(cem)
+    colnames(mod_genes) <- c("Gene", "Module") 
+    DT::datatable(mod_genes)
+```
 
 ## Profile Plot
 ```{r echo=FALSE, fig.align="center", cache=FALSE, label=profile-plots}
@@ -121,13 +125,14 @@ height <- ifelse(length(height) == 0, 7, height)
 ```{r echo=FALSE, cache=FALSE, label=parameters}
 desc <- c("cor_method" = "Correlation method.",
           "min_ngen" = "Minimum number of genes per module.",
-          "merge_similar" = "Should similar modules be merged ?",
-          "diss_thresh" = "Dissimilarity threshold to be used as cutoff on hierarchical cluster.",
-          "r2" = 'Determination coefficient. Reflects the "scale-freeness" of the resultant network.',
+          "merge_similar" = "Should similar modules be merged?",
+          "diss_thresh" = "Dissimilarity threshold to be used as cutoff on hierarchical clustering.",
+          "r2" = 'Determination coefficient. Reflects the "scale-freeness" of the resulting network.',
           "beta" = "Value of beta chosen.",
-          "phi" = "Area under curve / Total area in the graph Beta vs R^2.",
+          "phi" = "Area under curve / Total area in the Beta vs R squared graph.",
           "n_genes" = "Number of genes after filtering.",
-          "filter_pval" = "p-value used on filtering."
+          "filter_pval" = "p-value used on filtering.",
+	  "n_mods" = "Number of modules returned by CEMiTool."
           )
 desc_df <- data.frame(Parameter=names(desc), Description=desc)
 
