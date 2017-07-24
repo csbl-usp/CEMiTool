@@ -134,7 +134,7 @@ setMethod('find_modules', signature('CEMiTool'),
     our_r2 <- st[1]
 
     # Calculating adjacency matrix
-    our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type=network_type)
+    our_adj <- WGCNA::adjacency(expr_t, power=our_beta, type=network_type, corFnc=cor_function, corOptions=cor_options)
     cem@adjacency <- our_adj
 
     # Calculating Topological Overlap Matrix
