@@ -184,8 +184,10 @@ setMethod("mod_colors", signature("CEMiTool"),
                     }
                     names(cols) <- mod_names
                 } else {
-                    if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
-                        warning("mod_colors does not match with modules!")
+		    if(is.null(names(cem@mod_colors))){
+			warning("mod_colors should be a character vector with names corresponding to the modules")
+		    } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
+                        warning("mod_colors names do not match with modules!")
                     }
                 }
             }
@@ -199,9 +201,14 @@ setGeneric("mod_colors<-", function(cem, value) {
           })
 
 #' @rdname mod_colors
-setReplaceMethod("mod_colors", signature("CEMiTool"),
+setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
          function(cem, value){
-            cem@mod_colors <- value
+            cem@mod_colors <- value 
+            if(is.null(names(cem@mod_colors))){
+		stop("mod_colors should be a character vector with names corresponding to the modules")
+	    } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
+                stop("mod_colors names do not match with modules!")
+            }
             return(cem)
          } )
 
