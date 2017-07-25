@@ -2,6 +2,6 @@ CEMiTool.Rproj
 .Rproj.user
 .Rhistory
 .RData
-.travis.yaml
+.travis.yml
 *.sw*
 reports/
