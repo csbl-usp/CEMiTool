@@ -1,7 +1,7 @@
-#CEMiTool.Rproj
+CEMiTool.Rproj
 .Rproj.user
 .Rhistory
 .RData
-#.travis.yml
+.travis.yml
 *.sw*
 reports/
