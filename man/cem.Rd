@@ -15,19 +15,6 @@ This object can be used as input for CEMiTool functions. Data used are from
 \examples{
 # Get example CEMiTool object
 data(cem)
-# Read example gmt file
-gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_in <- read_gmt(gmt_fname)
-# Read example interactions file
-int_df <- read.delim(system.file("extdata", "interactions.tsv", 
-        package = "CEMiTool"))
-# Insert interactions data
-interactions_data(cem) <- int_df
-# Run analyses
-cem <- mod_gsea(cem)
-cem <- plot_gsea(cem)
-cem <- mod_ora(cem, gmt_in)
-cem <- plot_ora(cem)
-\dontrun{generate_report(cem)}
+cem
 }
 \keyword{data}

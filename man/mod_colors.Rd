@@ -5,7 +5,7 @@
 \alias{mod_colors}
 \alias{mod_colors,CEMiTool-method}
 \alias{mod_colors<-}
-\alias{mod_colors<-,CEMiTool-method}
+\alias{mod_colors<-,CEMiTool,character-method}
 \title{Retrieve and set mod_colors attribute}
 \usage{
 mod_colors(cem)
@@ -14,7 +14,7 @@ mod_colors(cem)
 
 mod_colors(cem) <- value
 
-\S4method{mod_colors}{CEMiTool}(cem) <- value
+\S4method{mod_colors}{CEMiTool,character}(cem) <- value
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
