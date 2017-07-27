@@ -172,7 +172,7 @@ setGeneric("mod_colors", function(cem) {
 #' @rdname mod_colors
 setMethod("mod_colors", signature("CEMiTool"),
          function(cem){
-            mod_names <- unique(cem@module$modules)
+            mod_names <- module_names(cem)
             nmod <- length(mod_names)
             cols <- cem@mod_colors
             if(nmod != 0) {
@@ -203,6 +203,7 @@ setGeneric("mod_colors<-", function(cem, value) {
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
          function(cem, value){
+			mod_names <- module_names(cem)
             cem@mod_colors <- value 
             if(is.null(names(cem@mod_colors))){
 		stop("mod_colors should be a character vector with names corresponding to the modules")

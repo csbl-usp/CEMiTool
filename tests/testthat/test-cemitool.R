@@ -19,6 +19,19 @@ gmt <- read_gmt(gmt)
 
 cem_filt <- filter_expr(cem_base, 1)
 
+test_that('mod_colors returns and sets adequate values', {
+	# Test if mod_cols is a named character vector 
+	mod_cols <- mod_colors(cem)
+	expect_is(mod_cols, "character")
+	expect_named(mod_cols, module_names(cem))
+
+	# Test if mod_colors returns the correct errors when given bad input
+	mock_colors <- c("a", "b", "c", "d", "e")
+	expect_error(mod_colors(cem) <- mock_colors)
+	names(mock_colors) <- c("A", "B", "C", "D", "E")
+	expect_error(mod_colors(cem) <- mock_colors)
+})
+
 test_that('all methods of signature CEMiTool returns CEMiTool objects', {
     expect_is(cem_filt, 'CEMiTool') 
     
@@ -61,4 +74,5 @@ test_that('CEMiTool throws errors when there is missing data', {
     expect_warning(mod_gsea(cem_filt), "No modules in CEMiTool object! Did you run find_modules()?")  
     expect_warning(mod_ora(cem0, gmt), "No modules in CEMiTool object! Did you run find_modules()?")
 })
+
 
