@@ -345,7 +345,7 @@ cemitool <- function(expr,
                      apply_vst=FALSE,
                      n_genes,
                      cor_method=c('pearson', 'spearman'),
-		     cor_function='cor',
+        		     cor_function='cor',
                      network_type='unsigned',
                      tom_type='signed',
                      sample_name_column="SampleName",
@@ -484,10 +484,10 @@ setGeneric('nmodules', function(cem) {
 setMethod('nmodules', signature(cem='CEMiTool'),
           function(cem) {
               n <- 0
-              if(!is.null(cem@module)){
+              if(nrow(cem@module) > 0){
                   n <- length(unique(cem@module$modules))
               } else {
-                  message("Run cemitool function to get modules!")
+                  warning("Run cemitool function to get modules!")
               }
               return(n)
           }
@@ -517,13 +517,13 @@ setGeneric('module_names', function(cem, include_NC=TRUE) {
 setMethod('module_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
-              if(!is.null(cem@module)){
+              if(nrow(cem@module) > 0){
                   mods <- unique(cem@module$modules)
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }
               } else {
-                  message("Run cemitool function to get modules!")
+                  warning("Run cemitool function to get modules!")
               }
               return(mods)
           }
@@ -586,7 +586,7 @@ setMethod('module_genes', signature(cem='CEMiTool'),
 setMethod('show', signature(object='CEMiTool'),
           function(object) {
               cat("CEMiTool Object\n")
-              cat("- Number of modules:", nmodules(object), "\n")
+              cat("- Number of modules:", suppressWarnings(nmodules(object)), "\n")
               cat("- Modules: ")
               if(nrow(object@module) == 0){
                   cat("null\n")
@@ -668,13 +668,13 @@ setMethod('show', signature(object='CEMiTool'),
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
 #' 
-#' @rdname save_files
+#' @rdname write_files
 #' @export
 setGeneric('write_files', function(cem, ...) {
     standardGeneric('write_files')
 })
 
-#' @rdname save_files
+#' @rdname write_files
 setMethod('write_files', signature(cem='CEMiTool'),
           function(cem, directory, force=FALSE) {
               if(dir.exists(directory)){

@@ -100,14 +100,15 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
               }
               message("Using all genes in GMT file as universe.")
               allgenes <- unique(gmt_in[, "gene"])
-	      if(is.null(module_genes(cem))){
-	          warning("No modules in CEMiTool object! Did you run find_modules()?")
-	          return(cem)
-	      }
+	      	  if(is.null(module_genes(cem))){
+	          	  warning("No modules in CEMiTool object! Did you run find_modules()?")
+	          	  return(cem)
+	       	  }
               mods <- split(cem@module[, "genes"], cem@module[, "modules"])
               res_list <- lapply(names(mods), ora, gmt_in, allgenes, mods)
               if (all(lapply(res_list, nrow) == 0)){
-                  message("Enrichment is NULL. Either your gmt file is inadequate or your modules really aren't enriched for any of the pathways in the gmt file")
+                  warning("Enrichment is NULL. Either your gmt file is inadequate or your modules really aren't enriched for any of the pathways in the gmt file.")
+			      return(cem)
               }
               names(res_list) <- names(mods)
 
