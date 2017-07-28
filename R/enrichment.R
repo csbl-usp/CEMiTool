@@ -184,10 +184,10 @@ setGeneric('mod_gsea', function(cem, ...) {
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
           function(cem, verbose=FALSE) {
-	      if(nrow(expr_data(cem)) == 0){
-		  warning("CEMiTool object has no expression file!")
-		  return(cem)
-	      }
+		      if(nrow(expr_data(cem)) == 0){
+				  warning("CEMiTool object has no expression file!")
+		  	      return(cem)
+		      }
 
               if (nrow(cem@sample_annotation)==0) {
                   warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
@@ -196,7 +196,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
               
               if(is.null(module_genes(cem))){
                   warning("No modules in CEMiTool object! Did you run find_modules()?")
-		  return(cem)
+				  return(cem)
               }
 
               if (verbose) {
