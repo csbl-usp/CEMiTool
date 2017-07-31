@@ -26,8 +26,8 @@ Retrieve CEMiTool object plots
 \examples{
 # Get example CEMiTool object
 data(cem)
-# Plot ORA results
-cem <- plot_ora(cem)
-# Check ORA results plots
-show_plot(cem, "ora")
+# Plot beta x R squared graph
+cem <- plot_beta_r2(cem)
+# Check plot
+show_plot(cem, "beta_r2")
 }

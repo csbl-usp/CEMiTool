@@ -124,7 +124,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n number of modules to show
 #' @param pv_cut p-value significance cutoff. Default is 0.01.
-#' @param ... paramaters to plot_ora_single
+#' @param ... parameters to plot_ora_single
 #'
 #' @return Object of class \code{CEMiTool} with ORA plots
 #'
@@ -257,7 +257,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 			  if(length(unique(cem@module$modules)) == 0){
 		          stop("No modules in CEMiTool object! Did you run find_modules()?")
               }
-              if(nrow(cem@ora) == 0){
+              if(length(cem@enrichment) == 0){
 			      stop("No GSEA data! Did you run mod_gsea()?")
 			  }
 
@@ -544,10 +544,10 @@ setMethod('plot_mean_k', signature('CEMiTool'),
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
-#' # Plot ORA results
-#' cem <- plot_ora(cem)
-#' # Check ORA results plots
-#' show_plot(cem, "ora")
+#' # Plot beta x R squared graph
+#' cem <- plot_beta_r2(cem)
+#' # Check plot
+#' show_plot(cem, "beta_r2")
 #' @rdname show_plot
 #' @export
 setGeneric('show_plot', function(cem, value) {

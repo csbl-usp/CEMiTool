@@ -13,7 +13,7 @@ plot_ora(cem, ...)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{paramaters to plot_ora_single}
+\item{...}{parameters to plot_ora_single}
 
 \item{n}{number of modules to show}
 
