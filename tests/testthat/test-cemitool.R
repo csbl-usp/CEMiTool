@@ -49,10 +49,6 @@ test_that('all methods of signature CEMiTool returns CEMiTool objects', {
     expect_is(cem, 'CEMiTool') 
 })
 
-test_that('expression file is getting the correct number of genes post-filtering',{
-    expect_equal(nrow(expr_data(cem_filt)), length(cem_filt@selected_genes))
-})
-
 test_that('CEMiTool throws errors when there is missing data', {
     expect_error(cemitool(), "Please*")
     expect_error(filter_expr(cem0), "CEMiTool object has no expression file!")

@@ -37,7 +37,10 @@ setGeneric('plot_profile', function(cem, ...) {
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
           function(cem, order=TRUE) {
-              modules <- unique(cem@module[, 'modules'])
+              modules <- unique(cem@module$modules)
+		  	  if(is.null(modules)){
+				  stop("No modules in CEMiTool object! Did you run find_modules()?")
+			  }
               modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
               expr <- expr_data(cem)
               annot <- cem@sample_annotation
@@ -147,6 +150,12 @@ setGeneric('plot_ora', function(cem, ...) {
 #' @rdname plot_ora
 setMethod('plot_ora', signature('CEMiTool'),
           function(cem, n=10, pv_cut=0.01, ...){
+			  if(length(unique(cem@module$modules)) == 0){
+				  stop("No modules in CEMiTool object! Did you run find_modules()?")
+			  }
+			  if(nrow(cem@ora) == 0){
+				  stop("No ORA data! Did you run mod_ora()?")
+			  }
               ora_splitted <- split(cem@ora, cem@ora$Module)
               mod_cols <- mod_colors(cem)
               res <- lapply(ora_splitted, function(x){
@@ -245,6 +254,13 @@ setGeneric('plot_gsea', function(cem, ...) {
 #' @rdname plot_gsea
 setMethod('plot_gsea', signature('CEMiTool'),
           function(cem, pv_cut=0.05) {
+			  if(length(unique(cem@module$modules)) == 0){
+		          stop("No modules in CEMiTool object! Did you run find_modules()?")
+              }
+              if(nrow(cem@ora) == 0){
+			      stop("No GSEA data! Did you run mod_gsea()?")
+			  }
+
               stats <- names(cem@enrichment)
               enrichment <- lapply(cem@enrichment, function(stat){
                                        stat[is.na(stat)] <- 0
@@ -332,6 +348,12 @@ setGeneric('plot_interactions', function(cem, ...) {
 #' @rdname plot_interactions
 setMethod('plot_interactions', signature('CEMiTool'),
           function(cem, n=10, ...) {
+			  if(length(unique(cem@module$modules)) == 0){
+		          stop("No modules in CEMiTool object! Did you run find_modules()?")
+              }
+              if(length(interactions_data(cem)) == 0){
+			      stop("No interactions information! Did you run interactions_data()?")
+			  }
               mod_cols <- mod_colors(cem)
               mod_names <- names(cem@interactions)
               mod_names <- mod_names[which(mod_names!="Not.Correlated")]
@@ -452,6 +474,9 @@ setGeneric('plot_beta_r2', function(cem, ...){
 #' @rdname plot_beta_r2
 setMethod('plot_beta_r2', signature('CEMiTool'),
           function(cem, title="Scale independence (beta selection)"){
+			  if(nrow(cem@fit_indices) == 0){
+				  stop("No fit indices data! Did you run find_modules()?")
+			  }
               fit <- cem@fit_indices
               fit$new_fit <- -sign(fit[, 3])*fit[, 2]
               beta <- cem@parameters$beta
@@ -494,6 +519,9 @@ setGeneric('plot_mean_k', function(cem, ...){
 #' @rdname plot_mean_k
 setMethod('plot_mean_k', signature('CEMiTool'),
           function(cem, title="Mean connectivity"){
+			  if(nrow(cem@fit_indices) == 0){
+			      stop("No fit indices data! Did you run find_modules()?")
+		      }
               fit <- cem@fit_indices
               
               pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +

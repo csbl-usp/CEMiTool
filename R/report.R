@@ -31,6 +31,9 @@ setGeneric('generate_report', function(cem, ...) {
 #' @rdname generate_report
 setMethod('generate_report', signature('CEMiTool'),
           function(cem, max_rows_ora=50, title="Report", directory="./reports", ...) {
+			  if(is.null(unique(cem@module$modules))){
+			  	  stop("No modules in CEMiTool object! Did you run find_modules()?")
+			  }
               rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
               rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, ...)
           })

@@ -251,6 +251,10 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
           {
               method <- match.arg(method)
 
+		  	  if(length(cem@module) == 0){
+				  stop("No modules in CEMiTool object! Did you run find_modules()?")
+			  }
+
               if (verbose) {
                   message(paste0('Summarizing modules by ', method))
               }
