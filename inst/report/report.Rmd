@@ -1,0 +1,150 @@
+---
+title: "CEMiTool"
+always_allow_html: yes
+output:
+  html_document:
+     code_folding: hide
+     theme: cosmo
+     self_contained: true
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+
+```{r echo=FALSE, results="asis", cache=FALSE, label=title}
+cat("#", title, "{.tabset}")
+```
+
+## Modules ##
+```{r echo=FALSE, cache=FALSE, label=modules-stats}
+    mod_df <- as.data.frame(table(cem@module$modules), stringsAsFactors=FALSE)
+    colnames(mod_df) <- c("Module", "No.Genes")
+    hub_list <- get_hubs(cem, n=5)
+    Hubs <- sapply(hub_list, paste, collapse=", ")
+    mod_df <- merge(mod_df, as.data.frame(Hubs), by.x="Module", by.y="row.names")
+    modules <- as.character(mod_df[, "Module"])
+    ord <- order(as.numeric(stringr::str_extract(modules, "\\d+")))
+    DT::datatable(mod_df[ord, ], rownames=FALSE)
+```
+
+```{r echo=FALSE, cache=FALSE, label=mod-genes}
+    mod_genes <- module_genes(cem)
+    colnames(mod_genes) <- c("Gene", "Module") 
+    DT::datatable(mod_genes)
+```
+
+## Profile Plot
+```{r echo=FALSE, fig.align="center", cache=FALSE, label=profile-plots}
+    if(length(cem@profile_plot) > 0){
+        .null <- lapply(cem@profile_plot, print)
+    } else {
+        writeLines("### Please create profile plots!")
+    }
+```
+
+```{r echo=FALSE}
+height <- 1.1*nrow(cem@enrichment$nes)
+height <- ifelse(length(height) == 0, 7, height)
+```
+
+## Gene Set Enrichment Analysis 
+```{r echo=FALSE, results="asis", fig.width=10, fig.height=height, fig.align="center", cache=FALSE, label=gsea-plot}
+    #knitr::opts_current$set('fig.height'=height)
+    if(length(cem@enrichment) == 0){
+        writeLines("### Please provide a sample annotation!")
+    } else if(!is.null(names(cem@enrichment_plot))){
+        plot(cem@enrichment_plot)
+    } else if(nrow(cem@enrichment$nes) == 0) {
+        writeLines("### No module enriched.")
+    }else {
+        writeLines("### Please create enrichment plots!")
+    }
+```
+
+```{r echo=FALSE, results="asis", cache=FALSE, label=gsea-table}
+    if(length(cem@enrichment) > 0){
+        nes <- cem@enrichment$nes
+        nes[, -1] <- round(nes[, -1], digits=2)
+        pv <- cem@enrichment$pval
+        pv[, -1] <- round(pv[, -1], digits=5)
+
+        colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
+        colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
+
+        # join p-values and nes
+        enrich_df <- merge(nes, pv, by.x="pathway")
+
+        # reorder columns
+        enrich_df <- enrich_df[, c("pathway", sort(colnames(enrich_df)[-1]))]
+        DT::datatable(enrich_df, rownames=FALSE)
+    } else {
+        writeLines("### Please run enrichment analysis!")
+    }
+
+```
+
+```{r echo=FALSE, results="asis", fig.align="center", label=ora-results}
+    if(nrow(cem@ora) > 0){
+        writeLines("## Over Representation Analysis {.tabset}")
+
+        columns <- c("ID", "Count", "GeneRatio", "BgRatio", "p.adjust")
+        ora_df <- cem@ora[, columns]
+        ora_df[, "p.adjust"] <- round(ora_df[, "p.adjust"], digits=5)
+        ora_list <- split(ora_df, cem@ora$Module)
+        there_is_barplot <- length(cem@barplot_ora) > 0
+        modules <- names(ora_list)
+        modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
+
+        for(n in modules){
+            h3n <- paste("###", n) 
+            writeLines(h3n)
+            if(there_is_barplot){
+                print(cem@barplot_ora[[n]]$pl)
+            }
+            print(htmltools::tagList(DT::datatable(ora_list[[n]][1:max_rows_ora, ], 
+                                                   options = list(pageLength=5), 
+                                                   rownames = FALSE)))
+        }
+    } else {
+        writeLines("## Over Representation Analysis")
+        writeLines("### Please run over representation analysis!")
+    }
+```
+
+## Interaction Network
+```{r echo=FALSE, fig.align="center", cache=FALSE, results="asis", label=interaction-networks}
+    if(length(cem@interaction_plot) > 0){
+        x <- lapply(cem@interaction_plot, print)
+    } else {
+        writeLines("### Please add interactions to the CEMiTool object")
+    }
+```
+
+## Parameters ##
+```{r echo=FALSE, cache=FALSE, label=parameters}
+desc <- c("cor_method" = "Correlation method.",
+          "min_ngen" = "Minimum number of genes per module.",
+          "merge_similar" = "Should similar modules be merged?",
+          "diss_thresh" = "Dissimilarity threshold to be used as cutoff on hierarchical clustering.",
+          "r2" = 'Determination coefficient. Reflects the "scale-freeness" of the resulting network.',
+          "beta" = "Value of beta chosen.",
+          "phi" = "Area under curve / Total area in the Beta vs R squared graph.",
+          "n_genes" = "Number of genes after filtering.",
+          "filter_pval" = "p-value used on filtering.",
+	  "n_mods" = "Number of modules returned by CEMiTool."
+          )
+desc_df <- data.frame(Parameter=names(desc), Description=desc)
+
+params_list <- cem@parameters
+numeric_params <- c("r2", "diss_thresh", "phi", "filter_pval")
+for(np in numeric_params){
+	if(np %in% names(params_list)){
+		params_list[[np]] <- round(params_list[[np]], digits=3)
+	}
+}
+params <- data.frame(Parameter=names(params_list), 
+                     Value=as.character(params_list))
+params <- merge(desc_df, params, all.y=TRUE)
+DT::datatable(params, rownames=F)
+```

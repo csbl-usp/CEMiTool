@@ -1,0 +1,27 @@
+Package: CEMiTool
+Title: Finds Gene Co-expression Modules
+Version: 0.99.8
+Authors@R: c( person("Pedro", "Russo", email = "pedro.russo@usp.br",
+        role = c("aut")), person("Gustavo", "Ferreira", email =
+        "gustavo.rodrigues.ferreira@usp.br", role = c("aut")),
+        person("Helder", "Nakaya", email = "hnakaya@usp.br", role =
+        c("aut", "cre")), person("Matheus", "Bürger", email =
+        "burger@usp.br", role = c("aut")), person("Lucas", "Cardozo",
+        email = "lucas.cardozo@usp.br", role = c("aut")))
+Description: CEMiTool improves WGCNA gene co-expression module
+        discovery by optimizing network parameter selection. This
+        package also perfoms enrichment analysis with the discovered
+        modules.
+Depends: R (>= 3.4)
+Imports: methods, scales, gRbase, data.table (>= 1.9.4), WGCNA,
+        ggplot2, ggrepel, sna, GSEABase, clusterProfiler, fgsea,
+        stringr, knitr, rmarkdown, igraph, DT, htmltools, pracma,
+        intergraph, grDevices, utils, network, matrixStats
+Suggests: testthat
+License: GPL-3
+Encoding: UTF-8
+biocViews: GeneExpression, Transcriptomics, GraphAndNetwork,
+        mRNAMicroarray, RNASeq, Network, NetworkEnrichment
+LazyData: true
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
