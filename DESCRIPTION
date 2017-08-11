@@ -18,7 +18,7 @@ Authors@R: c(
                     email = "lucas.cardozo@usp.br",
                     role = c("aut")))
 Description: The CEMiTool Bioconductor package unifies the discovery and the analysis 
-of co-expression gene modules in a fully automatic manner, 
+of coexpression gene modules in a fully automatic manner, 
 while providing a user-friendly html report with high quality graphs. 
 Our tool evaluates if modules contain genes that are over-represented by 
 specific pathways or that are altered in a specific sample group. 
