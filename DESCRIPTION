@@ -1,5 +1,5 @@
 Package: CEMiTool
-Title: Finds Gene Co-expression Modules
+Title: Co-Expression Modules identification Tool
 Version: 0.99.8
 Authors@R: c(
             person("Pedro", "Russo",
@@ -17,9 +17,13 @@ Authors@R: c(
             person("Lucas", "Cardozo",
                     email = "lucas.cardozo@usp.br",
                     role = c("aut")))
-Description: CEMiTool improves WGCNA gene co-expression module discovery by
-    optimizing network parameter selection. This package also perfoms enrichment
-    analysis with the discovered modules.
+Description: The CEMiTool Bioconductor package unifies the discovery and the analysis 
+of co-expression gene modules in a fully automatic manner, 
+while providing a user-friendly html report with high quality graphs. 
+Our tool evaluates if modules contain genes that are over-represented by 
+specific pathways or that are altered in a specific sample group. 
+Additionally, CEMiTool is able to integrate transcriptomic data with interactome 
+information, identifying the potential hubs on each network.
 Depends:
     R (>= 3.4)
 Imports:
