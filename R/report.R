@@ -30,7 +30,7 @@ setGeneric('generate_report', function(cem, ...) {
 
 #' @rdname generate_report
 setMethod('generate_report', signature('CEMiTool'),
-          function(cem, max_rows_ora=50, title="Report", directory="./reports", ...) {
+          function(cem, max_rows_ora=50, title="Report", directory="./Reports", ...) {
 			  if(is.null(unique(cem@module$modules))){
 			  	  stop("No modules in CEMiTool object! Did you run find_modules()?")
 			  }

@@ -555,7 +555,6 @@ setGeneric('show_plot', function(cem, value) {
 })
 
 #' @rdname show_plot
-#' @export
 setMethod('show_plot', signature('CEMiTool'), 
           function(cem, value=c("profile", "gsea", "ora", "interaction", 
                                 "beta_r2", "mean_k")) {
@@ -569,3 +568,68 @@ setMethod('show_plot', signature('CEMiTool'),
                 mean_k=cem@mean_k_plot)
               return(x_plot)
           })
+
+#' @title
+#' Save CEMiTool object plots
+#'
+#' @description
+#' Save plots into the directory specified by the \code{directory} argument.
+#' 
+#' @param cem Object of class \code{CEMiTool}.
+#' @param value A character string containing the name of the plot to be saved.
+#' @param directory Directory into which the files will be saved.
+#' @param force If the directory exists, execution will not stop.
+#' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".
+#'
+#' @return A pdf file with the desired plots
+#'
+#' @examples
+#' # Get example CEMiTool object
+#' data(cem)
+#' # Plot beta x R squared graph
+#' cem <- plot_beta_r2(cem)
+#' # Save plot
+#' \dontrun{save_plot(cem, value="beta_r2", directory="./Plots")}
+#' @rdname save_plot
+#' @export
+setGeneric('save_plot', function(cem, value, directory, force) {
+		       standardGeneric('save_plot')
+			       })
+
+#' @rdname save_plot
+setMethod('save_plot', signature('CEMiTool'),
+		  function(cem, value=c("all", "profile", "gsea", "ora", 
+								"interaction", "beta_r2", "mean_k"), 
+				   directory="./Plots", force=FALSE) {
+				  if(dir.exists(directory)){
+					  if(!force){
+						  stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
+				      }
+				  }else{
+				      dir.create(directory)
+				  }
+				  value <- match.arg(value)
+				  if(value == "all"){
+	                  plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
+	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot)
+	                  names(plots) <- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k")
+	                  lapply(names(plots), function(pl){
+		                  pdf(file=file.path(directory, paste0(pl, ".pdf")))
+		                  print(plots[[pl]])
+		                  dev.off()
+		              })
+		              cem@profile_plot
+		              dev.off()
+		          }else{
+				  	  x_plot <- switch(value,
+	                                   profile=cem@profile_plot,
+	                                   gsea=cem@enrichment_plot,
+	                                   ora=cem@barplot_ora,
+	                                   interaction=cem@interaction_plot,
+	                                   beta_r2=cem@beta_r2_plot,
+	                                   mean_k=cem@mean_k_plot)
+	                  pdf(file.path(directory, paste0(value, ".pdf")))
+					  print(x_plot)
+					  dev.off()
+			      }
+	      })

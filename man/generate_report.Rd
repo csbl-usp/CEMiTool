@@ -9,7 +9,7 @@
 generate_report(cem, ...)
 
 \S4method{generate_report}{CEMiTool}(cem, max_rows_ora = 50,
-  title = "Report", directory = "./reports", ...)
+  title = "Report", directory = "./Reports", ...)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

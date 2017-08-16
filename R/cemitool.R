@@ -676,12 +676,10 @@ setGeneric('write_files', function(cem, ...) {
 
 #' @rdname write_files
 setMethod('write_files', signature(cem='CEMiTool'),
-          function(cem, directory, force=FALSE) {
+          function(cem, directory="./Tables", force=FALSE) {
               if(dir.exists(directory)){
                   if(!force){
-                      stop("Stopping analysis: ", directory, " already exists!")
-                  } else {
-                      warning(directory, " already exists! Use force=TRUE to overwrite.")
+                      stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
                   }
               } else {
                   dir.create(directory)
