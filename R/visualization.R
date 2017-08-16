@@ -309,7 +309,8 @@ setMethod('plot_gsea', signature('CEMiTool'),
                   theme_minimal() +
                   theme(panel.grid.major = element_blank()) +
                   scale_x_discrete(position = "top")
-              cem@enrichment_plot <- res
+			  res_list <- list(enrichment_plot=res)
+              cem@enrichment_plot <- res_list
 
               return(cem)
           }
@@ -488,7 +489,8 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
                     theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                     scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
                     labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
-              cem@beta_r2_plot <- pl
+			  res_list <- list(beta_r2_plot=pl)
+              cem@beta_r2_plot <- res_list
               return(cem)
           })
 
@@ -529,7 +531,8 @@ setMethod('plot_mean_k', signature('CEMiTool'),
                   geom_point(size=1.5) +
                   theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                   labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
-              cem@mean_k_plot <- pl
+	  			  res_list <- list(mean_k_plot=pl)
+	              cem@mean_k_plot <- res_list
               return(cem)
           })
 
@@ -577,11 +580,12 @@ setMethod('show_plot', signature('CEMiTool'),
 #' 
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value A character string containing the name of the plot to be saved.
-#' @param directory Directory into which the files will be saved.
 #' @param force If the directory exists, execution will not stop.
+#' @param directory Directory into which the files will be saved.
+#' @param ... Optional parameters
 #' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".
 #'
-#' @return A pdf file with the desired plots
+#' @return A pdf file(s) with the desired plot(s)
 #'
 #' @examples
 #' # Get example CEMiTool object
@@ -589,18 +593,18 @@ setMethod('show_plot', signature('CEMiTool'),
 #' # Plot beta x R squared graph
 #' cem <- plot_beta_r2(cem)
 #' # Save plot
-#' \dontrun{save_plot(cem, value="beta_r2", directory="./Plots")}
-#' @rdname save_plot
+#' \dontrun{save_plots(cem, value="beta_r2", directory="./Plots")}
+#' @rdname save_plots
 #' @export
-setGeneric('save_plot', function(cem, value, directory, force) {
-		       standardGeneric('save_plot')
+setGeneric('save_plots', function(cem, ...) {
+		       standardGeneric('save_plots')
 			       })
 
-#' @rdname save_plot
-setMethod('save_plot', signature('CEMiTool'),
+#' @rdname save_plots
+setMethod('save_plots', signature('CEMiTool'),
 		  function(cem, value=c("all", "profile", "gsea", "ora", 
 								"interaction", "beta_r2", "mean_k"), 
-				   directory="./Plots", force=FALSE) {
+				   force=FALSE, directory="./Plots") {
 				  if(dir.exists(directory)){
 					  if(!force){
 						  stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
@@ -613,13 +617,12 @@ setMethod('save_plot', signature('CEMiTool'),
 	                  plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
 	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot)
 	                  names(plots) <- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k")
+					  plots <- Filter(function(x) length(x) > 0, plots)
 	                  lapply(names(plots), function(pl){
 		                  pdf(file=file.path(directory, paste0(pl, ".pdf")))
 		                  print(plots[[pl]])
 		                  dev.off()
 		              })
-		              cem@profile_plot
-		              dev.off()
 		          }else{
 				  	  x_plot <- switch(value,
 	                                   profile=cem@profile_plot,
