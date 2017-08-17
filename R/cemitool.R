@@ -47,9 +47,9 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 interactions='list',
                                 interaction_plot='list',
                                 profile_plot='list',
-                                enrichment_plot='gg',
-                                beta_r2_plot='gg',
-                                mean_k_plot='gg',
+                                enrichment_plot='list',
+                                beta_r2_plot='list',
+                                mean_k_plot='list',
                                 barplot_ora='list',
                                 sample_name_column='vector',
                                 class_column='vector',
@@ -676,12 +676,10 @@ setGeneric('write_files', function(cem, ...) {
 
 #' @rdname write_files
 setMethod('write_files', signature(cem='CEMiTool'),
-          function(cem, directory, force=FALSE) {
+          function(cem, directory="./Tables", force=FALSE) {
               if(dir.exists(directory)){
                   if(!force){
-                      stop("Stopping analysis: ", directory, " already exists!")
-                  } else {
-                      warning(directory, " already exists! Use force=TRUE to overwrite.")
+                      stop("Stopping analysis: ", directory, " already exists!Use force=TRUE to overwrite.")
                   }
               } else {
                   dir.create(directory)

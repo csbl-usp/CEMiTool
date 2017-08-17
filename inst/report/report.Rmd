@@ -53,8 +53,8 @@ height <- ifelse(length(height) == 0, 7, height)
     #knitr::opts_current$set('fig.height'=height)
     if(length(cem@enrichment) == 0){
         writeLines("### Please provide a sample annotation!")
-    } else if(!is.null(names(cem@enrichment_plot))){
-        plot(cem@enrichment_plot)
+    } else if(length(cem@enrichment_plot) > 0){
+        plot(cem@enrichment_plot[[1]])
     } else if(nrow(cem@enrichment$nes) == 0) {
         writeLines("### No module enriched.")
     }else {

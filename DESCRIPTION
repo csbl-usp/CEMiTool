@@ -1,5 +1,5 @@
 Package: CEMiTool
-Title: Finds Gene Co-expression Modules
+Title: Co-expression Modules identification Tool
 Version: 0.99.8
 Authors@R: c( person("Pedro", "Russo", email = "pedro.russo@usp.br",
         role = c("aut")), person("Gustavo", "Ferreira", email =
