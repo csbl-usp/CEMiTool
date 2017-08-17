@@ -9,7 +9,7 @@
 generate_report(cem, ...)
 
 \S4method{generate_report}{CEMiTool}(cem, max_rows_ora = 50,
-  title = "Report", directory = "./Reports", ...)
+  title = "Report", directory = "./Reports", force = FALSE, ...)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -21,6 +21,8 @@ generate_report(cem, ...)
 \item{title}{Character string with the title of the report.}
 
 \item{directory}{Directory name for results.}
+
+\item{force}{If the directory exists, execution will not stop.}
 }
 \value{
 An HTML file with an interactive report of CEMiTool analyses.

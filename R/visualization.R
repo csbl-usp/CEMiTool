@@ -310,12 +310,10 @@ setMethod('plot_gsea', signature('CEMiTool'),
                   theme(panel.grid.major = element_blank()) +
                   scale_x_discrete(position = "top")
 			  res_list <- list(enrichment_plot=res)
-              cem@enrichment_plot <- res_list
+			  cem@enrichment_plot <- res_list
 
               return(cem)
-          }
-          )
-
+          })
 
 #' Network visualization
 #'
@@ -531,8 +529,9 @@ setMethod('plot_mean_k', signature('CEMiTool'),
                   geom_point(size=1.5) +
                   theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                   labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
-	  			  res_list <- list(mean_k_plot=pl)
-	              cem@mean_k_plot <- res_list
+			  
+			  res_list <- list(mean_k_plot=pl)
+			  cem@mean_k_plot <- res_list
               return(cem)
           })
 
@@ -580,12 +579,12 @@ setMethod('show_plot', signature('CEMiTool'),
 #' 
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value A character string containing the name of the plot to be saved.
-#' @param force If the directory exists, execution will not stop.
 #' @param directory Directory into which the files will be saved.
-#' @param ... Optional parameters
+#' @param force If the directory exists, execution will not stop.
+#' @param ... Optimal parameters
 #' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".
 #'
-#' @return A pdf file(s) with the desired plot(s)
+#' @return A pdf file or files with the desired plot(s)
 #'
 #' @examples
 #' # Get example CEMiTool object

@@ -15,7 +15,7 @@ save_plots(cem, ...)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{Optional parameters
+\item{...}{Optimal parameters
 One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".}
 
 \item{value}{A character string containing the name of the plot to be saved.}
@@ -25,7 +25,7 @@ One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".}
 \item{directory}{Directory into which the files will be saved.}
 }
 \value{
-A pdf file(s) with the desired plot(s)
+A pdf file or files with the desired plot(s)
 }
 \description{
 Save plots into the directory specified by the \code{directory} argument.
