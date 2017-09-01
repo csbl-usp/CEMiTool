@@ -1,7 +1,6 @@
 #' @importFrom data.table fread setDF
 #' @importFrom fgsea fgsea
 #' @importFrom clusterProfiler enricher
-#' @importFrom GSEABase geneIds getGmt
 NULL
 
 #' Read a GMT file
@@ -15,13 +14,23 @@ NULL
 #' gmt_in <- read_gmt(gmt_fname)
 #'
 #' @export
+
 read_gmt <- function(fname){
-    gmt <- GSEABase::getGmt(con=fname)
-    ont2gene <- GSEABase::geneIds(gmt) %>% stack
-    ont2gene <- ont2gene[, c("ind", "values")]
-    colnames(ont2gene) <- c("term", "gene")
-    return(ont2gene)
+    res <- list(genes=list(), desc=list())
+    gmt <- file(fname)
+    gmt_lines <- readLines(gmt)
+    close(gmt)
+    gmt_list <- lapply(gmt_lines, function(x) unlist(strsplit(x, split="\t")))
+    gmt_names <- sapply(gmt_list, '[', 1)
+    gmt_desc <- lapply(gmt_list, '[', 2)
+    gmt_genes <- lapply(gmt_list, function(x){x[3:length(x)]})
+    names(gmt_desc) <- names(gmt_genes) <- gmt_names
+    res <- do.call(rbind, lapply(names(gmt_genes),
+				function(n) cbind.data.frame(term=n, gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
+	res$term <- as.factor(res$term)
+	return(res)
 }
+
 
 # Performs Over Representation Analysis for a list of genes and a GMT
 #
