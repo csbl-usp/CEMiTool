@@ -217,11 +217,18 @@ setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
 #' Retrive or set the sample_annotation attribute
 #'
 #' @param cem Object of class \code{CEMiTool}
+#' @param sample_name_column A string containing the name of a column which should be used
+#' as a unique identifier for samples in the file. Only used when assigning a sample annotation
+#' data.frame. Default: "SampleName".
+#' @param class_column A string containing the name of a column which should be used
+#' to identify different sample groups. Only used when assigning a sample annotation
+#' data.frame. Default: "Class"
 #' @param value A data.frame containing the sample annotation,
-#'              should have at least two columns containing the Class
-#'              and the Sample Name that should match with samples in
-#'              expression
-#' @return A data.frame containing characteristics of each sample
+#' should have at least two columns containing the Class
+#' and the Sample Name that should match with samples in
+#' expression
+#'
+#' @return A data.frame containing characteristics of each sample.
 #'
 #' @examples
 #' # Get example expression data
@@ -231,8 +238,10 @@ setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
 #' # Initialize CEMiTool object with expression
 #' cem <- new_cem(expr)
 #' # Add sample annotation file to CEMiTool object
-#' sample_annotation(cem) <- sample_annot
-#' # Check annotation file
+#' sample_annotation(cem, 
+#'     sample_name_column="SampleName", 
+#'     class_column="Class") <- sample_annot
+#' # Check annotation
 #' head(sample_annotation(cem))
 #'
 #' @rdname sample_annotation
@@ -249,27 +258,29 @@ setMethod("sample_annotation", signature("CEMiTool"),
 
 #' @rdname sample_annotation
 #' @export
-setGeneric("sample_annotation<-", function(cem, value) {
+setGeneric("sample_annotation<-", function(cem, sample_name_column="SampleName", class_column="Class", value) {
             standardGeneric("sample_annotation<-")
           })
 
 #' @rdname sample_annotation
 setReplaceMethod("sample_annotation", signature("CEMiTool"),
-         function(cem, value){
-            if(!cem@sample_name_column %in% colnames(value)){
+         function(cem, sample_name_column="SampleName", class_column="Class", value){
+            if(!sample_name_column %in% colnames(value)){
                 stop("Please supply a data.frame with a column named ",
-                     cem@sample_name_column,
-                     " or change the slot sample_name_column.")
+                     sample_name_column,
+                     " or change the sample_name_column argument.")
             }
-            if(!cem@class_column %in% colnames(value)){
+            if(!class_column %in% colnames(value)){
                 stop("Please supply a data.frame with a column named ",
-                     cem@class_column,
-                     " or change the slot class_column.")
+                     class_column,
+                     " or change the class_column argument.")
             }
-            if(min(table(value[, cem@class_column])) == 1){
+            if(min(table(value[, class_column])) == 1){
                 warning("There is at least one class with only 1 sample in it. Results may be suboptimal.")
             }
             cem@sample_annotation <- value
+			cem@sample_name_column <- sample_name_column
+			cem@class_column <- class_column
             return(cem)
          } )
 
