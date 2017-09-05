@@ -15,7 +15,7 @@ save_plots(cem, ...)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
-\item{...}{Optimal parameters
+\item{...}{Optional parameters
 One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".}
 
 \item{value}{A character string containing the name of the plot to be saved.}

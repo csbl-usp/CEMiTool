@@ -78,11 +78,15 @@ setMethod("initialize", signature="CEMiTool",
 #'
 #' @param expr Object of class \code{data.frame} with gene
 #'        expression data
-#' @param sample_annot Object of \code{data.frame} containing the sample annotation.
-#'        It should have at least two columns containing group Class
+#' @param sample_annot Object of \code{data.frame} containing the sample
+#'        annotation. It should have at least two columns containing group Class
 #'        and the Sample Name that should match with samples in
 #'        expression file
-#' 
+#' @param sample_name_column A string specifying the column to be used as
+#'        sample identification. Default: "SampleName".
+#' @param class_column A string specifying the column to be used as
+#'        a grouping factor for samples. Default: "Class"
+#'
 #' @return Object of class \code{CEMiTool}
 #' @examples
 #' # Create new CEMiTool object
@@ -90,15 +94,29 @@ setMethod("initialize", signature="CEMiTool",
 #' # Create new CEMiTool object with expression and sample_annotation data
 #' data(expr)
 #' data(sample_annot)
-#' cem <- new_cem(expr, sample_annot)
+#' cem <- new_cem(expr, sample_annot, "SampleName", "Class")
 #' # Equivalent to a call to new()
 #' cem2 <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
 #' identical(cem, cem2)
 #' @export
-new_cem <- function(expr=data.frame(), sample_annot=data.frame()){
-	new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
+		sample_name_column="SampleName", class_column="Class"){
+	if(nrow(sample_annot) > 0){
+		if(!sample_name_column %in% names(sample_annot)){
+		    stop("Please supply a data.frame with a column named ",
+				sample_name_column,
+				" or change the sample_name_column argument.")
+			}
+		if(!class_column %in% names(sample_annot)){
+			stop("Please supply a data.frame with a column named ",
+				class_column,
+				" or change the class_column argument.")
+		}
+	}
+    cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot,
+		sample_name_column=sample_name_column, class_column=class_column)
+	return(cem)
 }
-
 
 #' Retrieve and set expression attribute
 #'

@@ -4,16 +4,23 @@
 \alias{new_cem}
 \title{Create a CEMiTool object}
 \usage{
-new_cem(expr = data.frame(), sample_annot = data.frame())
+new_cem(expr = data.frame(), sample_annot = data.frame(),
+  sample_name_column = "SampleName", class_column = "Class")
 }
 \arguments{
 \item{expr}{Object of class \code{data.frame} with gene
 expression data}
 
-\item{sample_annot}{Object of \code{data.frame} containing the sample annotation.
-It should have at least two columns containing group Class
+\item{sample_annot}{Object of \code{data.frame} containing the sample
+annotation. It should have at least two columns containing group Class
 and the Sample Name that should match with samples in
 expression file}
+
+\item{sample_name_column}{A string specifying the column to be used as
+sample identification. Default: "SampleName".}
+
+\item{class_column}{A string specifying the column to be used as
+a grouping factor for samples. Default: "Class"}
 }
 \value{
 Object of class \code{CEMiTool}
@@ -27,7 +34,7 @@ cem <- new_cem()
 # Create new CEMiTool object with expression and sample_annotation data
 data(expr)
 data(sample_annot)
-cem <- new_cem(expr, sample_annot)
+cem <- new_cem(expr, sample_annot, "SampleName", "Class")
 # Equivalent to a call to new()
 cem2 <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
 identical(cem, cem2)
