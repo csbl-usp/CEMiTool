@@ -422,7 +422,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Including sample annotation ...")
         }
-        sample_annotation(results) <- annot
+        sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
         if(verbose){
             message("Running Gene Set Enrichment Analysis ...")
         }
