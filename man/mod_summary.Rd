@@ -33,5 +33,4 @@ data(cem)
 # Summarize results
 mod_summary <- mod_summary(cem)
 
-
 }

@@ -9,9 +9,9 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  cor_function = "cor", min_ngen = 20, merge_similar = TRUE,
-  network_type = "unsigned", tom_type = "signed", diss_thresh = 0.8,
-  verbose = FALSE)
+  cor_function = "cor", set_beta = NULL, min_ngen = 20,
+  merge_similar = TRUE, network_type = "unsigned", tom_type = "signed",
+  diss_thresh = 0.8, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -23,7 +23,9 @@ is to be computed. Default \code{"pearson"}}
 
 \item{cor_function}{A character string indicating the correlation function to be used. Default \code{'cor'}}
 
-\item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
+\item{set_beta}{A value to override the automatically selected beta value. Default is NULL.}
+
+\item{min_ngen}{Minimal number of genes per submodule. Default \code{20}.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, (the default) merge similar modules.}
 
