@@ -18,4 +18,9 @@ test_that('objects constructed receive the expected data', {
 	expect_identical(sample_annot, sample_annotation(cem2))
 })
 
+test_that('new_cem returns errors when appropriate', {
+	expect_error(cem <- new_cem(expr, sample_annot, sample_name_column="foo"))
+	expect_error(cem <- new_cem(expr, sample_annot, class_column="bar"))
+})
+
 
