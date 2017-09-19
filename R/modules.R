@@ -72,7 +72,7 @@ setMethod('find_modules', signature('CEMiTool'),
     wgcna_beta <- beta_data$powerEstimate
 		    
 	if(!is.null(set_beta)){
-	    if(is.numeric(set_beta) & !(set_beta) %in% fit_indices[, 2]){
+	    if(is.numeric(set_beta) & !(set_beta) %in% fit_indices[, "Power"]){
 		    stop(c("Parameter set_beta must be one of: ", paste(fit_indices$Power, collapse=" ")))
 	    }else if(is.character(set_beta) & tolower(set_beta)!= "wgcna"){
 			stop("Unrecognized string character for parameter set_beta")
@@ -102,7 +102,8 @@ setMethod('find_modules', signature('CEMiTool'),
 		    
 	if(is.na(beta)){
 		cem@parameters <- c(cem@parameters, NA)
-		stop('Could not specify the parameter Beta. No modules found.')
+		message('Could not specify the parameter Beta. No modules found.')
+		return(cem)
 	}
 
 	# Get adjacency matrix
@@ -114,7 +115,8 @@ setMethod('find_modules', signature('CEMiTool'),
 	# Number of modules
 	n_mods <- length(unique(mods))
 	if (n_mods <= 1) {
-		stop('No modules found.')
+		message('No modules found.')
+		return(cem)
 	}
 		    
 	# if merge_similar=TRUE, merges similar modules
