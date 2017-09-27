@@ -1,7 +1,3 @@
 language: r
 r: bioc-devel
-#cache: packages
-#before_install:
-#    Rscript -e "source('http://bioconductor.org/biocLite.R'); 
-#    biocLite('GO.db');
-#    biocLite('DO.db')"
+cache: packages
