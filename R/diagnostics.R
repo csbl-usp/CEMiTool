@@ -12,7 +12,9 @@ NULL
 #' @param cem Object of class \code{CEMiTool} or \code{data.frame}.
 #' @param col_vector A vector of columns to use for visualizing the clustering. See Details.
 #' @param sample_name_column A string specifying the column to be used as sample identification.
-#' 		  For CEMiTool objects, this will be the string specified in the sample_name_column slot. 
+#' 		  For CEMiTool objects, this will be the string specified in the sample_name_column slot.
+#' @param class_column A string specifying the column to be used as sample group identification.
+#' 		  For CEMiTool objects, this will be the string specified in the class_column slot.
 #' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters.
 #' 

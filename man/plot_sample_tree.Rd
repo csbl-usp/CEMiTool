@@ -14,14 +14,17 @@ plot_sample_tree(cem, ...)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool} or \code{data.frame}.}
 
+\item{...}{Optional parameters.}
+
 \item{col_vector}{A vector of columns to use for visualizing the clustering. See Details.}
 
 \item{sample_name_column}{A string specifying the column to be used as sample identification.
 For CEMiTool objects, this will be the string specified in the sample_name_column slot.}
 
-\item{filtered}{Logical. Whether or not to use filtered data for CEMiTool objects. Default: FALSE.}
+\item{class_column}{A string specifying the column to be used as sample group identification.
+For CEMiTool objects, this will be the string specified in the class_column slot.}
 
-\item{annot}{Annotation file. For CEMiTool objects, must be left NULL. See Details.}
+\item{filtered}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
 }
 \value{
 Object of class \code{CEMiTool} with dendrogram or a plot object.

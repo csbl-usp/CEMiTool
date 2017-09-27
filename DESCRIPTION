@@ -21,6 +21,7 @@ Imports: methods, scales, gRbase, data.table (>= 1.9.4), WGCNA,
         stringr, knitr, rmarkdown, igraph, DT, htmltools, pracma,
         intergraph, grDevices, utils, network, matrixStats, ggdendro, 
         gridExtra, gtable
+Remotes: bioc::release/GO.db
 Suggests: testthat
 License: GPL-3
 Encoding: UTF-8
