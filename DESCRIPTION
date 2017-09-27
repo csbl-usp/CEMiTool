@@ -19,12 +19,12 @@ Depends: R (>= 3.4)
 Imports: methods, scales, gRbase, data.table (>= 1.9.4), WGCNA,
         ggplot2, ggrepel, sna, clusterProfiler, fgsea,
         stringr, knitr, rmarkdown, igraph, DT, htmltools, pracma,
-        intergraph, grDevices, utils, network, matrixStats
+        intergraph, grDevices, utils, network, matrixStats, ggdendro, 
+        gridExtra, gtable
 Suggests: testthat
 License: GPL-3
 Encoding: UTF-8
-biocViews: GeneExpression, Transcriptomics, GraphAndNetwork,
-        mRNAMicroarray, RNASeq, Network, NetworkEnrichment
+biocViews: Pathways
 LazyData: true
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

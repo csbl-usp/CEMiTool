@@ -8,6 +8,7 @@
 #' @importFrom scales squish
 #' @import stringr
 #' @import network
+#' @import grid
 NULL
 
 #' Expression profile visualization
@@ -535,115 +536,12 @@ setMethod('plot_mean_k', signature('CEMiTool'),
               return(cem)
           })
 
-#' Sample clustering
-#' 
-#' Creates a dendrogram showing the similarities between samples in the expression data.
-#' Both CEMiTool objects or data.frames can be used; for CEMiTool objects, the sample_annotation
-#' slot data is used for creating the heatmap below the dendrogram. For a data.frame, annotation
-#' can be provided via the annot argument. 
-#' 
-#' @param obj Object of class \code{CEMiTool} or \code{data.frame}.
-#' @param annot Annotation file. For CEMiTool objects, must be left NULL. See Details.
-#' @param col_vector A vector of columns to use for visualizing the clustering. See Details.
-#' @param sample_name_column A string specifying the column int the sample_annotation file
-#' to be used as sample identification. For CEMiTool objects, this will be the string specified 
-#' in the sample_name_column slot.
-#' @param class_column A string specifying the column in the sample annotation file which indicates
-#' sample groups. For CEMiTool objects, this will be the string specified in the class_column slot.
-#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects. Default: FALSE.
-#' @param ... Optional parameters.
-#' 
-#' @return Object of class \code{CEMiTool} with dendrogram or a plot object. 
-#' 
-#' @examples 
-#' # Get example CEMiTool object
-#' data(cem)
-#' # Plot sample dendrogram
-#' plot_sample_tree(cem)
-#'
-#' @rdname plot_sample_tree
-#' @export
-setGeneric('plot_sample_tree', function(obj, ...){
-		       standardGeneric('plot_sample_tree')
-		  })
-
-#' @rdname plot_sample_tree
-setMethod('plot_sample_tree', signature('CEMiTool'),
-		function(obj, annot=NULL, col_vector=NULL, sample_name_column=NULL, 
-				class_column=NULL, filtered=FALSE){
-			if(class(obj) == "CEMiTool"){
-				if(!is.null(annot)){
-					stop(paste("Parameter annot must be NULL for CEMiTool objects.",
-						"Please use sample_annotation() to provide annotation instead."))
-				}
-				expr <- expr_data(cem, filtered=filtered)
-				if(nrow(sample_annotation(cem)) > 0){
-					annot <- sample_annotation(cem)
-					sample_name_column=obj@sample_name_column
-					class_column=obj@class_column
-				}else{
-					annot <- NULL
-				}
-			}else{
-		    	expr <- obj
-                if(is.null(sample_name_column)){
-					stop("Please provide the sample_name_column argument when using expression data.frames")
-				}
-				if(!sample_name_column %in% colnames(annot)){
-					stop("Please supply a data.frame with a column named ",
-					sample_name_column,
-					" or change the sample_name_column argument.")
-				}
-				if(is.null(class_column)){
-					stop("Please provide the class_column argument when using expression data.frames")
-				}
-				if(!class_column %in% colnames(annot)){
-					stop("Please supply a data.frame with a column named ",
-						class_column,
-						" or change the class_column argument.")
-				}
-			}
-
-			if(!is.null(annot)){
-		        rownames(annot) <- annot[, sample_name_column]
-		        annot[, sample_name_column] <- NULL
-		        annot_class <- annot[, class_column, drop=FALSE]
-		        if(!is.null(col_vector)){
-			        if(is.numeric(col_vector) | is.character(col_vector)){
-				        annot <- annot[, col_vector]
-					}else{
-						stop("Accepted classes for col_vector object are 'numeric' or 'character'.")
-					}
-				}
-			}
-			
-			expr_t <- t(expr)
-			sampleTree <- hclust(dist(expr_t), method = "average")
-			par(cex = 0.6)
-			par(mar = c(0,4,2,0))
-						                
-			annot[, "class_code"] <- match(annot$Class, unique(annot[, class_column]))
-			annot_class_code <- annot[, "class_code", drop=FALSE]
-			annot[, "class_code"] <- NULL
-			trait_colors_class <- WGCNA::numbers2colors(annot_class_code, 
-									colors=rainbow(length(unique(annot_class_code$class_code))))
-			if(ncol(annot) == 1){
-				trait_colors <- trait_colors_class
-			}else{
-				annot[, class_column] <- NULL
-				trait_colors <- WGCNA::numbers2colors(annot)
-				trait_colors <- cbind(trait_colors_class, trait_colors)
-				annot <- cbind(annot_class, annot)
-			}
-			            
-			pl <- WGCNA::plotDendroAndColors(sampleTree, trait_colors, groupLabels=names(annot))
-		})
 
 #' Retrieve CEMiTool object plots
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value A character string containing the name of the plot to be shown.
-#' One of "profile", "gsea", "ora", "interaction", "beta_r2" or "mean_k".
+#' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k", "sample_tree".
 #'
 #' @return A plot corresponding to a CEMiTool analysis
 #'
@@ -663,16 +561,20 @@ setGeneric('show_plot', function(cem, value) {
 #' @rdname show_plot
 setMethod('show_plot', signature('CEMiTool'), 
           function(cem, value=c("profile", "gsea", "ora", "interaction", 
-                                "beta_r2", "mean_k")) {
+                                "beta_r2", "mean_k", "sample_tree")) {
               value <- match.arg(value)
-              x_plot <- switch(value,
-                profile=cem@profile_plot,
-                gsea=cem@enrichment_plot,
-                ora=cem@barplot_ora,
-                interaction=cem@interaction_plot,
-                beta_r2=cem@beta_r2_plot,
-                mean_k=cem@mean_k_plot)
-              return(x_plot)
+		  	  if(value!="sample_tree"){
+              	  x_plot <- switch(value,
+	                  profile=cem@profile_plot,
+    	              gsea=cem@enrichment_plot,
+        	          ora=cem@barplot_ora,
+            	      interaction=cem@interaction_plot,
+                	  beta_r2=cem@beta_r2_plot,
+               	 	  mean_k=cem@mean_k_plot)
+              	  return(x_plot)
+			 }else{
+				  grid::grid.draw(cem@sample_tree_plot)
+			 }
           })
 
 #' @title

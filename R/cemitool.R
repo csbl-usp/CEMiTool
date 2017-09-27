@@ -4,6 +4,7 @@
 
 setOldClass('gg')
 setOldClass('ggplot')
+setOldClass('gtable')
 #' An S4 class to represent the CEMiTool analysis.
 #'
 #' @slot expression Gene expression \code{data.frame}.
@@ -51,6 +52,7 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 beta_r2_plot='list',
                                 mean_k_plot='list',
                                 barplot_ora='list',
+								sample_tree_plot='gtable',
                                 sample_name_column='vector',
                                 class_column='vector',
                                 mod_colors='character',
