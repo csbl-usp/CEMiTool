@@ -8,12 +8,19 @@
 \usage{
 get_mods(cem, ...)
 
-\S4method{get_mods}{CEMiTool}(cem, tom_type = "signed", min_ngen = 20)
+\S4method{get_mods}{CEMiTool}(cem, cor_function = "cor",
+  cor_method = "pearson", tom_type = "signed", min_ngen = 20)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
+
+\item{cor_function}{A character string indicating the correlation function 
+to be used. Default \code{'cor'}.}
+
+\item{cor_method}{A character string indicating which correlation 
+coefficient is to be computed. Default \code{"pearson"}.}
 
 \item{tom_type}{A character string indicating to use either "unsigned" or 
 "signed" (default) TOM similarity measure.}
