@@ -537,6 +537,10 @@ setMethod("get_adj", signature("CEMiTool"),
 #' together with the given network parameters, and returns the given 
 #' co-expression modules.
 #' @param cem Object of class \code{CEMiTool}.
+#' @param cor_function A character string indicating the correlation function 
+#'        to be used. Default \code{'cor'}.
+#' @param cor_method A character string indicating which correlation 
+#'        coefficient is to be computed. Default \code{"pearson"}.
 #' @param tom_type A character string indicating to use either "unsigned" or 
 #' 		  "signed" (default) TOM similarity measure.
 #' @param min_ngen Minimal number of genes per module (Default: 20).
@@ -563,7 +567,8 @@ setGeneric('get_mods', function(cem, ...) {
 })
 #' @rdname get_mods
 setMethod('get_mods', signature(cem='CEMiTool'),
-	function(cem, tom_type="signed", min_ngen=20) {
+	function(cem, cor_function="cor", cor_method="pearson",
+			 tom_type="signed", min_ngen=20) {
     
 	expr <- expr_data(cem)
 	if(nrow(expr) == 0){
@@ -577,11 +582,19 @@ setMethod('get_mods', signature(cem='CEMiTool'),
 
 	expr_t <- t(expr)
     names(expr_t) <- rownames(expr)
-	rownames(expr_t) <- colnames(expr)	    
+	rownames(expr_t) <- colnames(expr)	   
+
+
+	if(cor_function == 'cor'){
+		cor_options <- list(use="p", method=cor_method)
+    }else if (cor_function == 'bicor'){
+	    cor_options <- list(use="p", method="pearson")
+	}
 			    
 	# Calculating Topological Overlap Matrix
 	if (tom_type == 'signed') {
-		tom <- WGCNA::TOMsimilarity(adj*sign(WGCNA::cor(expr_t)), TOMType=tom_type)
+		tom <- WGCNA::TOMsimilarity(adj*sign(WGCNA::cor(expr_t, use=cor_options$use, 
+														method=cor_options$method)), TOMType=tom_type)
 	} else if (tom_type == 'unsigned') {
 		tom <- WGCNA::TOMsimilarity(adj, TOMType=tom_type)
 	}
