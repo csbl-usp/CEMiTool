@@ -3,6 +3,8 @@
 #' @import ggplot2
 #' @import ggdendro
 #' @import gtable
+#' @import ggpmisc
+#' @import ggthemes
 NULL
 
 #' Sample clustering
@@ -146,5 +148,154 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 			return(cem)
 		}
 })
+
+#' Plot mean and variance
+#'
+#' This plot returns a scatterplot of the mean by the variance
+#' of gene expression. A linear relationship between these values for
+#' RNAseq data suggest that an appropriate transformation such as the
+#' Variance Stabilizing Transformation should be applied.
+#' 
+#' @param cem Object of class \code{CEMiTool}
+#' @param ... Optional parameters
+#'
+#' @return Object of class \code{CEMiTool} containing a mean and variance plot
+#' 
+#' @examples
+#' # Get example CEMiTool object
+#' data(cem)
+#' # Plot mean and variance plot
+#' cem <- plot_mean_var(cem)
+#' # Check results
+#' show_plot(cem, 'mean_var')
+#'
+#' @rdname plot_mean_var
+#' @export
+setGeneric('plot_mean_var', function(cem, ...){
+	standardGeneric('plot_mean_var')
+})
+
+#' @rdname plot_mean_var
+setMethod('plot_mean_var', signature('CEMiTool'),
+	function(cem){
+		expr <- expr_data(cem, filtered=FALSE)
+	    
+	    expr_mean <- apply(expr, 1, mean)
+		expr_var <- apply(expr, 1, var)
+	
+		mean_var <- data.frame(Mean=expr_mean, Variance=expr_var)
+		log_mean_var <- as.data.frame(apply(mean_var, 2, log10))
+		my_formula <- y ~ x
+				    
+		pl <- ggplot(log_mean_var, aes(x=Mean, y=Variance)) + 
+				geom_point() + 
+				geom_smooth(method="lm", se=FALSE, color="red", formula=my_formula)+
+				ggpmisc::stat_poly_eq(formula=my_formula, 
+					aes(label=paste(..eq.label.., ..rr.label.., sep="*plain(\",\")~")), 
+					parse=TRUE) +
+	        labs(x = "Mean Expression (log10)", y="Variance (log10)") +
+			ggthemes::theme_gdocs() +
+			theme(axis.title.x = element_text(face="bold", size=12),
+			      axis.title.y = element_text(face="bold", size=12))
+		cem@mean_var_plot <- pl
+		return(cem)
+})
+
+#' Plot histogram
+#'
+#' This function plots a histogram of the distribution of gene expression, to 
+#' help assess the normality of the data. 
+#' 
+#' @param cem Object of class \code{CEMiTool}
+#' @param ... Optional parameters
+#' 
+#' @return Object of class \code{CEMiTool} containing expression histogram
+#'
+#' @examples
+#' # Get example CEMiTool object
+#' data(cem)
+#' # Plot histogram
+#' cem <- plot_hist(cem)
+#' # Check results
+#' show_plot(cem, "hist")
+#'
+#' @rdname plot_hist
+#' @export
+
+setGeneric('plot_hist', function(cem, ...){
+	standardGeneric('plot_hist')
+})
+
+#' @rdname plot_hist
+setMethod('plot_hist', signature('CEMiTool'),
+	function(cem){
+		measures <- as.data.frame(as.vector(as.matrix(expr)))
+		names(measures) <- "data"
+		minExp <- round(min(measures, na.rm=TRUE)-0.5,digits=0)
+		maxExp <- round(max(measures, na.rm=TRUE)+0.5, digits=0)
+		delta <- (maxExp -minExp)/100
+
+		pl <- ggplot(measures, aes(measures$data)) + 
+				geom_histogram(breaks=seq(minExp,maxExp , by=delta), 
+							   col="lightgrey",
+							   fill="#4A7CB2") +
+		     	labs(x="Measures", y="Count") +
+			    ggthemes::theme_gdocs() +
+				theme(axis.title.x = element_text(face="bold", size=12),
+					  axis.title.y = element_text(face="bold", size=12), 
+					  panel.grid=element_blank())
+
+		cem@hist_plot <- pl
+		return(cem)
+})
+
+#' Plot quantile-quantile plot
+#'
+#' This function creates a normal QQ plot of the expression values.
+#'
+#' @param cem Object of class \code{CEMiTool}
+#' @param ... Optional parameters
+#' 
+#' @return Object of class \code{CEMiTool} containing qqplot
+#'
+#' @examples
+#' # Get example CEMiTool object
+#' data(cem)
+#' # Plot quantile-quantile plot
+#' cem <- plot_qq(cem)
+#' # Check results
+#' show_plot(cem, 'qq)
+#' 
+#' @rdname plot_qq
+#' @export
+
+setGeneric('plot_qq', function(cem, ...){
+	standardGeneric('plot_qq')
+})
+
+#' @rdname plot_qq
+setMethod('plot_qq', signature('CEMiTool'),
+	function(cem){
+		measures <- as.data.frame(as.vector(as.matrix(expr)))
+		names(measures) <- "data"
+
+		pl <- ggplot(measures, aes(sample = data)) + 
+		    stat_qq() + 
+		    stat_qq_line() +
+		    ggthemes::theme_gdocs() +
+		    theme(axis.title.x = element_text(face="bold", size=12),
+	              axis.title.y = element_text(face="bold", size=12), 
+		          panel.grid=element_blank())
+
+		cem@qq_plot <- pl
+		return(cem)
+})
+
+
+
+
+
+
+
 
 

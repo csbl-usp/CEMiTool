@@ -541,7 +541,8 @@ setMethod('plot_mean_k', signature('CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value A character string containing the name of the plot to be shown.
-#' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k", "sample_tree".
+#' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k", "sample_tree",
+#' "mean_var", "hist", "qq".
 #'
 #' @return A plot corresponding to a CEMiTool analysis
 #'
@@ -561,7 +562,8 @@ setGeneric('show_plot', function(cem, value) {
 #' @rdname show_plot
 setMethod('show_plot', signature('CEMiTool'), 
           function(cem, value=c("profile", "gsea", "ora", "interaction", 
-                                "beta_r2", "mean_k", "sample_tree")) {
+                                "beta_r2", "mean_k", "sample_tree", "mean_var",
+								"hist", "qq")) {
               value <- match.arg(value)
 		  	  if(value!="sample_tree"){
               	  x_plot <- switch(value,
@@ -570,7 +572,10 @@ setMethod('show_plot', signature('CEMiTool'),
         	          ora=cem@barplot_ora,
             	      interaction=cem@interaction_plot,
                 	  beta_r2=cem@beta_r2_plot,
-               	 	  mean_k=cem@mean_k_plot)
+               	 	  mean_k=cem@mean_k_plot,
+			  		  mean_var=cem@mean_var_plot,
+					  hist=cem@hist_plot,
+					  qq=cem@qq_plot)
               	  return(x_plot)
 			 }else{
 				  grid::grid.draw(cem@sample_tree_plot)
@@ -588,7 +593,8 @@ setMethod('show_plot', signature('CEMiTool'),
 #' @param directory Directory into which the files will be saved.
 #' @param force If the directory exists, execution will not stop.
 #' @param ... Optional parameters
-#' One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k" or "all".
+#' One of "all", "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k",
+#' "sample_tree", "mean_var", "hist", "qq".
 #'
 #' @return A pdf file or files with the desired plot(s)
 #'
@@ -608,7 +614,8 @@ setGeneric('save_plots', function(cem, ...) {
 #' @rdname save_plots
 setMethod('save_plots', signature('CEMiTool'),
 		  function(cem, value=c("all", "profile", "gsea", "ora", 
-								"interaction", "beta_r2", "mean_k"), 
+								"interaction", "beta_r2", "mean_k", 
+								"sample_tree", "mean_var", "hist", "qq"), 
 				   force=FALSE, directory="./Plots") {
 				  if(dir.exists(directory)){
 					  if(!force){
@@ -620,22 +627,49 @@ setMethod('save_plots', signature('CEMiTool'),
 				  value <- match.arg(value)
 				  if(value == "all"){
 	                  plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
-	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot)
-	                  names(plots) <- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k")
-					  plots <- Filter(function(x) length(x) > 0, plots)
+	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot, 
+									cem@sample_tree_plot, cem@mean_var_plot, cem@hist_plot, 
+									cem@qq_plot)
+	
+					  all_plots<- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k",
+										"sample_tree", "mean_var", "hist", "qq")
+					  names(plots) <- all_plots
+
+					  plots <- Filter(function(x) length(x) >= 1, plots)
+					  if(length(plots) < length(all_plots)){
+					  	  message("Some plots have not been defined. Please run the appropriate plot functions. Saving available plots.")
+					  }
 	                  lapply(names(plots), function(pl){
 		                  pdf(file=file.path(directory, paste0(pl, ".pdf")))
-		                  print(plots[[pl]])
-		                  dev.off()
+						  if(pl=="sample_tree"){
+							  if(!is.null(nrow(plots[[pl]]))){
+							      grid::grid.draw(plots[[pl]])
+								  dev.off()
+							  }
+						  }else{
+							  print(plots[[pl]])
+						  	  dev.off()
+						  }
 		              })
-		          }else{
+		          }else if(value=="sample_tree"){
+					  if(!is.null(nrow(cem@sample_tree_plot))){
+						  pdf(file.path(directory, paste0(value, ".pdf")))
+					  	  grid::grid.draw(cem@sample_tree_plot)
+						  dev.off()
+					  }else{
+						  stop("Plot not available! Please use the appropriate plotting function on the CEMiTool object.")
+					  }
+				  }else{
 				  	  x_plot <- switch(value,
 	                                   profile=cem@profile_plot,
 	                                   gsea=cem@enrichment_plot,
 	                                   ora=cem@barplot_ora,
 	                                   interaction=cem@interaction_plot,
 	                                   beta_r2=cem@beta_r2_plot,
-	                                   mean_k=cem@mean_k_plot)
+	                                   mean_k=cem@mean_k_plot, 
+									   mean_var=cem@mean_var_plot,
+        	                           hist=cem@hist_plot,
+									   qq=cem@qq_plot)
 	                  pdf(file.path(directory, paste0(value, ".pdf")))
 					  print(x_plot)
 					  dev.off()

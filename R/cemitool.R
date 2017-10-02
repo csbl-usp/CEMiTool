@@ -5,6 +5,7 @@
 setOldClass('gg')
 setOldClass('ggplot')
 setOldClass('gtable')
+
 #' An S4 class to represent the CEMiTool analysis.
 #'
 #' @slot expression Gene expression \code{data.frame}.
@@ -20,11 +21,16 @@ setOldClass('gtable')
 #'   modules.
 #' @slot interaction_plot list of ggplot graphs with module gene interactions.
 #' @slot profile_plot list of ggplot graphs with gene expression profile per module.
-#' @slot enrichment_plot ggplot graph for enrichment analysis results
+#' @slot enrichment_plot ggplot graph for enrichment analysis results.
 #' @slot beta_r2_plot ggplot graph with scale-free topology fit results for each
-#'   soft-threshold
-#' @slot mean_k_plot ggplot graph with mean network connectivity
-#' @slot barplot_ora list of ggplot graphs with over-representation analysis results per module
+#'   soft-threshold.
+#' @slot mean_k_plot ggplot graph with mean network connectivity.
+#' @slot barplot_ora list of ggplot graphs with over-representation analysis results per module.
+#' @slot sample_tree_plot gtable containing sample dendrogram with class labels and clinical data
+#' 	 (if available in sample_annotation(cem)).
+#' @slot mean_var_plot Mean x variance scatterplot.
+#' @slot hist_plot Expression histogram.
+#' @slot qq_plot Quantile-quantile plot.
 #' @slot sample_name_column character string containing the name of the column with sample names
 #'   in the annotation file.
 #' @slot class_column character string containing the name of the column with class names
@@ -53,6 +59,9 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 mean_k_plot='list',
                                 barplot_ora='list',
 								sample_tree_plot='gtable',
+								mean_var_plot='gg',
+								hist_plot='gg',
+								qq_plot='gg',
                                 sample_name_column='vector',
                                 class_column='vector',
                                 mod_colors='character',
@@ -415,7 +424,7 @@ cemitool <- function(expr,
     }
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
-			    cor_function=cor_function,
+			    			cor_function=cor_function,
                             min_ngen=min_ngen,
                             merge_similar=merge_similar,
                             diss_thresh=diss_thresh,
@@ -483,11 +492,20 @@ cemitool <- function(expr,
         
         if(verbose){
             message("Plotting beta x R squared curve ...")
-            message("Plotting mean connectivity curve ...")
+            message("Plotting mean connectivity curve ...")	
+            message("Plotting diagnostic plots ...")
+            message("...Plotting mean and variance scatterplot ...")
+            message("...Plotting expression histogram ...")
+            message("...Plotting qq plot ...")
+            message("...Plotting sample tree ...")
         }
       
         results <- plot_beta_r2(results)
         results <- plot_mean_k(results)
+		results <- plot_mean_var(results)
+		results <- plot_hist(results)
+		results <- plot_qq(results)
+		results <- plot_sample_tree(cem)
     }
     return(results)
 }
