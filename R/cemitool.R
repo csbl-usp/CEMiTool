@@ -425,7 +425,6 @@ cemitool <- function(expr,
             message("Including sample annotation ...")
         }
         sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
-		print(head(sample_annotation(results)))
 	}
 
 	if(plot){
@@ -456,6 +455,7 @@ cemitool <- function(expr,
                             verbose=verbose)
 	
 	if(is.na(results@parameters$beta)){
+		return(cem)
 		stop("Unable to find parameter beta. Please check diagnostic plots with function show_plots().")
 	}
 

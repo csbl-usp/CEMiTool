@@ -52,11 +52,11 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
     
 	    expr_t <- as.data.frame(t(expr))
 	    samples <- rownames(expr_t)
-	    
+		sample_tree <- hclust(dist(expr_t), method = "average")
+
 	    if(!is.null(annot)){
 			rownames(annot) <- annot[, sample_name_column]
 		    annot[, sample_name_column] <- NULL
-			#annot_class <- annot[, class_column, drop=FALSE]
 			annot_rows <- match(samples, rownames(annot))
 			if(!is.null(col_vector)){
 				if(is.numeric(col_vector) | is.character(col_vector)){
@@ -67,17 +67,13 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 			}
 			annot <- annot[annot_rows, , drop=FALSE]
 								        
-			#annot[, "class_code"] <- match(annot$Class, unique(annot[, class_column]))
-			#annot_class_code <- annot[, "class_code", drop=FALSE]
-			#annot[, "class_code"] <- NULL
-								        
-		}
-		    
-		sample_tree <- hclust(dist(expr_t), method = "average")
-		#plot(sample_tree)
-		colors_samples <- data.frame(class=annot[, class_column],
+			colors_samples <- data.frame(class=annot[, class_column],
 				                       samples=factor(sample_tree$labels,
-		                               levels=sample_tree$labels[sample_tree$order]))
+		                               			 levels=sample_tree$labels[sample_tree$order]))
+		}else{
+			colors_samples <- data.frame(samples=factor(sample_tree$labels,
+		                               			   levels=sample_tree$labels[sample_tree$order]))
+		}
 		rownames(colors_samples) <- colors_samples$samples
 			    
 		lvl <- levels(colors_samples$samples)
@@ -89,61 +85,64 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 		                 breaks = 1:length(colors_samples$samples)) +
 			             scale_y_continuous(expand = c(0.02, 0))
 		)
-				    
-		p2 <- ggplot2::ggplot(colors_samples, aes(samples, y=1, fill=factor(class))) +
-					geom_tile() +
-					scale_y_continuous(expand=c(0, 0)) +
-					theme(axis.title=element_blank(),
-					axis.ticks=element_blank(),
-					axis.text=element_blank(),
-					legend.position="none")
-					    
-		annot_num <- Filter(is.numeric, annot)
-		order <- match(lvl, rownames(annot_num))
-		annot_num <- annot_num[order, ]
-							    
-		png("NULL")
-		gp1 <- ggplot2::ggplotGrob(p1)  
-		gp2 <- ggplot2::ggplotGrob(p2)  
-								    
-		if(ncol(annot_num) > 0){
-			df_scaled <- as.data.frame(scale(annot_num))
-			df_scaled[, sample_name_column] <- rownames(annot_num)
-			df <- reshape2::melt(df_scaled, id.vars=sample_name_column)
-			df[, sample_name_column] <- factor(df[, sample_name_column], levels=lvl)
 
-			#custom_pal <- c("#053061", "#2166AC", "#4393C3", "#92C5DE",
-			#                "#D1E5F0", "#FFFFFF", "#FDDBC7", "#F4A582",
-			#                "#D6604D", "#B2182B", "#67001F")
-			#custom_pal <- colorRampPalette(custom_pal)(200)
-															        
-			p3 <- ggplot2::ggplot(df, aes_string(x=sample_name_column, y="variable", fill="value")) +
-					geom_raster() +
-					#scale_y_continuous(expand=c(0, 0)) +
-					#scale_fill_gradientn(colors=custom_pal) +
-					scale_fill_gradient2(low="blue", mid="white", high="red", midpoint=0) +
-					#scale_fill_gradientn(colors=blueWhiteRed(100)) +
-															        
-					theme(axis.title=element_blank(),
-					      axis.ticks=element_blank(),
-					      axis.text.x=element_blank(),
-					      legend.position="none") 
-																	        
-			gp3 <- ggplot2::ggplotGrob(p3)
-			maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5], gp3$widths[2:5])
-			gp1$widths[2:5] <- as.list(maxWidth)
-			gp2$widths[2:5] <- as.list(maxWidth)
-			gp3$widths[2:5] <- as.list(maxWidth)
-			invisible(dev.off())
-			g <- gridExtra::arrangeGrob(gp1, gp2, gp3, ncol=1,heights=c(2/5, 1/5, 2/5))
-			cem@sample_tree_plot <- g
-			return(cem)
+		png("NULL")
+        gp1 <- ggplot2::ggplotGrob(p1)
+
+		if(!is.null(annot)){		    
+			p2 <- ggplot2::ggplot(colors_samples, aes(samples, y=1, fill=factor(class))) +
+						geom_tile() +
+						scale_y_continuous(expand=c(0, 0)) +
+						theme(axis.title=element_blank(),
+						axis.ticks=element_blank(),
+						axis.text=element_blank(),
+						legend.position="none")
+						    
+			annot_num <- Filter(is.numeric, annot)
+			order <- match(lvl, rownames(annot_num))
+			annot_num <- annot_num[order, ]
+								    
+			#png("NULL")
+			#gp1 <- ggplot2::ggplotGrob(p1)  
+			gp2 <- ggplot2::ggplotGrob(p2)  
+									    
+			if(ncol(annot_num) > 0){
+				df_scaled <- as.data.frame(scale(annot_num))
+				df_scaled[, sample_name_column] <- rownames(annot_num)
+				df <- reshape2::melt(df_scaled, id.vars=sample_name_column)
+				df[, sample_name_column] <- factor(df[, sample_name_column], levels=lvl)
+	
+																        
+				p3 <- ggplot2::ggplot(df, aes_string(x=sample_name_column, y="variable", fill="value")) +
+						geom_raster() +
+						scale_fill_gradient2(low="blue", mid="white", high="red", midpoint=0) +
+																        
+						theme(axis.title=element_blank(),
+						      axis.ticks=element_blank(),
+						      axis.text.x=element_blank(),
+						      legend.position="none") 
+																		        
+				gp3 <- ggplot2::ggplotGrob(p3)
+				maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5], gp3$widths[2:5])
+				gp1$widths[2:5] <- as.list(maxWidth)
+				gp2$widths[2:5] <- as.list(maxWidth)
+				gp3$widths[2:5] <- as.list(maxWidth)
+				invisible(dev.off())
+				g <- gridExtra::arrangeGrob(gp1, gp2, gp3, ncol=1,heights=c(2/5, 1/5, 2/5))
+				cem@sample_tree_plot <- g
+				return(cem)
+			}else{
+				maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5])
+				gp1$widths[2:5] <- as.list(maxWidth)
+				gp2$widths[2:5] <- as.list(maxWidth)
+				invisible(dev.off())
+				g <- gridExtra::arrangeGrob(gp1, gp2, ncol=1,heights=c(3/5, 2/5))
+				cem@sample_tree_plot <- g
+				return(cem)
+			}
 		}else{
-			maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5])
-			gp1$widths[2:5] <- as.list(maxWidth)
-			gp2$widths[2:5] <- as.list(maxWidth)
 			invisible(dev.off())
-			g <- gridExtra::arrangeGrob(gp1, gp2, ncol=1,heights=c(3/5, 2/5))
+			g <- gridExtra::arrangeGrob(gp1, ncol=1)
 			cem@sample_tree_plot <- g
 			return(cem)
 		}
