@@ -33,14 +33,23 @@ modules.}
 
 \item{\code{profile_plot}}{list of ggplot graphs with gene expression profile per module.}
 
-\item{\code{enrichment_plot}}{ggplot graph for enrichment analysis results}
+\item{\code{enrichment_plot}}{ggplot graph for enrichment analysis results.}
 
 \item{\code{beta_r2_plot}}{ggplot graph with scale-free topology fit results for each
-soft-threshold}
+soft-threshold.}
 
-\item{\code{mean_k_plot}}{ggplot graph with mean network connectivity}
+\item{\code{mean_k_plot}}{ggplot graph with mean network connectivity.}
 
-\item{\code{barplot_ora}}{list of ggplot graphs with over-representation analysis results per module}
+\item{\code{barplot_ora}}{list of ggplot graphs with over-representation analysis results per module.}
+
+\item{\code{sample_tree_plot}}{gtable containing sample dendrogram with class labels and clinical data
+(if available in sample_annotation(cem)).}
+
+\item{\code{mean_var_plot}}{Mean x variance scatterplot.}
+
+\item{\code{hist_plot}}{Expression histogram.}
+
+\item{\code{qq_plot}}{Quantile-quantile plot.}
 
 \item{\code{sample_name_column}}{character string containing the name of the column with sample names
 in the annotation file.}

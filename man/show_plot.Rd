@@ -9,13 +9,14 @@
 show_plot(cem, value)
 
 \S4method{show_plot}{CEMiTool}(cem, value = c("profile", "gsea", "ora",
-  "interaction", "beta_r2", "mean_k", "sample_tree"))
+  "interaction", "beta_r2", "mean_k", "sample_tree", "mean_var", "hist", "qq"))
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
 \item{value}{A character string containing the name of the plot to be shown.
-One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k", "sample_tree".}
+One of "profile", "gsea", "ora", "interaction", "beta_r2", "mean_k", "sample_tree",
+"mean_var", "hist", "qq".}
 }
 \value{
 A plot corresponding to a CEMiTool analysis

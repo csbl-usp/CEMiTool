@@ -102,6 +102,7 @@ setMethod('find_modules', signature('CEMiTool'),
 		    
 	if(is.na(beta)){
 		cem@parameters <- c(cem@parameters, NA)
+		names(cem@parameters)[length(cem@parameters)] <- "beta"
 		message('Could not specify the parameter Beta. No modules found.')
 		return(cem)
 	}

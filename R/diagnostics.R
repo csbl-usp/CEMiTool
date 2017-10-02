@@ -38,7 +38,7 @@ setGeneric('plot_sample_tree', function(cem, ...){
 
 #' @rdname plot_sample_tree
 setMethod('plot_sample_tree', signature('CEMiTool'),
-	function(cem,  col_vector=NULL, sample_name_column=NULL,
+	function(cem, col_vector=NULL, sample_name_column=NULL,
 			 class_column=NULL, filtered=FALSE){
 
 		expr <- expr_data(cem, filtered=filtered)
@@ -264,7 +264,7 @@ setMethod('plot_hist', signature('CEMiTool'),
 #' # Plot quantile-quantile plot
 #' cem <- plot_qq(cem)
 #' # Check results
-#' show_plot(cem, 'qq)
+#' show_plot(cem, 'qq')
 #' 
 #' @rdname plot_qq
 #' @export

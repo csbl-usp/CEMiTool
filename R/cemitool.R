@@ -419,6 +419,29 @@ cemitool <- function(expr,
         }
     }
 
+    # if user provides annot file
+    if (!missing(annot)) {
+        if(verbose){
+            message("Including sample annotation ...")
+        }
+        sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
+		print(head(sample_annotation(results)))
+	}
+
+	if(plot){
+		if(verbose){
+			message("Plotting diagnostic plots ...")
+    	    message("...Plotting mean and variance scatterplot ...")
+	        message("...Plotting expression histogram ...")
+	        message("...Plotting qq plot ...")
+	        message("...Plotting sample tree ...")
+		}
+		results <- plot_mean_var(results)
+	    results <- plot_hist(results)
+	    results <- plot_qq(results)
+	    results <- plot_sample_tree(results)
+	}
+
     if(verbose){
         message("Finding modules ...")
     }
@@ -431,6 +454,10 @@ cemitool <- function(expr,
                             network_type=network_type,
                             tom_type=tom_type,
                             verbose=verbose)
+	
+	if(is.na(results@parameters$beta)){
+		stop("Unable to find parameter beta. Please check diagnostic plots with function show_plots().")
+	}
 
     if (!missing(interactions)){
         if(verbose){
@@ -439,13 +466,9 @@ cemitool <- function(expr,
         interactions_data(results) <- interactions
     }
 
-    # if user provides annot file
-    if (!missing(annot)) {
-        if(verbose){
-            message("Including sample annotation ...")
-        }
-        sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
-        if(verbose){
+    
+	if (!missing(annot)){
+		if(verbose){
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
@@ -493,19 +516,10 @@ cemitool <- function(expr,
         if(verbose){
             message("Plotting beta x R squared curve ...")
             message("Plotting mean connectivity curve ...")	
-            message("Plotting diagnostic plots ...")
-            message("...Plotting mean and variance scatterplot ...")
-            message("...Plotting expression histogram ...")
-            message("...Plotting qq plot ...")
-            message("...Plotting sample tree ...")
         }
       
         results <- plot_beta_r2(results)
         results <- plot_mean_k(results)
-		results <- plot_mean_var(results)
-		results <- plot_hist(results)
-		results <- plot_qq(results)
-		results <- plot_sample_tree(cem)
     }
     return(results)
 }
