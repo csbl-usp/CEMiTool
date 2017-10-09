@@ -42,6 +42,9 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 			 class_column=NULL, filtered=FALSE){
 
 		expr <- expr_data(cem, filtered=filtered)
+		if(nrow(expr) == 0){
+		    stop("CEMiTool object has no expression file!")
+	    }
 	    if(nrow(sample_annotation(cem)) > 0){
 		    annot <- sample_annotation(cem)
         	sample_name_column=cem@sample_name_column
@@ -156,6 +159,7 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 #' Variance Stabilizing Transformation should be applied.
 #' 
 #' @param cem Object of class \code{CEMiTool}
+#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
 #'
 #' @return Object of class \code{CEMiTool} containing a mean and variance plot
@@ -176,8 +180,11 @@ setGeneric('plot_mean_var', function(cem, ...){
 
 #' @rdname plot_mean_var
 setMethod('plot_mean_var', signature('CEMiTool'),
-	function(cem){
-		expr <- expr_data(cem, filtered=FALSE)
+	function(cem, filtered=FALSE){
+		expr <- expr_data(cem, filtered=filtered)
+		if(nrow(expr) == 0){
+		    stop("CEMiTool object has no expression file!")
+	    }
 	    
 	    expr_mean <- apply(expr, 1, mean)
 		expr_var <- apply(expr, 1, var)
@@ -206,6 +213,7 @@ setMethod('plot_mean_var', signature('CEMiTool'),
 #' help assess the normality of the data. 
 #' 
 #' @param cem Object of class \code{CEMiTool}
+#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
 #' 
 #' @return Object of class \code{CEMiTool} containing expression histogram
@@ -227,7 +235,11 @@ setGeneric('plot_hist', function(cem, ...){
 
 #' @rdname plot_hist
 setMethod('plot_hist', signature('CEMiTool'),
-	function(cem){
+	function(cem, filtered=FALSE){
+		expr <- expr_data(cem, filtered=filtered)
+		if(nrow(expr) == 0){
+			stop("CEMiTool object has no expression file!")
+	    }
 		measures <- as.data.frame(as.vector(as.matrix(expr)))
 		names(measures) <- "data"
 		minExp <- round(min(measures, na.rm=TRUE)-0.5,digits=0)
@@ -253,6 +265,7 @@ setMethod('plot_hist', signature('CEMiTool'),
 #' This function creates a normal QQ plot of the expression values.
 #'
 #' @param cem Object of class \code{CEMiTool}
+#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
 #' 
 #' @return Object of class \code{CEMiTool} containing qqplot
@@ -274,7 +287,11 @@ setGeneric('plot_qq', function(cem, ...){
 
 #' @rdname plot_qq
 setMethod('plot_qq', signature('CEMiTool'),
-	function(cem){
+	function(cem, filtered=FALSE){
+		expr <- expr_data(cem, filtered=filtered)
+	        if(nrow(expr) == 0){
+			    stop("CEMiTool object has no expression file!")
+	    }
 		measures <- as.data.frame(as.vector(as.matrix(expr)))
 		names(measures) <- "data"
 

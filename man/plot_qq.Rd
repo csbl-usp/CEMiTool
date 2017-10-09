@@ -8,12 +8,14 @@
 \usage{
 plot_qq(cem, ...)
 
-\S4method{plot_qq}{CEMiTool}(cem)
+\S4method{plot_qq}{CEMiTool}(cem, filtered = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
 \item{...}{Optional parameters}
+
+\item{filtered}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
 }
 \value{
 Object of class \code{CEMiTool} containing qqplot
