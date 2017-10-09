@@ -5,6 +5,10 @@
 #' @import gtable
 #' @import ggpmisc
 #' @import ggthemes
+#' @importFrom rmarkdown render
+#' @import knitr
+#' @importFrom DT datatable
+#' @import htmltools
 NULL
 
 #' Sample clustering
@@ -201,8 +205,10 @@ setMethod('plot_mean_var', signature('CEMiTool'),
 					parse=TRUE) +
 	        labs(x = "Mean Expression (log10)", y="Variance (log10)") +
 			ggthemes::theme_gdocs() +
-			theme(axis.title.x = element_text(face="bold", size=12),
+			theme(rect=element_blank(),
+				  axis.title.x = element_text(face="bold", size=12),
 			      axis.title.y = element_text(face="bold", size=12))
+
 		cem@mean_var_plot <- pl
 		return(cem)
 })
@@ -252,7 +258,8 @@ setMethod('plot_hist', signature('CEMiTool'),
 							   fill="#4A7CB2") +
 		     	labs(x="Measures", y="Count") +
 			    ggthemes::theme_gdocs() +
-				theme(axis.title.x = element_text(face="bold", size=12),
+				theme(rect=element_blank(),
+					  axis.title.x = element_text(face="bold", size=12),
 					  axis.title.y = element_text(face="bold", size=12), 
 					  panel.grid=element_blank())
 
@@ -299,7 +306,8 @@ setMethod('plot_qq', signature('CEMiTool'),
 		    stat_qq() + 
 		    stat_qq_line() +
 		    ggthemes::theme_gdocs() +
-		    theme(axis.title.x = element_text(face="bold", size=12),
+		    theme(rect=element_blank(),
+				  axis.title.x = element_text(face="bold", size=12),
 	              axis.title.y = element_text(face="bold", size=12), 
 		          panel.grid=element_blank())
 
@@ -307,7 +315,37 @@ setMethod('plot_qq', signature('CEMiTool'),
 		return(cem)
 })
 
+#' Diagnostic report
+#'
+#' Creates report for identifying potential problems with data.
+#'
+#' @param cem Object of class \code{CEMiTool}.
+#' @param directory Directory name for results.
+#' @param title Character string with the title of the report.
+#' @param force If the directory exists, execution will not stop. 
+#' @param ... parameters to rmarkdown::render
+#' 
+#' @return An HTML file with an interactive diagnostic report.
+#'
+#' @rdname diagnostic_report
+#' @export
+setGeneric('diagnostic_report', function(cem, ...) {
+	standardGeneric('diagnostic_report')
+})
 
+#' @rdname diagnostic_report
+setMethod('diagnostic_report', signature('CEMiTool'),
+	function(cem, title="Diagnostics", directory="./Reports/Diagnostics", force=FALSE, ...) {
+		if(dir.exists(directory)){
+			if(!force){
+				stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
+			}
+		}else{
+			dir.create(directory, recursive=TRUE)
+		}
+		rmd <- system.file("diagnostics", "diagnostics.Rmd", package = "CEMiTool")
+		rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, ...)
+})
 
 
 

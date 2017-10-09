@@ -1,0 +1,70 @@
+---
+title: "CEMiTool diagnostics"
+always_allow_html: yes
+output:
+  html_document:
+     code_folding: hide
+     theme: cosmo
+     self_contained: true
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+```{r echo=FALSE, results="asis", cache=FALSE, label=title}
+cat("#", title, "{.tabset}")
+```
+
+## Sample clustering
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=sample_tree_plot}
+    if(!is.null(nrow(cem@sample_tree_plot))){
+        grid::grid.draw(cem@sample_tree_plot)
+    }else {
+        writeLines("### Please create sample tree plot!")
+    }
+```
+
+## Mean Variance 
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=mean_var_plot}
+    if(length(cem@mean_var_plot) > 1){
+        print(cem@mean_var_plot)
+    }else {
+        writeLines("### Please create mean var plot!")
+    }
+```
+
+## Quantile-quantile plot
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=qq_plot}
+    if(length(cem@qq_plot) > 1){
+        print(cem@qq_plot)
+    }else {
+        writeLines("### Please create QQ plot!")
+    }
+```
+
+## Expression histogram
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=hist_plot}
+    if(length(cem@hist_plot) > 1){
+        print(cem@hist_plot)
+    }else {
+        writeLines("### Please create expression histogram!")
+    }
+```
+
+## Beta x R2 plot
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=beta_r2_plot}
+    if(length(cem@beta_r2_plot) > 0){
+        print(cem@beta_r2_plot[[1]])
+    }else {
+        writeLines("### Please create Beta x R2 plot!")
+    }
+```
+
+## Mean connectivity plot
+```{r echo=FALSE, cache=FALSE, fig.align="center", label=mean_k_plot}
+    if(length(cem@mean_k_plot) > 0){
+        print(cem@mean_k_plot[[1]])
+    }else {
+        writeLines("### Please create mean connectivity plot!")
+    }
+```
