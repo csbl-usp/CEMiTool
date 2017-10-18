@@ -21,7 +21,6 @@ Imports: methods, scales, gRbase, data.table (>= 1.9.4), WGCNA, grid,
         stringr, knitr, rmarkdown, igraph, DT, htmltools, pracma,
         intergraph, grDevices, utils, network, matrixStats, ggdendro, 
         gridExtra, gtable
-Remotes: github::tidyverse/ggplot2
 Suggests: testthat
 License: GPL-3
 Encoding: UTF-8

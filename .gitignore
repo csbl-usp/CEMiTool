@@ -4,4 +4,4 @@ CEMiTool.Rproj
 .RData
 .travis.yml
 *.sw*
-reports/
+Reports/
