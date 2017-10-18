@@ -36,10 +36,10 @@ Default is \code{"pearson"}.}
 \item{cor_function}{A character string indicating the correlation function to be used. Supported functions are
 currently 'cor' and 'bicor'. Default is \code{"cor"}}
 
-\item{network_type}{A character string indicating if network type should be computed 
+\item{network_type}{A character string indicating if network type should be computed
 as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}}
 
-\item{tom_type}{A character string indicating if the TOM type should be computed 
+\item{tom_type}{A character string indicating if the TOM type should be computed
 as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}}
 
 \item{sample_name_column}{A character string indicating the sample column
@@ -90,7 +90,7 @@ gmt_in <- read_gmt(gmt_fname)
 ## Get example interactions file
 int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 ## Run CEMiTool
-cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, 
+cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in,
     interactions=int_df, verbose=TRUE, plot=TRUE)
 }
 }

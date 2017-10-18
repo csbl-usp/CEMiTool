@@ -14,10 +14,10 @@ An S4 class to represent the CEMiTool analysis.
 
 \item{\code{sample_annotation}}{Sample annotation \code{data.frame}.}
 
-\item{\code{fit_indices}}{\code{data.frame} containing scale-free model fit, 
+\item{\code{fit_indices}}{\code{data.frame} containing scale-free model fit,
 soft-threshold and network parameters.}
 
-\item{\code{selected_genes}}{Character \code{vector} containing the names of genes 
+\item{\code{selected_genes}}{Character \code{vector} containing the names of genes
 selected for analysis}
 
 \item{\code{module}}{Genes in modules information \code{data.frame}.}
@@ -67,6 +67,6 @@ in the annotation file.}
 \examples{
 # Get example expression data
 data(expr)
-# Initialize CEMiTool object with expression 
-cem <- new("CEMiTool", expression=expr) 
+# Initialize CEMiTool object with expression
+cem <- new("CEMiTool", expression=expr)
 }

@@ -31,7 +31,7 @@ data(cem)
 # Read example gmt file
 gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
                    package='CEMiTool'))
-# Run overrepresentation analysis 
+# Run overrepresentation analysis
 cem <- mod_ora(cem, gmt)
 # Plot module gene expression profiles
 cem <- plot_ora(cem)

@@ -30,6 +30,7 @@
 #'   stat_qq() +
 #'   stat_qq_line()
 #' }
+#' @return ggplot
 geom_qq <- function(mapping = NULL, data = NULL,
                     geom = "point", position = "identity",
                     ...,

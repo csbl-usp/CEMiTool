@@ -1,9 +1,9 @@
 #' @import ggplot2
 #' @importFrom sna gplot.layout.fruchtermanreingold
-#' @import data.table 
-#' @importFrom ggrepel geom_label_repel 
+#' @import data.table
+#' @importFrom ggrepel geom_label_repel
 #' @importFrom igraph degree
-#' @importFrom igraph set_vertex_attr 
+#' @importFrom igraph set_vertex_attr
 #' @import intergraph
 #' @importFrom scales squish
 #' @import stringr
@@ -19,7 +19,7 @@ NULL
 #' @param order Logical. If TRUE, sorts samples by class (only if CEMiTool object contains sample_annotation data.
 #' @param ... Optional parameters.
 #'
-#' @return Object of class \code{CEMiTool} with profile plots 
+#' @return Object of class \code{CEMiTool} with profile plots
 #'
 #' @examples
 #' # Get example CEMiTool object
@@ -135,7 +135,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #' # Read example gmt file
 #' gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 #'                    package='CEMiTool'))
-#' # Run overrepresentation analysis 
+#' # Run overrepresentation analysis
 #' cem <- mod_ora(cem, gmt)
 #' # Plot module gene expression profiles
 #' cem <- plot_ora(cem)
@@ -166,7 +166,7 @@ setMethod('plot_ora', signature('CEMiTool'),
                                                 title=unique(x$Module),
                                                 ...)
               })
-              modules <- names(res) 
+              modules <- names(res)
               modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
               cem@barplot_ora <- res[modules]
               return(cem)
@@ -188,36 +188,36 @@ setMethod('plot_ora', signature('CEMiTool'),
 #' @return a list with ggplot2 object and the number of significant gene sets
 plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
                             graph_color="#4169E1", title="Over Representation Analysis"){
-    
+
     es[, "GeneSet"] <- es[, "ID"]
-    
+
     # limits name length
     ovf_rows <- which(nchar(es[, "GeneSet"]) > max_length) # overflow
     es[ovf_rows, "GeneSet"] <-  paste0(strtrim(es[ovf_rows, "GeneSet"], max_length), "...")
     es[, "GeneSet"] <- stringr::str_wrap(es[, "GeneSet"], width = 20)
-    
+
     # order bars
     lvls <- es[order(es[, ordr_by], decreasing=TRUE), "GeneSet"]
     es[, "GeneSet"] <- factor(es[, "GeneSet"], levels=lvls)
-    
+
     es[, "alpha"] <- 1
     es[es[, ordr_by] > pv_cut, "alpha"] <- 0
-    
+
     # Avoid 0's
     es[es[, ordr_by] > 0.8, ordr_by] <- 0.8
     my_squish <- function(...){
         return(scales::squish(..., only.finite=FALSE))
     }
-    
+
     # plot
     y_axis <- paste('-log10(', ordr_by, ')')
-    pl <- ggplot(es, aes_string(x="GeneSet", y=y_axis, alpha="alpha", fill=y_axis)) + 
+    pl <- ggplot(es, aes_string(x="GeneSet", y=y_axis, alpha="alpha", fill=y_axis)) +
         geom_bar(stat="identity") +
         theme(axis.text=element_text(size=8), legend.title=element_blank()) +
-        coord_flip() + 
+        coord_flip() +
         scale_alpha(range=c(0.4, 1), guide="none") +
         labs(y="-log10(adjusted p-value)", title=title, x="") +
-        geom_hline(yintercept=-log10(pv_cut), colour="grey", linetype="longdash") + 
+        geom_hline(yintercept=-log10(pv_cut), colour="grey", linetype="longdash") +
         scale_fill_gradient(low="gray", high=graph_color, limits=c(2, 5), oob=my_squish)
     res <- list('pl'=pl, numsig=sum(es[, ordr_by] < pv_cut, na.rm=TRUE))
     return(res)
@@ -245,7 +245,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 #' cem <- plot_gsea(cem)
 #' # Check resulting plot
 #' show_plot(cem, "gsea")
-#' 
+#'
 #' @rdname plot_gsea
 #' @export
 setGeneric('plot_gsea', function(cem, ...) {
@@ -301,9 +301,9 @@ setMethod('plot_gsea', signature('CEMiTool'),
               colnames(nes_melted) <- c("Module", "Class", "NES")
               nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
               max_abs_nes <- max(abs(nes_melted$NES))
-              res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) + 
+              res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) +
                   geom_point(color = "white", shape=21) +
-                  scale_fill_gradientn(colours=custom_pal, space = "Lab", 
+                  scale_fill_gradientn(colours=custom_pal, space = "Lab",
                                        limits=c(-max_abs_nes, max_abs_nes)) +
                   scale_size(range=c(0,30)) +
                   guides(size="none") +
@@ -324,7 +324,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
 #' @param n number of nodes to label
 #' @param ... Optional parameters.
 #'
-#' @return Object of class \code{CEMiTool} with profile plots 
+#' @return Object of class \code{CEMiTool} with profile plots
 #'
 #' @examples
 #' # Get example CEMiTool object
@@ -372,9 +372,9 @@ setMethod('plot_interactions', signature('CEMiTool'),
               if(length(mod_names) == 0){
                   warning("There are no interactions in the given modules. Please check interactions file.")
                   return(cem)
-              }              
+              }
               res <- lapply(mod_names, function(name){
-                                plot_interaction(ig_obj=cem@interactions[[name]], 
+                                plot_interaction(ig_obj=cem@interactions[[name]],
                                                  n=n, color=mod_cols[name], name=name,
                                                  coexp_hubs=hubs[[name]])
                                        })
@@ -391,9 +391,9 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     net_obj <- intergraph::asNetwork(ig_obj)
     m <- network::as.matrix.network.adjacency(net_obj) # get sociomatrix
     # get coordinates from Fruchterman and Reingold's force-directed placement algorithm.
-    plotcord <- data.frame(sna::gplot.layout.fruchtermanreingold(m, NULL)) 
-    # or get it them from Kamada-Kawai's algorithm: 
-    # plotcord <- data.frame(sna::gplot.layout.kamadakawai(m, NULL)) 
+    plotcord <- data.frame(sna::gplot.layout.fruchtermanreingold(m, NULL))
+    # or get it them from Kamada-Kawai's algorithm:
+    # plotcord <- data.frame(sna::gplot.layout.kamadakawai(m, NULL))
     colnames(plotcord) <- c("X1","X2")
     edglist <- network::as.matrix.network.edgelist(net_obj)
     edges <- data.frame(plotcord[edglist[,1],], plotcord[edglist[,2],])
@@ -412,7 +412,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
         plotcord[which(coexp_and_int), "Hub"] <- "Co-expression + Interaction"
         sel_vertex <- c(sel_vertex, coexp_hubs)
     }
-    
+
     colnames(edges) <-  c("X1","Y1","X2","Y2")
     #edges$midX  <- (edges$X1 + edges$X2) / 2
     #edges$midY  <- (edges$Y1 + edges$Y2) / 2
@@ -422,41 +422,41 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     mod_genes <- cem@module[cem@module$modules==name,]$genes
     not_in <- setdiff(plotcord[,"vertex.names"], mod_genes)
     plotcord[which(plotcord[, "vertex.names"] %in% not_in), "in_mod"] <- FALSE
-    
-    pl <- ggplot(plotcord)  + 
-        geom_segment(data=edges, aes_(x=~X1, y=~Y1, xend=~X2, yend=~Y2), 
+
+    pl <- ggplot(plotcord)  +
+        geom_segment(data=edges, aes_(x=~X1, y=~Y1, xend=~X2, yend=~Y2),
                      size = 0.5, alpha=0.5, colour="#DDDDDD") +
         geom_point(aes_(x=~X1, y=~X2, size=~Degree, alpha=~Degree), color=color) +
-        geom_label_repel(aes_(x=~X1, y=~X2, label=~vertex.names, color=~Hub), 
+        geom_label_repel(aes_(x=~X1, y=~X2, label=~vertex.names, color=~Hub),
                          box.padding=unit(1, "lines"),
                          data=function(x){x[x$shouldLabel, ]}) +
         scale_colour_manual(values=c("Co-expression" = "#005E87",
                                      "Interaction" = "#540814",
-                                     "Co-expression + Interaction" = "#736E0B")) +                
+                                     "Co-expression + Interaction" = "#736E0B")) +
         labs(title=name) +
-        ggplot2::theme_bw(base_size = 12, base_family = "") + 
-        ggplot2::theme(axis.text = ggplot2::element_blank(), 
-                       axis.ticks = ggplot2::element_blank(), 
-                       axis.title = ggplot2::element_blank(), 
-                       legend.key = ggplot2::element_blank(), 
+        ggplot2::theme_bw(base_size = 12, base_family = "") +
+        ggplot2::theme(axis.text = ggplot2::element_blank(),
+                       axis.ticks = ggplot2::element_blank(),
+                       axis.title = ggplot2::element_blank(),
+                       legend.key = ggplot2::element_blank(),
                        panel.background = ggplot2::element_rect(fill = "white",
-                                                                colour = NA), 
-                       panel.border = ggplot2::element_blank(), 
-                       panel.grid = ggplot2::element_blank()) 
-    
+                                                                colour = NA),
+                       panel.border = ggplot2::element_blank(),
+                       panel.grid = ggplot2::element_blank())
+
     return(pl)
 }
 
 #' Soft-threshold beta selection graph
-#' 
+#'
 #' Creates a graph showing each possible soft-threshold value and its corresponding R squared value
-#' 
+#'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param title title of the graph
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return Object of class \code{CEMiTool} with beta x R squared plot
-#' 
+#'
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
@@ -479,31 +479,36 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
 			  }
               fit <- cem@fit_indices
               fit$new_fit <- -sign(fit[, 3])*fit[, 2]
-              beta <- cem@parameters$beta
-              
+              beta_power <- cem@parameters$beta
+
               pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
                     geom_line(color="darkgrey") +
                     geom_point(size=1.5) +
-                    annotate(geom="text", label=beta, x=beta, y=fit[fit$Power == beta, "SFT.R.sq"] + 0.05, color="red", size=7) +
+                    #annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7) +
                     theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                     scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
                     labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
-			  res_list <- list(beta_r2_plot=pl)
+
+              if(!is.na(beta_power)){
+                  pl <- pl + annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7)
+              }
+
+			        res_list <- list(beta_r2_plot=pl)
               cem@beta_r2_plot <- res_list
               return(cem)
           })
 
 #' Network mean connectivity
-#' 
+#'
 #' Creates a graph showing the mean connectivity of genes in the network
-#' 
+#'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param title title of the graph
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return Object of class \code{CEMiTool} with connectivity plot
-#' 
-#' @examples 
+#'
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Plot scale-free model fit as a function of the soft-thresholding beta parameter choice
@@ -524,13 +529,13 @@ setMethod('plot_mean_k', signature('CEMiTool'),
 			      stop("No fit indices data! Did you run find_modules()?")
 		      }
               fit <- cem@fit_indices
-              
+
               pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +
                   geom_line(color="darkgrey") +
                   geom_point(size=1.5) +
                   theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
                   labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
-			  
+
 			  res_list <- list(mean_k_plot=pl)
 			  cem@mean_k_plot <- res_list
               return(cem)
@@ -560,8 +565,8 @@ setGeneric('show_plot', function(cem, value) {
 })
 
 #' @rdname show_plot
-setMethod('show_plot', signature('CEMiTool'), 
-          function(cem, value=c("profile", "gsea", "ora", "interaction", 
+setMethod('show_plot', signature('CEMiTool'),
+          function(cem, value=c("profile", "gsea", "ora", "interaction",
                                 "beta_r2", "mean_k", "sample_tree", "mean_var",
 								"hist", "qq")) {
               value <- match.arg(value)
@@ -587,7 +592,7 @@ setMethod('show_plot', signature('CEMiTool'),
 #'
 #' @description
 #' Save plots into the directory specified by the \code{directory} argument.
-#' 
+#'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param value A character string containing the name of the plot to be saved.
 #' @param directory Directory into which the files will be saved.
@@ -613,9 +618,9 @@ setGeneric('save_plots', function(cem, ...) {
 
 #' @rdname save_plots
 setMethod('save_plots', signature('CEMiTool'),
-		  function(cem, value=c("all", "profile", "gsea", "ora", 
-								"interaction", "beta_r2", "mean_k", 
-								"sample_tree", "mean_var", "hist", "qq"), 
+		  function(cem, value=c("all", "profile", "gsea", "ora",
+								"interaction", "beta_r2", "mean_k",
+								"sample_tree", "mean_var", "hist", "qq"),
 				   force=FALSE, directory="./Plots") {
 				  if(dir.exists(directory)){
 					  if(!force){
@@ -627,10 +632,10 @@ setMethod('save_plots', signature('CEMiTool'),
 				  value <- match.arg(value)
 				  if(value == "all"){
 	                  plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
-	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot, 
-									cem@sample_tree_plot, cem@mean_var_plot, cem@hist_plot, 
+	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot,
+									cem@sample_tree_plot, cem@mean_var_plot, cem@hist_plot,
 									cem@qq_plot)
-	
+
 					  all_plots<- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k",
 										"sample_tree", "mean_var", "hist", "qq")
 					  names(plots) <- all_plots
@@ -666,7 +671,7 @@ setMethod('save_plots', signature('CEMiTool'),
 	                                   ora=cem@barplot_ora,
 	                                   interaction=cem@interaction_plot,
 	                                   beta_r2=cem@beta_r2_plot,
-	                                   mean_k=cem@mean_k_plot, 
+	                                   mean_k=cem@mean_k_plot,
 									   mean_var=cem@mean_var_plot,
         	                           hist=cem@hist_plot,
 									   qq=cem@qq_plot)

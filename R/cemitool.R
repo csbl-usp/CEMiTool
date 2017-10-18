@@ -10,9 +10,9 @@ setOldClass('gtable')
 #'
 #' @slot expression Gene expression \code{data.frame}.
 #' @slot sample_annotation Sample annotation \code{data.frame}.
-#' @slot fit_indices \code{data.frame} containing scale-free model fit, 
+#' @slot fit_indices \code{data.frame} containing scale-free model fit,
 #'   soft-threshold and network parameters.
-#' @slot selected_genes Character \code{vector} containing the names of genes 
+#' @slot selected_genes Character \code{vector} containing the names of genes
 #'   selected for analysis
 #' @slot module Genes in modules information \code{data.frame}.
 #' @slot enrichment \code{list} with modules enrichment results for sample classes.
@@ -38,12 +38,12 @@ setOldClass('gtable')
 #' @slot mod_colors character \code{vector} containing colors associated with each network module.
 #' @slot parameters \code{list} containing analysis parameters.
 #' @slot adjacency \code{matrix} containing gene adjacency values based on correlation
-#' 
+#'
 #' @examples
 #' # Get example expression data
 #' data(expr)
-#' # Initialize CEMiTool object with expression 
-#' cem <- new("CEMiTool", expression=expr) 
+#' # Initialize CEMiTool object with expression
+#' cem <- new("CEMiTool", expression=expr)
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
                                 fit_indices='data.frame',
@@ -138,7 +138,7 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{data.frame} with gene expression data
-#' @examples 
+#' @examples
 #' # Initialize an empty CEMiTool object
 #' cem <- new_cem()
 #' # Get example expression data
@@ -183,11 +183,11 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' Retrieve and set mod_colors attribute
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param value a character vector containing colors for each module. 
+#' @param value a character vector containing colors for each module.
 #'Names should match with module names
 #'
 #' @return A vector with color names.
-#' @examples 
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # See module colors
@@ -233,7 +233,7 @@ setGeneric("mod_colors<-", function(cem, value) {
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
          function(cem, value){
 			mod_names <- module_names(cem)
-            cem@mod_colors <- value 
+            cem@mod_colors <- value
             if(is.null(names(cem@mod_colors))){
 		stop("mod_colors should be a character vector with names corresponding to the modules")
 	    } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
@@ -267,8 +267,8 @@ setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
 #' # Initialize CEMiTool object with expression
 #' cem <- new_cem(expr)
 #' # Add sample annotation file to CEMiTool object
-#' sample_annotation(cem, 
-#'     sample_name_column="SampleName", 
+#' sample_annotation(cem,
+#'     sample_name_column="SampleName",
 #'     class_column="Class") <- sample_annot
 #' # Check annotation
 #' head(sample_annotation(cem))
@@ -333,9 +333,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'        Default is \code{"pearson"}.
 #' @param cor_function A character string indicating the correlation function to be used. Supported functions are
 #' currently 'cor' and 'bicor'. Default is \code{"cor"}
-#' @param network_type A character string indicating if network type should be computed 
+#' @param network_type A character string indicating if network type should be computed
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}
-#' @param tom_type  A character string indicating if the TOM type should be computed 
+#' @param tom_type  A character string indicating if the TOM type should be computed
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}
 #' @param sample_name_column A character string indicating the sample column
 #'        name of the annotation table.
@@ -372,7 +372,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' ## Get example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' ## Run CEMiTool
-#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in, 
+#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in,
 #'     interactions=int_df, verbose=TRUE, plot=TRUE)
 #' }
 #' @export
@@ -435,7 +435,7 @@ cemitool <- function(expr,
 	        message("...Plotting qq plot ...")
 	        message("...Plotting sample tree ...")
 		}
-		results <- plot_mean_var(results)
+		  results <- plot_mean_var(results)
 	    results <- plot_hist(results)
 	    results <- plot_qq(results)
 	    results <- plot_sample_tree(results)
@@ -453,10 +453,17 @@ cemitool <- function(expr,
                             network_type=network_type,
                             tom_type=tom_type,
                             verbose=verbose)
-	
+    if(verbose){
+      message("Plotting beta x R squared curve ...")
+      message("Plotting mean connectivity curve ...")
+    }
+
+    results <- plot_beta_r2(results)
+    results <- plot_mean_k(results)
+
 	if(is.na(results@parameters$beta)){
-		return(cem)
-		stop("Unable to find parameter beta. Please check diagnostic plots with function show_plots().")
+	  message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
+		return(results)
 	}
 
     if (!missing(interactions)){
@@ -466,7 +473,7 @@ cemitool <- function(expr,
         interactions_data(results) <- interactions
     }
 
-    
+
 	if (!missing(annot)){
 		if(verbose){
             message("Running Gene Set Enrichment Analysis ...")
@@ -512,12 +519,12 @@ cemitool <- function(expr,
             }
             results <- plot_interactions(results)
         }
-        
+
         if(verbose){
             message("Plotting beta x R squared curve ...")
-            message("Plotting mean connectivity curve ...")	
+            message("Plotting mean connectivity curve ...")
         }
-      
+
         results <- plot_beta_r2(results)
         results <- plot_mean_k(results)
     }
@@ -559,7 +566,7 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #' Get module names in a CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param include_NC Logical. Whether or not to include "Not.Correlated" 
+#' @param include_NC Logical. Whether or not to include "Not.Correlated"
 #' module. Defaults to \code{TRUE}.
 #'
 #' @return Module names
@@ -642,7 +649,7 @@ setMethod('module_genes', signature(cem='CEMiTool'),
 #' Print a cemitool object
 #'
 #' @param object Object of class CEMiTool
-#' 
+#'
 #' @return A CEMiTool object.
 #'
 #' @export
@@ -725,12 +732,12 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param force if the directory exists the execution will not stop
 #' @param ... Optional parameters
 #' @return A directory containing CEMiTool results in files.
-#' @examples 
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#' 
+#'
 #' @rdname write_files
 #' @export
 setGeneric('write_files', function(cem, ...) {
@@ -767,7 +774,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
 	              if(nrow(mod_int) > 0 ){
 		          cbind(x, mod_int)
        		      }
-		  }) 
+		  })
 		  int_df <- do.call("rbind", mod_ints)
 		  colnames(int_df) <- c("Module", "Gene1", "Gene2")
                   write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)

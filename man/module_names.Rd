@@ -13,7 +13,7 @@ module_names(cem, include_NC = TRUE)
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
-\item{include_NC}{Logical. Whether or not to include "Not.Correlated" 
+\item{include_NC}{Logical. Whether or not to include "Not.Correlated"
 module. Defaults to \code{TRUE}.}
 }
 \value{

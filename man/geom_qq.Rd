@@ -53,6 +53,9 @@ the data}
 
 \item{inherit.aes}{Parameter to ggplot}
 }
+\value{
+ggplot
+}
 \description{
 Geom qq
 

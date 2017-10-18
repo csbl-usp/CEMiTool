@@ -48,8 +48,8 @@ data(sample_annot)
 # Initialize CEMiTool object with expression
 cem <- new_cem(expr)
 # Add sample annotation file to CEMiTool object
-sample_annotation(cem, 
-    sample_name_column="SampleName", 
+sample_annotation(cem,
+    sample_name_column="SampleName",
     class_column="Class") <- sample_annot
 # Check annotation
 head(sample_annotation(cem))
