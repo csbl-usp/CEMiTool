@@ -1,3 +1,7 @@
 language: r
 r: bioc-devel
 #cache: packages
+
+before_install: 
+- sudo rm -vf /etc/apt/sources.list.d/*riak*
+- sudo apt-get update
