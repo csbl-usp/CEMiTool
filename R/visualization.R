@@ -16,7 +16,10 @@ NULL
 #' Creates a plot with module gene expression profiles along samples
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param order Logical. If TRUE, sorts samples by class (only if CEMiTool object contains sample_annotation data.
+#' @param order_by_class Logical. Only used if a sample 
+#' 		  annotation file is present. Whether or not to order by the 
+#' 		  class column in the sample annotation file (as defined by the 
+#' 		  class_column slot in \code{cem}).
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots
@@ -37,84 +40,84 @@ setGeneric('plot_profile', function(cem, ...) {
 
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
-          function(cem, order=TRUE) {
-              modules <- unique(cem@module$modules)
-		  	  if(is.null(modules)){
-				  stop("No modules in CEMiTool object! Did you run find_modules()?")
-			  }
-              modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
-              expr <- expr_data(cem)
-              annot <- cem@sample_annotation
-              sample_name_column <- cem@sample_name_column
-              class_column <- cem@class_column
-              mod_cols <- mod_colors(cem)
-              plots <- lapply(modules, function(mod){
-                                  # subsets from expr all genes inside module mod
-                                  genes <- cem@module[cem@module[,'modules']==mod, 'genes']
-                                  expr[, 'id'] <- rownames(expr)
-                                  mod_expr <- melt(expr[genes,], 'id',
-                                                    variable.name='sample',
-                                                    value.name='expression')
+    function(cem, order_by_class=TRUE) {
+        modules <- module_names(cem)
+		    if(is.null(modules)){
+	  	    stop("No modules in CEMiTool object! Did you run find_modules()?")
+	    }
+        modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
+        expr <- expr_data(cem)
+        annot <- sample_annotation(cem)
+        sample_name_column <- cem@sample_name_column
+        class_column <- cem@class_column
+        mod_cols <- mod_colors(cem)
+        plots <- lapply(modules, function(mod){
+            # subsets from expr all genes inside module mod
+            genes <- cem@module[cem@module[,'modules']==mod, 'genes']
+            expr[, 'id'] <- rownames(expr)
+            mod_expr <- melt(expr[genes,], 'id',
+                              variable.name='sample',
+                              value.name='expression')
 
-                                  # initialize plot base layer
-                                  g <- ggplot(mod_expr, aes_(x=~sample, y=~expression))
+            # initialize plot base layer
+            g <- ggplot(mod_expr, aes_(x=~sample, y=~expression))
 
-                                  # adds different background colours if annot is provided
-                                  if (nrow(annot)!=0) {
-                                      if (order) {
-                                          # sorts data.frame by class name
-                                          annot <- annot[order(annot[, class_column]),]
-                                          annot[, sample_name_column] <- factor(annot[, sample_name_column],
-                                                                                levels=annot[, sample_name_column])
-                                          mod_expr[, 'sample'] <- factor(mod_expr[, 'sample'],
-                                                                          levels=annot[, sample_name_column])
-                                      }
+            # adds different background colours if annot is provided
+            if (nrow(annot)!=0) {
+                if (order_by_class) {
+                    # sorts data.frame by class name
+                    annot <- annot[order(annot[, class_column]),]
+				}
+				annot[, sample_name_column] <- factor(annot[, sample_name_column],
+                                                      levels=annot[, sample_name_column])
+                mod_expr[, 'sample'] <- factor(mod_expr[, 'sample'],
+                                               levels=annot[, sample_name_column])
 
-                                      # y positioning of background tiles
-                                      y_pos <- mean(mod_expr[, 'expression'])
+                # y positioning of background tiles
+                y_pos <- mean(mod_expr[, 'expression'])
 
-                                      # reinitialize base layer adding background tiles
-                                      g <- ggplot(mod_expr, aes_(x=~sample, y=~expression)) +
-                                          geom_tile(data=annot, alpha=0.3, height=Inf,
-                                                    aes(x=get(sample_name_column), y=y_pos,
-                                                        fill=get(class_column)))
-                                  }
+                # reinitialize base layer adding background tiles
+                g <- ggplot(mod_expr, aes_(x=~sample, y=~expression)) +
+                     geom_tile(data=annot, alpha=0.3, height=Inf,
+                               aes(x=get(sample_name_column), y=y_pos,
+                               fill=get(class_column)))
+            }
 
-                                  # adding lines
-                                  g <- g + geom_line(aes_(group=~id), alpha=0.2, colour=mod_cols[mod]) +
-                                      stat_summary(aes(group=1), size=1, fun.y=mean, geom='line')
+            # adding lines
+            g <- g + geom_line(aes_(group=~id), alpha=0.2, colour=mod_cols[mod]) +
+                stat_summary(aes(group=1), size=1, fun.y=mean, geom='line')
 
-                                  # custom theme
-                                  g <- g + theme(plot.title=element_text(lineheight=0.8,
-                                                                         face='bold',
-                                                                         colour='black',
-                                                                         size=15),
-                                                 axis.title=element_text(face='bold',
-                                                                         colour='black',
-                                                                         size=15),
-                                                 axis.text.y=element_text(angle=0,
-                                                                          vjust=0.5,
-                                                                          size=8),
-                                                 axis.text.x=element_text(angle=90,
-                                                                          vjust=0.5,
-                                                                          size=6),
-                                                 panel.grid=element_blank(),
-                                                 legend.title=element_blank(),
-                                                 legend.text=element_text(size = 8),
-                                                 legend.background=element_rect(fill='gray90',
-                                                                                size=0.5,
-                                                                                linetype='dotted'),
-                                                 legend.position='bottom'
-                                                 )
-                                  # title
-                                  g <- g + ggtitle(mod)
+            # custom theme
+            g <- g + theme(plot.title=element_text(lineheight=0.8,
+                                                   face='bold',
+                                                   colour='black',
+                                                   size=15),
+                           axis.title=element_text(face='bold',
+                                                   colour='black',
+                                                   size=15),
+                           axis.text.y=element_text(angle=0,
+                                                    vjust=0.5,
+                                                    size=8),
+                           axis.text.x=element_text(angle=90,
+                                                    vjust=0.5,
+                                                    size=6),
+                           panel.grid=element_blank(),
+                           legend.title=element_blank(),
+                           legend.text=element_text(size = 8),
+                           legend.background=element_rect(fill='gray90',
+                                                          size=0.5,
+                                                          linetype='dotted'),
+                           legend.position='bottom'
+                           )
+            # title
+            g <- g + ggtitle(mod)
 
-                                  return(g)
-              })
-              names(plots) <- modules
-              cem@profile_plot <- plots
-              return(cem)
-          })
+            return(g)
+        })
+        names(plots) <- modules
+        cem@profile_plot <- plots
+        return(cem)
+})
 
 
 

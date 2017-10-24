@@ -316,8 +316,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 
 #' Full gene co-expression analysis
 #'
-#' Defines co-expression modules and functionally characterizes
-#' each one of them.
+#' Defines co-expression modules and runs several different analyses.
 #'
 #' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
@@ -326,13 +325,13 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param filter Logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
 #' @param apply_vst Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
-#' Currently ignored if parameter \code{filter} is FALSE.
+#' 		  Currently ignored if parameter \code{filter} is FALSE.
 #' @param n_genes Number of genes left after filtering.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default is \code{"pearson"}.
 #' @param cor_function A character string indicating the correlation function to be used. Supported functions are
-#' currently 'cor' and 'bicor'. Default is \code{"cor"}
+#' 		  currently 'cor' and 'bicor'. Default is \code{"cor"}
 #' @param network_type A character string indicating if network type should be computed
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}
 #' @param tom_type  A character string indicating if the TOM type should be computed
@@ -347,6 +346,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param plot Logical. If \code{TRUE}, plots all figures.
+#' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups  
+#' 		  defined by the class_column slot in the sample annotation file. Ignored if there is no 
+#' 		  sample_annotation file. Default \code{TRUE}.
 #' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
@@ -395,6 +397,7 @@ cemitool <- function(expr,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=FALSE,
+					 order_by_class=TRUE,
                      directed=FALSE,
                      verbose=FALSE
                      )
@@ -435,7 +438,7 @@ cemitool <- function(expr,
 	        message("...Plotting qq plot ...")
 	        message("...Plotting sample tree ...")
 		}
-		  results <- plot_mean_var(results)
+		results <- plot_mean_var(results)
 	    results <- plot_hist(results)
 	    results <- plot_qq(results)
 	    results <- plot_sample_tree(results)
@@ -496,7 +499,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Generating profile plots ...")
         }
-        results <- plot_profile(results)
+        results <- plot_profile(results, order_by_class=order_by_class)
 
         if (length(results@enrichment) > 0) {
             if(verbose){

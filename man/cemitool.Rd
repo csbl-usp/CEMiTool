@@ -9,7 +9,8 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
   cor_function = "cor", network_type = "unsigned", tom_type = "signed",
   sample_name_column = "SampleName", class_column = "Class",
   merge_similar = TRUE, ora_pval = 0.05, min_ngen = 30,
-  diss_thresh = 0.8, plot = FALSE, directed = FALSE, verbose = FALSE)
+  diss_thresh = 0.8, plot = FALSE, order_by_class = TRUE,
+  directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -59,6 +60,10 @@ Default \code{0.8}.}
 
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
 
+\item{order_by_class}{Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
+defined by the class_column slot in the sample annotation file. Ignored if there is no 
+sample_annotation file. Default \code{TRUE}.}
+
 \item{directed}{Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
@@ -67,8 +72,7 @@ Default \code{0.8}.}
 Object of class \code{CEMiTool}
 }
 \description{
-Defines co-expression modules and functionally characterizes
-each one of them.
+Defines co-expression modules and runs several different analyses.
 }
 \examples{
 \dontrun{

@@ -11,8 +11,9 @@
 #' @param cem Object of class \code{CEMiTool}.
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed. Default \code{"pearson"}
-#' @param cor_function A character string indicating the correlation function to be used. Default \code{'cor'}
+#' @param cor_function A character string indicating the correlation function to be used. Default \code{'cor'}.
 #' @param set_beta A value to override the automatically selected beta value. Default is NULL.
+#' @param force_beta Whether or not to automatically force a beta value based on number of samples. Default is FALSE. 
 #' @param min_ngen Minimal number of genes per submodule. Default \code{20}.
 #' @param merge_similar Logical. If \code{TRUE}, (the default) merge similar modules.
 #' @param network_type A character string indicating to use either "unsigned" (default) or "signed" networks. Default \code{"unsigned"}
@@ -45,16 +46,21 @@ setGeneric('find_modules', function(cem, ...) {
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
 	function(cem, cor_method=c('pearson', 'spearman'),
-                          cor_function='cor', set_beta=NULL,
-                          min_ngen=20, merge_similar=TRUE,
-                          network_type='unsigned', tom_type='signed',
-                          diss_thresh=0.8, verbose=FALSE) {
+                  cor_function='cor', 
+				  set_beta=NULL, force_beta=FALSE, 
+                  min_ngen=20, merge_similar=TRUE,
+                  network_type='unsigned', tom_type='signed',
+                  diss_thresh=0.8, verbose=FALSE) {
 
 	cor_method <- match.arg(cor_method)
     
     expr <- expr_data(cem)
     if(nrow(expr) == 0){
 		stop("CEMiTool object has no expression file!")
+	}
+
+	if(!is.null(set_beta) & force_beta){
+		stop("Please specify only set_beta or force_beta!")
 	}
 	    
 	expr_t <- t(expr)
@@ -70,7 +76,7 @@ setMethod('find_modules', signature('CEMiTool'),
 	beta_data <- get_beta_data(cem, network_type, cor_function, cor_method, verbose)
     fit_indices <- beta_data$fitIndices
     wgcna_beta <- beta_data$powerEstimate
-		    
+
 	if(!is.null(set_beta)){
 	    if(is.numeric(set_beta) & !(set_beta) %in% fit_indices[, "Power"]){
 		    stop(c("Parameter set_beta must be one of: ", paste(fit_indices$Power, collapse=" ")))
@@ -94,6 +100,11 @@ setMethod('find_modules', signature('CEMiTool'),
 		r2 <- fit_indices[fit_indices$Power == beta, 2]
 	}else if(tolower(set_beta) == "wgcna"){
 		beta <- wgcna_beta
+		r2 <- fit_indices[fit_indices$Power == beta, 2]
+	}
+	
+	if(force_beta){
+		beta <- get_forced_beta(cem, network_type=network_type)
 		r2 <- fit_indices[fit_indices$Power == beta, 2]
 	}
 	    

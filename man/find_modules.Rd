@@ -9,9 +9,9 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  cor_function = "cor", set_beta = NULL, min_ngen = 20,
-  merge_similar = TRUE, network_type = "unsigned", tom_type = "signed",
-  diss_thresh = 0.8, verbose = FALSE)
+  cor_function = "cor", set_beta = NULL, force_beta = FALSE,
+  min_ngen = 20, merge_similar = TRUE, network_type = "unsigned",
+  tom_type = "signed", diss_thresh = 0.8, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -21,9 +21,11 @@ find_modules(cem, ...)
 \item{cor_method}{A character string indicating which correlation coefficient
 is to be computed. Default \code{"pearson"}}
 
-\item{cor_function}{A character string indicating the correlation function to be used. Default \code{'cor'}}
+\item{cor_function}{A character string indicating the correlation function to be used. Default \code{'cor'}.}
 
 \item{set_beta}{A value to override the automatically selected beta value. Default is NULL.}
+
+\item{force_beta}{Whether or not to automatically force a beta value based on number of samples. Default is FALSE.}
 
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{20}.}
 
