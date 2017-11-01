@@ -12,6 +12,7 @@
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed. Default \code{"pearson"}
 #' @param cor_function A character string indicating the correlation function to be used. Default \code{'cor'}.
+#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1. 
 #' @param set_beta A value to override the automatically selected beta value. Default is NULL.
 #' @param force_beta Whether or not to automatically force a beta value based on number of samples. Default is FALSE. 
 #' @param min_ngen Minimal number of genes per submodule. Default \code{20}.
@@ -46,7 +47,7 @@ setGeneric('find_modules', function(cem, ...) {
 #' @export
 setMethod('find_modules', signature('CEMiTool'), 
 	function(cem, cor_method=c('pearson', 'spearman'),
-                  cor_function='cor', 
+                  cor_function='cor', eps=0.1, 
 				  set_beta=NULL, force_beta=FALSE, 
                   min_ngen=20, merge_similar=TRUE,
                   network_type='unsigned', tom_type='signed',
@@ -62,6 +63,10 @@ setMethod('find_modules', signature('CEMiTool'),
 	if(!is.null(set_beta) & force_beta){
 		stop("Please specify only set_beta or force_beta!")
 	}
+
+	vars <- mget(ls())
+	vars$expr <- NULL
+	cem <- get_args(cem, vars=vars)
 	    
 	expr_t <- t(expr)
 	names(expr_t) <- rownames(expr)
@@ -92,7 +97,7 @@ setMethod('find_modules', signature('CEMiTool'),
 
 	# Get CEMiTool Beta and R2
     if(is.null(set_beta)){
-	    r2_beta <- get_cemitool_r2_beta(cem, eps=0.1)    
+	    r2_beta <- get_cemitool_r2_beta(cem, eps=eps)    
 		beta <- as.integer(r2_beta[2])
 		r2 <- r2_beta[1]
 	}else if(is.numeric(set_beta)){
@@ -721,49 +726,48 @@ setGeneric('mod_summary', function(cem, ...) {
 
 #' @rdname mod_summary
 setMethod('mod_summary', signature(cem='CEMiTool'),
-          function(cem, method=c('mean', 'eigengene'),
-                   verbose=FALSE){
+    function(cem, method=c('mean', 'eigengene'),
+             verbose=FALSE){
 
-              method <- match.arg(method)
+        method <- match.arg(method)
 
-		  	  if(length(cem@module) == 0){
-				  stop("No modules in CEMiTool object! Did you run find_modules()?")
-			  }
+    	if(length(cem@module) == 0){
+            stop("No modules in CEMiTool object! Did you run find_modules()?")
+  	    }
 
-              if (verbose) {
-                  message(paste0('Summarizing modules by ', method))
-              }
+        if (verbose) {
+            message(paste0('Summarizing modules by ', method))
+        }
 
-              modules <- unique(cem@module[, 'modules'])
+        modules <- unique(cem@module[, 'modules'])
 
-              # mean expression of genes in modules
-              if (method == 'mean') {
-                  expr <- data.table(expr_data(cem), keep.rownames=TRUE)
-                  expr_melt <- melt(expr, id='rn', variable.name='samples',
-                                     value.name='expression')
-                  expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
-                  summarized <- expr_melt[, list(mean=mean(expression)),
-                                           by=c('samples', 'modules')]
-                  summarized <- dcast(summarized, modules~samples, value.var='mean')
-                  setDF(summarized)
+        # mean expression of genes in modules
+        if (method == 'mean') {
+            expr <- data.table(expr_data(cem), keep.rownames=TRUE)
+            expr_melt <- melt(expr, id='rn', variable.name='samples',
+                               value.name='expression')
+            expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
+            summarized <- expr_melt[, list(mean=mean(expression)),
+                                     by=c('samples', 'modules')]
+            summarized <- dcast(summarized, modules~samples, value.var='mean')
+            setDF(summarized)
 
-                  return(summarized)
-                  # eigengene for each module
-              } else if (method == 'eigengene') {
-                  expr_t <- t(expr_data(cem))
-                  colnames(expr_t) <- rownames(expr)
-                  rownames(expr_t) <- colnames(expr)
-                  me_list <- WGCNA::moduleEigengenes(expr_t, 
-                                                     colors=cem@module[,2])
-                  me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=TRUE)
-                  setnames(me_eigen, c('modules', colnames(expr)))
-                  me_eigen[, modules := gsub('^ME', '', modules)]
-                  setDF(me_eigen)
+            return(summarized)
+            # eigengene for each module
+        } else if (method == 'eigengene') {
+            expr_t <- t(expr_data(cem))
+            colnames(expr_t) <- rownames(expr)
+            rownames(expr_t) <- colnames(expr)
+            me_list <- WGCNA::moduleEigengenes(expr_t, 
+                                               colors=cem@module[,2])
+            me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=TRUE)
+            setnames(me_eigen, c('modules', colnames(expr)))
+            me_eigen[, modules := gsub('^ME', '', modules)]
+            setDF(me_eigen)
 
-                  return(me_eigen)
-
-              }
-          }
+            return(me_eigen)
+        }
+    }
 )
 
 
@@ -791,19 +795,19 @@ setGeneric('get_hubs', function(cem, ...) {
 
 #' @rdname get_hubs
 setMethod('get_hubs', signature(cem='CEMiTool'),
-          function(cem, n=5){
-              if(nrow(cem@adjacency) == 0){
-                  stop("Make sure that you ran the method find_modules.")
-              }
-              mod2gene <- split(cem@module$genes, cem@module$modules)
-              hubs <- lapply(mod2gene, function(x){
-                                           if (length(x) > 1) {
-                                               mod_adj <- cem@adjacency[x, x]
-                                               top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
-                                               return(names(top))
-                                           } else {
-                                               return(character())
-                                           }
-                                       })
-              return(hubs)
-          })
+    function(cem, n=5){
+        if(nrow(cem@adjacency) == 0){
+            stop("Make sure that you ran the method find_modules.")
+        }
+        mod2gene <- split(cem@module$genes, cem@module$modules)
+        hubs <- lapply(mod2gene, function(x){
+                                     if (length(x) > 1) {
+                                         mod_adj <- cem@adjacency[x, x]
+                                         top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
+                                         return(names(top))
+                                     } else {
+                                         return(character())
+                                     }
+                                 })
+        return(hubs)
+    })

@@ -66,6 +66,8 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 class_column='vector',
                                 mod_colors='character',
                                 parameters='list',
+								input_params='list',
+								calls='list',
                                 adjacency='matrix'))
 
 setMethod("initialize", signature="CEMiTool",
@@ -126,6 +128,7 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 	}
     cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot,
 		sample_name_column=sample_name_column, class_column=class_column)
+	cem <- get_args(cem, vars=mget(ls()))
 	return(cem)
 }
 
@@ -327,6 +330,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param apply_vst Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
 #' 		  Currently ignored if parameter \code{filter} is FALSE.
 #' @param n_genes Number of genes left after filtering.
+#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1. 
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default is \code{"pearson"}.
@@ -386,6 +390,7 @@ cemitool <- function(expr,
                      filter_pval=0.1,
                      apply_vst=FALSE,
                      n_genes,
+					 eps=0.1,
                      cor_method=c('pearson', 'spearman'),
         		     cor_function='cor',
                      network_type='unsigned',
@@ -410,12 +415,15 @@ cemitool <- function(expr,
     results <- new('CEMiTool', expression=expr,
                    sample_name_column=sample_name_column,
                    class_column=class_column)
+	
+	# keep input parameters
+	results <- get_args(cem=results, vars=mget(ls()))
 
     if (filter) {
         if(!missing(n_genes)){
             results <- filter_expr(results, n_genes=n_genes, apply_vst=apply_vst)
         } else {
-            results <- filter_expr(results, pval=filter_pval, apply_vst=apply_vst)
+            results <- filter_expr(results, filter_pval=filter_pval, apply_vst=apply_vst)
         }
         if (length(results@selected_genes) <= 0) {
             stop('Stopping analysis, no gene left for analysis. Maybe try to change the filter parameters.')
@@ -450,6 +458,7 @@ cemitool <- function(expr,
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
 			    			cor_function=cor_function,
+							eps=0.1,
                             min_ngen=min_ngen,
                             merge_similar=merge_similar,
                             diss_thresh=diss_thresh,
@@ -491,7 +500,7 @@ cemitool <- function(expr,
             message("Running over representation analysis ...")
         }
         #run mod_ora
-        results <- mod_ora(results, gmt_in=gmt, verbose=verbose)
+        results <- mod_ora(results, gmt=gmt, verbose=verbose)
     }
 
     # plots all desired charts
@@ -531,6 +540,11 @@ cemitool <- function(expr,
         results <- plot_beta_r2(results)
         results <- plot_mean_k(results)
     }
+
+	#cem@input_params <- list()
+	#cem@calls <- list()
+	#results <- get_args(cem=results, vars=mget(ls()))
+
     return(results)
 }
 
@@ -596,7 +610,7 @@ setMethod('module_names', signature(cem='CEMiTool'),
                       mods <- mods[mods != "Not.Correlated"]
                   }
               } else {
-                  warning("Run cemitool function to get modules!")
+                  warning("No modules in this CEMiTool object.")
               }
               return(mods)
           }
@@ -634,7 +648,7 @@ setMethod('module_genes', signature(cem='CEMiTool'),
               if(nrow(cem@module) > 0){
                   res <- cem@module
               }else{
-                  message("Run cemitool function to get modules!")
+                  message("No modules in this CEMiTool object.")
 		  return(res)
               }
               mod_names <- unique(cem@module[, "modules"])

@@ -41,10 +41,14 @@ setGeneric('plot_profile', function(cem, ...) {
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
     function(cem, order_by_class=TRUE) {
-        modules <- module_names(cem)
-		    if(is.null(modules)){
-	  	    stop("No modules in CEMiTool object! Did you run find_modules()?")
+        modules <- unique(cem@module$modules)
+		if(is.null(modules)){
+	   	    stop("No modules in this CEMiTool object.")
 	    }
+	    vars <- mget(ls())
+		vars$modules <- NULL
+		cem <- get_args(cem=cem, vars=vars)
+
         modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
         expr <- expr_data(cem)
         annot <- sample_annotation(cem)
@@ -153,27 +157,29 @@ setGeneric('plot_ora', function(cem, ...) {
 
 #' @rdname plot_ora
 setMethod('plot_ora', signature('CEMiTool'),
-          function(cem, n=10, pv_cut=0.01, ...){
-			  if(length(unique(cem@module$modules)) == 0){
-				  stop("No modules in CEMiTool object! Did you run find_modules()?")
-			  }
-			  if(nrow(cem@ora) == 0){
-				  stop("No ORA data! Did you run mod_ora()?")
-			  }
-              ora_splitted <- split(cem@ora, cem@ora$Module)
-              mod_cols <- mod_colors(cem)
-              res <- lapply(ora_splitted, function(x){
-                                plot_ora_single(head(x, n=n),
-						pv_cut=pv_cut,
-                                                graph_color=mod_cols[unique(x$Module)],
-                                                title=unique(x$Module),
-                                                ...)
-              })
-              modules <- names(res)
-              modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
-              cem@barplot_ora <- res[modules]
-              return(cem)
-          }
+    function(cem, n=10, pv_cut=0.01, ...){
+        if(length(unique(cem@module$modules)) == 0){
+    	    stop("No modules in CEMiTool object! Did you run find_modules()?")
+    	}
+    	if(nrow(cem@ora) == 0){
+    	    stop("No ORA data! Did you run mod_ora()?")
+    	}
+    	  
+    	cem <- get_args(cem=cem, vars=mget(ls()))
+        ora_splitted <- split(cem@ora, cem@ora$Module)
+        mod_cols <- mod_colors(cem)
+        res <- lapply(ora_splitted, function(x){
+                      plot_ora_single(head(x, n=n),
+    	    	      pv_cut=pv_cut,
+                      graph_color=mod_cols[unique(x$Module)],
+                      title=unique(x$Module),
+                      ...)
+        })
+        modules <- names(res)
+        modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
+        cem@barplot_ora <- res[modules]
+        return(cem)
+    }
 )
 
 
@@ -257,67 +263,68 @@ setGeneric('plot_gsea', function(cem, ...) {
 
 #' @rdname plot_gsea
 setMethod('plot_gsea', signature('CEMiTool'),
-          function(cem, pv_cut=0.05) {
-			  if(length(unique(cem@module$modules)) == 0){
-		          stop("No modules in CEMiTool object! Did you run find_modules()?")
-              }
-              if(length(cem@enrichment) == 0){
-			      stop("No GSEA data! Did you run mod_gsea()?")
-			  }
+    function(cem, pv_cut=0.05) {
+  	    if(length(unique(cem@module$modules)) == 0){
+            stop("No modules in CEMiTool object! Did you run find_modules()?")
+        }
+        if(length(cem@enrichment) == 0){
+  	        stop("No GSEA data! Did you run mod_gsea()?")
+  	    }
+		cem <- get_args(cem, vars=mget(ls()))
 
-              stats <- names(cem@enrichment)
-              enrichment <- lapply(cem@enrichment, function(stat){
-                                       stat[is.na(stat)] <- 0
-                                       rownames(stat) <- stat[,1]
-                                       stat[,1] <- NULL
-                                       return(stat)
-              })
-              names(enrichment) <- stats
+        stats <- names(cem@enrichment)
+        enrichment <- lapply(cem@enrichment, function(stat){
+                                 stat[is.na(stat)] <- 0
+                                 rownames(stat) <- stat[,1]
+                                 stat[,1] <- NULL
+                                 return(stat)
+        })
+        names(enrichment) <- stats
 
-              pval <- enrichment[['pval']]
-              nes <- enrichment[['nes']]
+        pval <- enrichment[['pval']]
+        nes <- enrichment[['nes']]
 
-              pval <- pval[rowSums(pval < pv_cut) >= 1,]
-              nes <- nes[rownames(pval),]
+        pval <- pval[rowSums(pval < pv_cut) >= 1,]
+        nes <- nes[rownames(pval),]
 
-              # check if there is any signif. module
-              if(nrow(nes) < 0){
-                  stop("No significant modules found!")
-              }
+        # check if there is any signif. module
+        if(nrow(nes) < 0){
+            stop("No significant modules found!")
+        }
 
-              custom_pal <- c("#053061", "#2166AC", "#4393C3", "#92C5DE",
-                              "#D1E5F0", "#FFFFFF", "#FDDBC7", "#F4A582",
-                              "#D6604D", "#B2182B", "#67001F")
-              custom_pal <- colorRampPalette(custom_pal)(200)
+        custom_pal <- c("#053061", "#2166AC", "#4393C3", "#92C5DE",
+                        "#D1E5F0", "#FFFFFF", "#FDDBC7", "#F4A582",
+                        "#D6604D", "#B2182B", "#67001F")
+        custom_pal <- colorRampPalette(custom_pal)(200)
 
-              nes <- as.matrix(nes)
-              pval <- as.matrix(pval)
-              nes[which(pval > pv_cut, arr.ind=TRUE)] <- 0
+        nes <- as.matrix(nes)
+        pval <- as.matrix(pval)
+        nes[which(pval > pv_cut, arr.ind=TRUE)] <- 0
 
-              if(nrow(nes) > 2){
-                  row_order <- rownames(nes)[hclust(dist(nes))$order]
-              } else {
-                  row_order <- rownames(nes)
-              }
+        if(nrow(nes) > 2){
+            row_order <- rownames(nes)[hclust(dist(nes))$order]
+        } else {
+            row_order <- rownames(nes)
+        }
 
-              nes_melted <- reshape2::melt(nes)
-              colnames(nes_melted) <- c("Module", "Class", "NES")
-              nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
-              max_abs_nes <- max(abs(nes_melted$NES))
-              res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) +
-                  geom_point(color = "white", shape=21) +
-                  scale_fill_gradientn(colours=custom_pal, space = "Lab",
-                                       limits=c(-max_abs_nes, max_abs_nes)) +
-                  scale_size(range=c(0,30)) +
-                  guides(size="none") +
-                  theme_minimal() +
-                  theme(panel.grid.major = element_blank()) +
-                  scale_x_discrete(position = "top")
-			  res_list <- list(enrichment_plot=res)
-			  cem@enrichment_plot <- res_list
+        nes_melted <- reshape2::melt(nes)
+        colnames(nes_melted) <- c("Module", "Class", "NES")
+        nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
+        max_abs_nes <- max(abs(nes_melted$NES))
+        res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) +
+            geom_point(color = "white", shape=21) +
+            scale_fill_gradientn(colours=custom_pal, space = "Lab",
+                                 limits=c(-max_abs_nes, max_abs_nes)) +
+            scale_size(range=c(0,30)) +
+            guides(size="none") +
+            theme_minimal() +
+            theme(panel.grid.major = element_blank()) +
+            scale_x_discrete(position = "top")
+  	    res_list <- list(enrichment_plot=res)
+  	    cem@enrichment_plot <- res_list
 
-              return(cem)
-          })
+        return(cem)
+    })
 
 #' Network visualization
 #'
@@ -350,42 +357,43 @@ setGeneric('plot_interactions', function(cem, ...) {
 
 #' @rdname plot_interactions
 setMethod('plot_interactions', signature('CEMiTool'),
-          function(cem, n=10, ...) {
-			  if(length(unique(cem@module$modules)) == 0){
-		          stop("No modules in CEMiTool object! Did you run find_modules()?")
-              }
-              if(length(interactions_data(cem)) == 0){
-			      stop("No interactions information! Did you run interactions_data()?")
-			  }
-              mod_cols <- mod_colors(cem)
-              mod_names <- names(cem@interactions)
-              mod_names <- mod_names[which(mod_names!="Not.Correlated")]
-              hubs <- get_hubs(cem)
-              zero_ints <- character()
-              zero_ints <- lapply(names(cem@interactions), function(mod){
-                  degree <- igraph::degree(cem@interactions[[mod]], normalized=FALSE)
-                  if(length(degree) == 0) {
-                      zero_ints <- append(zero_ints, mod)
-                  }
-              })
-              zero_ints <- unlist(zero_ints)
-              if(!is.null(zero_ints)){
-                  mod_names <- mod_names[which(!(mod_names %in% zero_ints))]
-              }
-              if(length(mod_names) == 0){
-                  warning("There are no interactions in the given modules. Please check interactions file.")
-                  return(cem)
-              }
-              res <- lapply(mod_names, function(name){
-                                plot_interaction(ig_obj=cem@interactions[[name]],
-                                                 n=n, color=mod_cols[name], name=name,
-                                                 coexp_hubs=hubs[[name]])
-                                       })
-              names(res) <- mod_names
-              mod_names_ordered <- mod_names[order(as.numeric(stringr::str_extract(mod_names, "\\d+")))]
-              cem@interaction_plot <- res[mod_names_ordered]
-              return(cem)
-          })
+    function(cem, n=10, ...) {
+        if(length(unique(cem@module$modules)) == 0){
+            stop("No modules in CEMiTool object! Did you run find_modules()?")
+        }
+        if(length(interactions_data(cem)) == 0){
+  	      stop("No interactions information! Did you run interactions_data()?")
+  	    }
+  	    cem <- get_args(cem, vars=mget(ls()))
+        mod_cols <- mod_colors(cem)
+        mod_names <- names(cem@interactions)
+        mod_names <- mod_names[which(mod_names!="Not.Correlated")]
+        hubs <- get_hubs(cem)
+        zero_ints <- character()
+        zero_ints <- lapply(names(cem@interactions), function(mod){
+            degree <- igraph::degree(cem@interactions[[mod]], normalized=FALSE)
+            if(length(degree) == 0) {
+                zero_ints <- append(zero_ints, mod)
+            }
+        })
+        zero_ints <- unlist(zero_ints)
+        if(!is.null(zero_ints)){
+            mod_names <- mod_names[which(!(mod_names %in% zero_ints))]
+        }
+        if(length(mod_names) == 0){
+            warning("There are no interactions in the given modules. Please check interactions file.")
+            return(cem)
+        }
+        res <- lapply(mod_names, function(name){
+                          plot_interaction(ig_obj=cem@interactions[[name]],
+                                           n=n, color=mod_cols[name], name=name,
+                                           coexp_hubs=hubs[[name]])
+		       })
+        names(res) <- mod_names
+        mod_names_ordered <- mod_names[order(as.numeric(stringr::str_extract(mod_names, "\\d+")))]
+        cem@interaction_plot <- res[mod_names_ordered]
+        return(cem)
+    })
 
 plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     degrees <- igraph::degree(ig_obj, normalized=FALSE)
@@ -476,30 +484,32 @@ setGeneric('plot_beta_r2', function(cem, ...){
 
 #' @rdname plot_beta_r2
 setMethod('plot_beta_r2', signature('CEMiTool'),
-          function(cem, title="Scale independence (beta selection)"){
-			  if(nrow(cem@fit_indices) == 0){
-				  stop("No fit indices data! Did you run find_modules()?")
-			  }
-              fit <- cem@fit_indices
-              fit$new_fit <- -sign(fit[, 3])*fit[, 2]
-              beta_power <- cem@parameters$beta
+    function(cem, title="Scale independence (beta selection)"){
+  	    if(nrow(cem@fit_indices) == 0){
+            stop("No fit indices data! Did you run find_modules()?")
+        }
+	    cem <- get_args(cem, vars=mget(ls()))
 
-              pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
-                    geom_line(color="darkgrey") +
-                    geom_point(size=1.5) +
-                    #annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7) +
-                    theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
-                    scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
-                    labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
+        fit <- cem@fit_indices
+        fit$new_fit <- -sign(fit[, 3])*fit[, 2]
+        beta_power <- cem@parameters$beta
 
-              if(!is.na(beta_power)){
-                  pl <- pl + annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7)
-              }
+        pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
+              geom_line(color="darkgrey") +
+              geom_point(size=1.5) +
+              #annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7) +
+              theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
+              scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
+              labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
 
-			        res_list <- list(beta_r2_plot=pl)
-              cem@beta_r2_plot <- res_list
-              return(cem)
-          })
+        if(!is.na(beta_power)){
+            pl <- pl + annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7)
+        }
+
+  	    res_list <- list(beta_r2_plot=pl)
+        cem@beta_r2_plot <- res_list
+        return(cem)
+    })
 
 #' Network mean connectivity
 #'
@@ -527,22 +537,23 @@ setGeneric('plot_mean_k', function(cem, ...){
 
 #' @rdname plot_mean_k
 setMethod('plot_mean_k', signature('CEMiTool'),
-          function(cem, title="Mean connectivity"){
-			  if(nrow(cem@fit_indices) == 0){
-			      stop("No fit indices data! Did you run find_modules()?")
-		      }
-              fit <- cem@fit_indices
+    function(cem, title="Mean connectivity"){
+        if(nrow(cem@fit_indices) == 0){
+  	        stop("No fit indices data! Did you run find_modules()?")
+        }
+  	    cem <- get_args(cem, vars=mget(ls()))
+        fit <- cem@fit_indices
 
-              pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +
-                  geom_line(color="darkgrey") +
-                  geom_point(size=1.5) +
-                  theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
-                  labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
+        pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +
+            geom_line(color="darkgrey") +
+            geom_point(size=1.5) +
+            theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
+            labs(y="Mean connectivity", title=title, x="Soft-threshold beta")
 
-			  res_list <- list(mean_k_plot=pl)
-			  cem@mean_k_plot <- res_list
-              return(cem)
-          })
+  	    res_list <- list(mean_k_plot=pl)
+  	    cem@mean_k_plot <- res_list
+        return(cem)
+    })
 
 
 #' Retrieve CEMiTool object plots
@@ -569,26 +580,26 @@ setGeneric('show_plot', function(cem, value) {
 
 #' @rdname show_plot
 setMethod('show_plot', signature('CEMiTool'),
-          function(cem, value=c("profile", "gsea", "ora", "interaction",
-                                "beta_r2", "mean_k", "sample_tree", "mean_var",
-								"hist", "qq")) {
-              value <- match.arg(value)
-		  	  if(value!="sample_tree"){
-              	  x_plot <- switch(value,
-	                  profile=cem@profile_plot,
-    	              gsea=cem@enrichment_plot,
-        	          ora=cem@barplot_ora,
-            	      interaction=cem@interaction_plot,
-                	  beta_r2=cem@beta_r2_plot,
-               	 	  mean_k=cem@mean_k_plot,
-			  		  mean_var=cem@mean_var_plot,
-					  hist=cem@hist_plot,
-					  qq=cem@qq_plot)
-              	  return(x_plot)
-			 }else{
-				  grid::grid.draw(cem@sample_tree_plot)
-			 }
-          })
+    function(cem, value=c("profile", "gsea", "ora", "interaction",
+                          "beta_r2", "mean_k", "sample_tree", "mean_var",
+						  "hist", "qq")) {
+        value <- match.arg(value)
+        if(value!="sample_tree"){
+            x_plot <- switch(value,
+            profile=cem@profile_plot,
+            gsea=cem@enrichment_plot,
+  	        ora=cem@barplot_ora,
+      	    interaction=cem@interaction_plot,
+          	beta_r2=cem@beta_r2_plot,
+         	mean_k=cem@mean_k_plot,
+  	  		mean_var=cem@mean_var_plot,
+  			hist=cem@hist_plot,
+  			qq=cem@qq_plot)
+            return(x_plot)
+        }else{
+            grid::grid.draw(cem@sample_tree_plot)
+        }
+    })
 
 #' @title
 #' Save CEMiTool object plots
@@ -616,70 +627,69 @@ setMethod('show_plot', signature('CEMiTool'),
 #' @rdname save_plots
 #' @export
 setGeneric('save_plots', function(cem, ...) {
-		       standardGeneric('save_plots')
-			       })
+    standardGeneric('save_plots')
+})
 
 #' @rdname save_plots
 setMethod('save_plots', signature('CEMiTool'),
-		  function(cem, value=c("all", "profile", "gsea", "ora",
-								"interaction", "beta_r2", "mean_k",
-								"sample_tree", "mean_var", "hist", "qq"),
-				   force=FALSE, directory="./Plots") {
-				  if(dir.exists(directory)){
-					  if(!force){
-						  stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
-				      }
-				  }else{
-				      dir.create(directory)
-				  }
-				  value <- match.arg(value)
-				  if(value == "all"){
-	                  plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
-	                                cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot,
-									cem@sample_tree_plot, cem@mean_var_plot, cem@hist_plot,
-									cem@qq_plot)
+    function(cem, value=c("all", "profile", "gsea", "ora",
+						  "interaction", "beta_r2", "mean_k",
+						  "sample_tree", "mean_var", "hist", "qq"),
+			      force=FALSE, directory="./Plots") {
+        if(dir.exists(directory)){
+		    if(!force){
+			    stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
+			}
+		}else{
+		    dir.create(directory)
+		}
+		value <- match.arg(value)
+		if(value == "all"){
+            plots <- list(cem@profile_plot, cem@enrichment_plot, cem@barplot_ora,
+                          cem@interaction_plot, cem@beta_r2_plot, cem@mean_k_plot,
+						  cem@sample_tree_plot, cem@mean_var_plot, cem@hist_plot,
+						  cem@qq_plot)
+		    all_plots<- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k",
+									"sample_tree", "mean_var", "hist", "qq")
+			names(plots) <- all_plots
 
-					  all_plots<- c("profile", "gsea", "ora", "interaction", "beta_r2", "mean_k",
-										"sample_tree", "mean_var", "hist", "qq")
-					  names(plots) <- all_plots
-
-					  plots <- Filter(function(x) length(x) >= 1, plots)
-					  if(length(plots) < length(all_plots)){
-					  	  message("Some plots have not been defined. Please run the appropriate plot functions. Saving available plots.")
-					  }
-	                  lapply(names(plots), function(pl){
-		                  pdf(file=file.path(directory, paste0(pl, ".pdf")))
-						  if(pl=="sample_tree"){
-							  if(!is.null(nrow(plots[[pl]]))){
-							      grid::grid.draw(plots[[pl]])
-								  dev.off()
-							  }
-						  }else{
-							  print(plots[[pl]])
-						  	  dev.off()
-						  }
-		              })
-		          }else if(value=="sample_tree"){
-					  if(!is.null(nrow(cem@sample_tree_plot))){
-						  pdf(file.path(directory, paste0(value, ".pdf")))
-					  	  grid::grid.draw(cem@sample_tree_plot)
-						  dev.off()
-					  }else{
-						  stop("Plot not available! Please use the appropriate plotting function on the CEMiTool object.")
-					  }
-				  }else{
-				  	  x_plot <- switch(value,
-	                                   profile=cem@profile_plot,
-	                                   gsea=cem@enrichment_plot,
-	                                   ora=cem@barplot_ora,
-	                                   interaction=cem@interaction_plot,
-	                                   beta_r2=cem@beta_r2_plot,
-	                                   mean_k=cem@mean_k_plot,
-									   mean_var=cem@mean_var_plot,
-        	                           hist=cem@hist_plot,
-									   qq=cem@qq_plot)
-	                  pdf(file.path(directory, paste0(value, ".pdf")))
-					  print(x_plot)
-					  dev.off()
-			      }
-	      })
+			plots <- Filter(function(x) length(x) >= 1, plots)
+			if(length(plots) < length(all_plots)){
+			    message("Some plots have not been defined. Please run the appropriate plot functions. Saving available plots.")
+			}
+            lapply(names(plots), function(pl){
+	            pdf(file=file.path(directory, paste0(pl, ".pdf")))
+				if(pl=="sample_tree"){
+				    if(!is.null(nrow(plots[[pl]]))){
+					    grid::grid.draw(plots[[pl]])
+						dev.off()
+					}
+				}else{
+				    print(plots[[pl]])
+					dev.off()
+				}
+	        })
+		}else if(value=="sample_tree"){
+		    if(!is.null(nrow(cem@sample_tree_plot))){
+			    pdf(file.path(directory, paste0(value, ".pdf")))
+				grid::grid.draw(cem@sample_tree_plot)
+				dev.off()
+			}else{
+			    stop("Plot not available! Please use the appropriate plotting function on the CEMiTool object.")
+			}
+		}else{
+			x_plot <- switch(value,
+                             profile=cem@profile_plot,
+                             gsea=cem@enrichment_plot,
+                             ora=cem@barplot_ora,
+                             interaction=cem@interaction_plot,
+                             beta_r2=cem@beta_r2_plot,
+                             mean_k=cem@mean_k_plot,
+							 mean_var=cem@mean_var_plot,
+    	                     hist=cem@hist_plot,
+							 qq=cem@qq_plot)
+            pdf(file.path(directory, paste0(value, ".pdf")))
+			print(x_plot)
+			dev.off()
+		}
+      })

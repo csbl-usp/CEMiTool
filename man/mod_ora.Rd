@@ -8,14 +8,14 @@
 \usage{
 mod_ora(cem, ...)
 
-\S4method{mod_ora}{CEMiTool}(cem, gmt_in, verbose = FALSE)
+\S4method{mod_ora}{CEMiTool}(cem, gmt, verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
 
-\item{gmt_in}{Object of class \code{data.frame} with 2 columns, one with
+\item{gmt}{Object of class \code{data.frame} with 2 columns, one with
 pathways and one with genes}
 
 \item{verbose}{logical. Report analysis steps.}

@@ -49,10 +49,13 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 		if(nrow(expr) == 0){
 		    stop("CEMiTool object has no expression file!")
 	    }
+		vars <- mget(ls())
+		vars$expr <- NULL
+		cem <- get_args(cem, vars)
 	    if(nrow(sample_annotation(cem)) > 0){
 		    annot <- sample_annotation(cem)
-        	sample_name_column=cem@sample_name_column
-		    class_column=cem@class_column
+        	sample_name_column <- cem@sample_name_column
+		    class_column <- cem@class_column
 		}else{
 			annot <- NULL
 		}
@@ -189,6 +192,9 @@ setMethod('plot_mean_var', signature('CEMiTool'),
 		if(nrow(expr) == 0){
 		    stop("CEMiTool object has no expression file!")
 	    }
+		vars <- mget(ls())
+        vars$expr <- NULL
+        cem <- get_args(cem, vars=vars)
 	    
 	    expr_mean <- apply(expr, 1, mean)
 		expr_var <- apply(expr, 1, var)
@@ -246,6 +252,9 @@ setMethod('plot_hist', signature('CEMiTool'),
 		if(nrow(expr) == 0){
 			stop("CEMiTool object has no expression file!")
 	    }
+        vars <- mget(ls())
+        vars$expr <- NULL
+        cem <- get_args(cem, vars=vars)
 		measures <- as.data.frame(as.vector(as.matrix(expr)))
 		names(measures) <- "data"
 		minExp <- round(min(measures, na.rm=TRUE)-0.5,digits=0)
@@ -299,6 +308,9 @@ setMethod('plot_qq', signature('CEMiTool'),
 	        if(nrow(expr) == 0){
 			    stop("CEMiTool object has no expression file!")
 	    }
+        vars <- mget(ls())
+        vars$expr <- NULL
+        cem <- get_args(cem, vars=vars)
 		measures <- as.data.frame(as.vector(as.matrix(expr)))
 		names(measures) <- "data"
 

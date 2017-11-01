@@ -9,7 +9,7 @@
 find_modules(cem, ...)
 
 \S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  cor_function = "cor", set_beta = NULL, force_beta = FALSE,
+  cor_function = "cor", eps = 0.1, set_beta = NULL, force_beta = FALSE,
   min_ngen = 20, merge_similar = TRUE, network_type = "unsigned",
   tom_type = "signed", diss_thresh = 0.8, verbose = FALSE)
 }
@@ -22,6 +22,8 @@ find_modules(cem, ...)
 is to be computed. Default \code{"pearson"}}
 
 \item{cor_function}{A character string indicating the correlation function to be used. Default \code{'cor'}.}
+
+\item{eps}{A value for accepted R-squared interval between subsequent beta values. Default is 0.1.}
 
 \item{set_beta}{A value to override the automatically selected beta value. Default is NULL.}
 

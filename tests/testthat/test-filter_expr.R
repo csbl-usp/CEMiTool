@@ -9,7 +9,7 @@ test_that('expression file is getting the correct number of genes post-filtering
 })
 
 test_that('filter_expr throws an error when both pval and n_genes are given', {
-	expect_error(cem <- filter_expr(cem, pval=0.1, n_genes=200))
+	expect_error(cem <- filter_expr(cem, filter_pval=0.1, n_genes=200))
 })
 
 test_that('filter_expr throws an error when there is no expression file', {
@@ -17,5 +17,5 @@ test_that('filter_expr throws an error when there is no expression file', {
 })
 
 test_that('filter_expr throws a warning when no genes are left after filtering', {
-	expect_warning(cem <- filter_expr(cem, pval=0))
+	expect_warning(cem <- filter_expr(cem, filter_pval=0))
 })

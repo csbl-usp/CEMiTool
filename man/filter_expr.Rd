@@ -8,15 +8,15 @@
 \usage{
 filter_expr(cem, ...)
 
-\S4method{filter_expr}{CEMiTool}(cem, pval = 0.1, n_genes, pct = 0.75,
-  apply_vst = FALSE)
+\S4method{filter_expr}{CEMiTool}(cem, filter_pval = 0.1, n_genes,
+  pct = 0.75, apply_vst = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
 
-\item{pval}{P-value cutoff for gene selection.}
+\item{filter_pval}{P-value cutoff for gene selection.}
 
 \item{n_genes}{Number of genes to be selected.}
 

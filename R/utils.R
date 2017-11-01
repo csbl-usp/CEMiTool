@@ -18,3 +18,36 @@ get_forced_beta <- function(cem, network_type){
 	}
 	return(beta)
 }
+
+get_args <- function(cem, vars){
+	system_calls <- lapply(sys.calls(), as.character)
+	go_back <- ifelse(".local" %in% unlist(system_calls), 2, 1)
+
+	func <- as.character(sys.calls()[[sys.nframe()-go_back]][[1]])
+	if(class(get(func)) == "function"){
+		command <- deparse(sys.call(-1))
+	}else if(class(get(func)) == "nonstandardGenericFunction"){
+		command <- deparse(sys.call(-2))
+	}
+	exceptions <- c("expr", "sample_annot", "gmt", "interactions")
+	vars[["cem"]] <- NULL
+	vars[["results"]] <- NULL
+	vars[names(vars) %in% exceptions] <- "input"
+		    
+	inputs <- cem@input_params
+
+	inputs[[func]] <- vars
+			    
+	cem@input_params <- inputs
+				    
+	calls <- cem@calls
+	calls[[length(calls) + 1]] <- command
+	if(length(calls) == 1){
+		names(calls) <- func
+	}else{
+		names(calls)[length(calls)] <- func
+	}
+						    
+	cem@calls <- calls
+	return(cem)
+}
