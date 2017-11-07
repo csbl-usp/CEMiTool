@@ -7,7 +7,7 @@ Authors@R: c( person("Pedro", "Russo", email = "pedro.russo@usp.br",
         person("Matheus", "Bürger", email ="burger@usp.br", role 
 		= c("aut")), person("Lucas", "Cardozo", email = 
 		"lucas.cardozo@usp.br", role = c("aut")), person("Diogenes", "Lima", 
-		email = "diogenes.lima@usp.br"), role = c("aut")), person("Thiago", 
+		email = "diogenes.lima@usp.br", role = c("aut")), person("Thiago", 
 		"Hirata", email = "thiago.hirata@usp.br", role = c("aut")), 
 		person("Melissa", "Lever", email = "melissa.lever@usp.br", 
 		role = c("aut")), person("Helder", "Nakaya", email = "hnakaya@usp.br", 
