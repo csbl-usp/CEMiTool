@@ -168,6 +168,8 @@ setMethod("ora_data", signature("CEMiTool"),
 #' Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
+#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#' (the default) or "median".
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #' 
@@ -193,7 +195,10 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-          function(cem, verbose=FALSE) {
+          function(cem, rank_method="mean", verbose=FALSE) {
+			  if(!tolower(rank_method) %in% c("mean", "median")){
+				  stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
+			  }	  
 		      if(nrow(expr_data(cem)) == 0){
 				  warning("CEMiTool object has no expression file!")
 		  	      return(cem)
@@ -258,8 +263,8 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
                   # samples of class == class_group
                   class_samples <- annot[annot[, class_col]==class_group, sample_col]
                   
-                  # genes ranked by mean
-                  genes_ranked <- apply(z_expr[, class_samples, drop=FALSE], 1, mean)
+                  # genes ranked by rank_method
+                  genes_ranked <- apply(z_expr[, class_samples, drop=FALSE], 1, tolower(rank_method))
                   genes_ranked <- sort(genes_ranked, decreasing=TRUE)
                   
                   # BiocParallel setting up
