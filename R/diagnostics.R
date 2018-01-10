@@ -110,7 +110,7 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 						    
 			annot_num <- Filter(is.numeric, annot)
 			order <- match(lvl, rownames(annot_num))
-			annot_num <- annot_num[order, ]
+			annot_num <- annot_num[order, , drop=FALSE]
 								    
 			#png("NULL")
 			#gp1 <- ggplot2::ggplotGrob(p1)  
