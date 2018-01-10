@@ -204,7 +204,7 @@ setGeneric("mod_colors", function(cem) {
 #' @rdname mod_colors
 setMethod("mod_colors", signature("CEMiTool"),
          function(cem){
-            mod_names <- module_names(cem)
+            mod_names <- mod_names(cem)
             nmod <- length(mod_names)
             cols <- cem@mod_colors
             if(nmod != 0) {
@@ -235,7 +235,7 @@ setGeneric("mod_colors<-", function(cem, value) {
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
          function(cem, value){
-			mod_names <- module_names(cem)
+			mod_names <- mod_names(cem)
             cem@mod_colors <- value
             if(is.null(names(cem@mod_colors))){
 		stop("mod_colors should be a character vector with names corresponding to the modules")
@@ -594,24 +594,24 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #'
 #' @return Module names
 #'
-#' @rdname module_names
+#' @rdname mod_names
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Get module names
-#' module_names(cem)
+#' mod_names(cem)
 #'
 #' @export
-setGeneric('module_names', function(cem, include_NC=TRUE) {
-    standardGeneric('module_names')
+setGeneric('mod_names', function(cem, include_NC=TRUE) {
+    standardGeneric('mod_names')
 })
 
-#' @rdname module_names
-setMethod('module_names', signature(cem='CEMiTool'),
+#' @rdname mod_names
+setMethod('mod_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
               if(nrow(cem@module) > 0){
-                  mods <- unique(cem@module$modules)
+                  mods <- names(sort(table(cem@module$modules), decreasing=T))
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }
