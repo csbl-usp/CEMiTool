@@ -89,7 +89,7 @@ setMethod('plot_profile', signature('CEMiTool'),
                 g <- ggplot(mod_expr, aes_(x=~sample, y=~expression)) +
                      geom_tile(data=annot, alpha=0.3, height=Inf,
                                aes(x=get(sample_name_column), y=y_pos,
-                               fill=get(class_column)))
+                               fill=as.factor(get(class_column))))
             }
 
             # adding lines
