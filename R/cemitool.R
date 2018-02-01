@@ -176,6 +176,7 @@ setGeneric("expr_data<-", function(cem, value) {
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
          function(cem, value){
+			cem <- get_args(cem, vars=mget(ls()))
             cem@expression <- value
             cem@selected_genes <- rownames(cem@expression)
             return(cem)

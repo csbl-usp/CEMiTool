@@ -44,6 +44,7 @@ setReplaceMethod("interactions_data", signature("CEMiTool"),
         if(nrow(cem@module) == 0){
             stop("No genes in modules! Did you run find_modules?")
         }
+		cem <- get_args(cem, vars=mget(ls()))
         genes_by_module <- split(cem@module$genes, cem@module$modules)
         cem@interactions <- lapply(genes_by_module, function(x) {
             rows <- which(value[,1] %in% x | value[, 2] %in% x)
