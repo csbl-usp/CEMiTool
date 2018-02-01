@@ -96,8 +96,8 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 			             scale_y_continuous(expand = c(0.02, 0))
 		)
 
-		png("NULL")
         gp1 <- ggplot2::ggplotGrob(p1)
+        invisible(dev.off())
 
 		if(!is.null(annot)){		    
 			p2 <- ggplot2::ggplot(colors_samples, aes(samples, y=1, fill=factor(class))) +
@@ -112,9 +112,7 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 			order <- match(lvl, rownames(annot_num))
 			annot_num <- annot_num[order, , drop=FALSE]
 								    
-			#png("NULL")
-			#gp1 <- ggplot2::ggplotGrob(p1)  
-			gp2 <- ggplot2::ggplotGrob(p2)  
+			gp2 <- ggplot2::ggplotGrob(p2)
 									    
 			if(ncol(annot_num) > 0){
 				df_scaled <- as.data.frame(scale(annot_num))
@@ -137,7 +135,6 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 				gp1$widths[2:5] <- as.list(maxWidth)
 				gp2$widths[2:5] <- as.list(maxWidth)
 				gp3$widths[2:5] <- as.list(maxWidth)
-				invisible(dev.off())
 				g <- gridExtra::arrangeGrob(gp1, gp2, gp3, ncol=1,heights=c(2/5, 1/5, 2/5))
 				cem@sample_tree_plot <- g
 				return(cem)
@@ -145,13 +142,11 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 				maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5])
 				gp1$widths[2:5] <- as.list(maxWidth)
 				gp2$widths[2:5] <- as.list(maxWidth)
-				invisible(dev.off())
 				g <- gridExtra::arrangeGrob(gp1, gp2, ncol=1,heights=c(3/5, 2/5))
 				cem@sample_tree_plot <- g
 				return(cem)
 			}
 		}else{
-			invisible(dev.off())
 			g <- gridExtra::arrangeGrob(gp1, ncol=1)
 			cem@sample_tree_plot <- g
 			return(cem)
