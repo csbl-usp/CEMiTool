@@ -8,7 +8,8 @@
 \usage{
 plot_profile(cem, ...)
 
-\S4method{plot_profile}{CEMiTool}(cem, order_by_class = TRUE)
+\S4method{plot_profile}{CEMiTool}(cem, order_by_class = TRUE,
+  center_func = "mean")
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -19,6 +20,9 @@ plot_profile(cem, ...)
 annotation file is present. Whether or not to order by the 
 class column in the sample annotation file (as defined by the 
 class_column slot in \code{cem}).}
+
+\item{center_func}{Character string indicating the centrality measure to show in
+the plot. Either 'mean' (the default) or 'median'.}
 }
 \value{
 Object of class \code{CEMiTool} with profile plots

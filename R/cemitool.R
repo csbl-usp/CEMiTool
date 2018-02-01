@@ -205,7 +205,7 @@ setGeneric("mod_colors", function(cem) {
 #' @rdname mod_colors
 setMethod("mod_colors", signature("CEMiTool"),
          function(cem){
-            mod_names <- module_names(cem)
+            mod_names <- mod_names(cem)
             nmod <- length(mod_names)
             cols <- cem@mod_colors
             if(nmod != 0) {
@@ -236,7 +236,7 @@ setGeneric("mod_colors<-", function(cem, value) {
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
          function(cem, value){
-			mod_names <- module_names(cem)
+			mod_names <- mod_names(cem)
             cem@mod_colors <- value
             if(is.null(names(cem@mod_colors))){
 		stop("mod_colors should be a character vector with names corresponding to the modules")
@@ -346,6 +346,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param class_column A character string indicating the class column name of the
 #'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
+#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#'        (the default) or "median".
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
@@ -354,6 +356,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups  
 #' 		  defined by the class_column slot in the sample annotation file. Ignored if there is no 
 #' 		  sample_annotation file. Default \code{TRUE}.
+#' @param center_func Character string indicating the centrality measure to show in
+#'        the plot. Either 'mean' (the default) or 'median'.
 #' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
@@ -399,11 +403,13 @@ cemitool <- function(expr,
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
+					 rank_method="mean",
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=FALSE,
 					 order_by_class=TRUE,
+					 center_func="mean",
                      directed=FALSE,
                      verbose=FALSE
                      )
@@ -492,7 +498,7 @@ cemitool <- function(expr,
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
-        results <- mod_gsea(results, verbose=verbose)
+        results <- mod_gsea(results, rank_method=rank_method, verbose=verbose)
     }
 
     # if user provides .gmt file
@@ -509,7 +515,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Generating profile plots ...")
         }
-        results <- plot_profile(results, order_by_class=order_by_class)
+        results <- plot_profile(results, order_by_class=order_by_class, center_func=center_func)
 
         if (length(results@enrichment) > 0) {
             if(verbose){
@@ -589,24 +595,24 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #'
 #' @return Module names
 #'
-#' @rdname module_names
+#' @rdname mod_names
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Get module names
-#' module_names(cem)
+#' mod_names(cem)
 #'
 #' @export
-setGeneric('module_names', function(cem, include_NC=TRUE) {
-    standardGeneric('module_names')
+setGeneric('mod_names', function(cem, include_NC=TRUE) {
+    standardGeneric('mod_names')
 })
 
-#' @rdname module_names
-setMethod('module_names', signature(cem='CEMiTool'),
+#' @rdname mod_names
+setMethod('mod_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
               if(nrow(cem@module) > 0){
-                  mods <- unique(cem@module$modules)
+                  mods <- names(sort(table(cem@module$modules), decreasing=T))
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }

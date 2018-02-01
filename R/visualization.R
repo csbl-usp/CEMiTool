@@ -20,6 +20,8 @@ NULL
 #' 		  annotation file is present. Whether or not to order by the 
 #' 		  class column in the sample annotation file (as defined by the 
 #' 		  class_column slot in \code{cem}).
+#' @param center_func Character string indicating the centrality measure to show in
+#'        the plot. Either 'mean' (the default) or 'median'.
 #' @param ... Optional parameters.
 #'
 #' @return Object of class \code{CEMiTool} with profile plots
@@ -40,7 +42,10 @@ setGeneric('plot_profile', function(cem, ...) {
 
 #' @rdname plot_profile
 setMethod('plot_profile', signature('CEMiTool'),
-    function(cem, order_by_class=TRUE) {
+    function(cem, order_by_class=TRUE, center_func='mean') {
+		if(!tolower(center_func) %in% c("mean", "median")){
+		    stop("Invalid center_func type. Valid values are 'mean' and 'median'")
+	    }
         modules <- unique(cem@module$modules)
 		if(is.null(modules)){
 	   	    stop("No modules in this CEMiTool object.")
@@ -84,12 +89,12 @@ setMethod('plot_profile', signature('CEMiTool'),
                 g <- ggplot(mod_expr, aes_(x=~sample, y=~expression)) +
                      geom_tile(data=annot, alpha=0.3, height=Inf,
                                aes(x=get(sample_name_column), y=y_pos,
-                               fill=get(class_column)))
+                               fill=as.factor(get(class_column))))
             }
 
             # adding lines
             g <- g + geom_line(aes_(group=~id), alpha=0.2, colour=mod_cols[mod]) +
-                stat_summary(aes(group=1), size=1, fun.y=mean, geom='line')
+                stat_summary(aes(group=1), size=1, fun.y=get(tolower(center_func)), geom='line')
 
             # custom theme
             g <- g + theme(plot.title=element_text(lineheight=0.8,
