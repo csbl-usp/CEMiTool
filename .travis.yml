@@ -10,8 +10,8 @@ script:
 after_success:
  - if [[ "$TRAVIS_BRANCH" = *"RELEASE"* ]] || [[ "$TRAVIS_BRANCH" = *"docker" ]]; then
        docker pull csblusp/cemitool:builder;
-       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-       docker build -t csblusp/cemitool -f docker/Dockerfile .; 
+       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+       docker build -t csblusp/cemitool -f docker/Dockerfile . ;
        docker push csblusp/cemitool;
    fi
 env:
