@@ -1,12 +1,19 @@
 language: R
-r: bioc-devel
 services:
 - docker
-cache: packages
+install:
+ - docker image build -t csblusp/cemitool:builder -f docker/Dockerfile.build .
+script:
+ - docker container run --rm csblusp/cemitool:builder bash -c "R CMD build . && R CMD check --no-manual --no-build-vignettes --no-examples *tar.gz"
+ - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+ - docker push csblusp/cemitool:builder
 after_success:
-- if [[ "$TRAVIS_BRANCH" = *"RELEASE"* ]] || [[ "$TRAVIS_BRANCH" = *"docker" ]]; then docker login -u "$DOCKER_USERNAME" -p
-  "$DOCKER_PASSWORD"; docker build -t csblusp/cemitool ./docker; docker push csblusp/cemitool;
-  fi
+ - if [[ "$TRAVIS_BRANCH" = *"RELEASE"* ]] || [[ "$TRAVIS_BRANCH" = *"docker" ]]; then
+       docker pull csblusp/cemitool:builder;
+       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+       docker build -t csblusp/cemitool -f docker/Dockerfile .; 
+       docker push csblusp/cemitool;
+   fi
 env:
   global:
   - secure: tMuvyID3iqmoUrbX7Op8UmjmUbIydrH59u8sHdsQvDnySi1o3hDd37yxHLMUlS1XAu7rcVnvDqYBtBzvCWMKzmIzhP4xMMQKlFtNzM1mtjNRWOUluUZ0V0x1WpGZ1wtB3qdA+0fOpGos9nozDRZ99istlKblqx7c9TxjHrIWQdoVJKW+0jC9FSVVoPP/HAvS0F0vHAIzIK7HkcQFOQEjLBKDnQm1Z5QrenqXDoCkh3yr7u+vIQViqK+5EFYDm6Ha/+OFgI5j0kMtZc+7U3gP+e6Zx58UkCOT13G0FOQmmBKH08tS6rTYbgeO87oK5k0kswSQBgmrK63x4C0SmcX033FixOMBD1DamdW6rse5porqLXa/v8yN1lhD2LRRPttkneVtfdA12q6KLCaN5UYrgC018g7F+inK33/us5mIsLz9XTOmVkIxfCUtkA4a2CDvSKLFgog0ULuRiDJufvYzZfavk0s74gAVV8MpxgKbkooMgsFIJpDTJicSfpAx5WQii8XOw1JxnOsHRVqoYoD9XKt5UFM8sodYQO0GrbBMxyHzssLqS1uc1xe3VQuA7/lZVRy1bWUaQMOgQz+VCEMDCDpQCDjNbG2IJY4JA9QXrMKxeZgRvmvxXR2X8dHUGNl1jwskuBC8bA0nmdLdl3HBhDw4oU+87q0P5Uu0xiIBr0k=
