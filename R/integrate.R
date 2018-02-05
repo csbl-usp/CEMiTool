@@ -44,22 +44,22 @@ cem_overlap <- function(..., analyses_list = NULL, fraction = 1){
       names(analyses) <- paste0('cem',seq_along(analyses)) 
     }
 
-	analyses <- lapply(analyses, function(x){
-		if(is.character(x)){
-			if(file.exists(x)){
-				data.table::fread(x, data.table=FALSE)
-	        }
-	    }else if(class(x) == "CEMiTool"){
-			module_genes(x)
-		}else if(is.data.frame(x)){
-			x
-		}else{
-			warning("List element ", x, " is not a valid CEMiTool module file, 
-					CEMiTool object or data.frame and will be removed.")
-			NULL
-		}
-	})
-	analyses <- Filter(Negate(is.null), analyses)
+    analyses <- lapply(analyses, function(x){
+        if(is.character(x)){
+            if(file.exists(x)){
+                data.table::fread(x, data.table=FALSE)
+            }
+        }else if(class(x) == "CEMiTool"){
+            module_genes(x)
+        }else if(is.data.frame(x)){
+            x
+        }else{
+            warning("List element ", x, " is not a valid CEMiTool module file, 
+                    CEMiTool object or data.frame and will be removed.")
+            NULL
+        }
+    })
+    analyses <- Filter(Negate(is.null), analyses)
 
     edgelist <- lapply(seq_along(analyses), function(index){
         cem <- analyses[[index]]

@@ -36,12 +36,12 @@ setMethod('generate_report', signature('CEMiTool'),
             stop("No modules in CEMiTool object! Did you run find_modules()?")
         }
         if(dir.exists(directory)){
-		    if(!force){
-			    stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
-		  	}
-		}else{
-		    dir.create(directory, recursive=TRUE)
-		}
+            if(!force){
+                stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
+              }
+        }else{
+            dir.create(directory, recursive=TRUE)
+        }
         rmd <- system.file("report", "report.Rmd", package = "CEMiTool")
         rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, ...)
     })

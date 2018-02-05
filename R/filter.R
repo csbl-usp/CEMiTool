@@ -34,7 +34,6 @@ setGeneric('filter_expr', function(cem, ...) {
     standardGeneric('filter_expr')
 })
 
-
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
@@ -45,24 +44,23 @@ setMethod('filter_expr', signature('CEMiTool'),
             }
         }
         expr <- expr_data(cem, filtered=FALSE)
-    	if(nrow(expr) == 0){
-    	    stop("CEMiTool object has no expression file!")
-	    } 
+        if(nrow(expr) == 0){
+            stop("CEMiTool object has no expression file!")
+        }
 
-		vars <- mget(ls())
-		vars$expr <- NULL
-		cem <- get_args(cem=cem, vars=vars)
+        vars <- mget(ls())
+        vars$expr <- NULL
+        cem <- get_args(cem=cem, vars=vars)
 
         expr <- expr_pct_filter(expr, pct)
 
-        #expr_var <- apply(expr, 1, var)
         temp <- as.matrix(expr)
         rownames(temp) <- rownames(expr)
         colnames(temp) <- names(expr)
         expr <- temp
-         
+
         expr_var <- matrixStats::rowVars(expr)
-         
+
         expr <- expr[which(expr_var!=0),]
 
         if(!missing(n_genes)){

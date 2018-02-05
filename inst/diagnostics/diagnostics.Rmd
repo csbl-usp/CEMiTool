@@ -25,12 +25,6 @@ cat("#", title, "{.tabset}")
 		cem <- plot_sample_tree(cem)
 	}
 	grid::grid.draw(cem@sample_tree_plot)
-
-#	if(!is.null(nrow(cem@sample_tree_plot))){
-#        grid::grid.draw(cem@sample_tree_plot)
-#    }else {
-#        writeLines("### Please create sample tree plot!")
-#    }
 ```
 
 ## Mean Variance 
@@ -43,12 +37,6 @@ cat("#", title, "{.tabset}")
 	    cem <- plot_mean_var(cem)
     }
     print(cem@mean_var_plot)
-
-#	if(length(cem@mean_var_plot) > 1){
-#        print(cem@mean_var_plot)
-#    }else {
-#        writeLines("### Please create mean var plot!")
-#    }
 ```
 
 ## Quantile-quantile plot
@@ -61,12 +49,6 @@ cat("#", title, "{.tabset}")
 	    cem <- plot_qq(cem)
     }
     print(cem@qq_plot)
-
-#	if(length(cem@qq_plot) > 1){
-#        print(cem@qq_plot)
-#    }else {
-#        writeLines("### Please create QQ plot!")
-#    }
 ```
 
 ## Expression histogram
@@ -78,13 +60,7 @@ cat("#", title, "{.tabset}")
     if(inherits(error_if_empty, "error")){
 	    cem <- plot_hist(cem)
     }
-    print(cem@hist_plot)
-		  
-#    if(length(cem@hist_plot) > 1){
-#        print(cem@hist_plot)
-#    }else {
-#        writeLines("### Please create expression histogram!")
-#    }
+    print(cem@hist_plot)	  
 ```
 
 ## Beta x R2 plot
@@ -97,12 +73,6 @@ cat("#", title, "{.tabset}")
 	}else{
 		print(cem@beta_r2_plot[[1]])
 	}
-
-#	if(length(cem@beta_r2_plot) > 0){
-#        print(cem@beta_r2_plot[[1]])
-#    }else {
-#        writeLines("### Please create Beta x R2 plot!")
-#    }
 ```
 
 ## Mean connectivity plot
@@ -115,11 +85,4 @@ cat("#", title, "{.tabset}")
 	}else{
 		print(cem@mean_k_plot[[1]])
 	}
-
-
-#	if(length(cem@mean_k_plot) > 0){
-#        print(cem@mean_k_plot[[1]])
-#    }else {
-#        writeLines("### Please create mean connectivity plot!")
-#    }
 ```
