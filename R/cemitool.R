@@ -549,6 +549,13 @@ cemitool <- function(expr,
         results <- plot_mean_k(results)
     }
 
+
+    results@calls <- results@calls["cemitool", drop=FALSE]
+    results@input_params <- results@input_params["cemitool", drop=FALSE]
+
+    #results@input_params <- as.list(results@input_params$cemitool)
+    #results@calls <- as.list(results@calls$cemitool)
+    
     #cem@input_params <- list()
     #cem@calls <- list()
     #results <- get_args(cem=results, vars=mget(ls()))

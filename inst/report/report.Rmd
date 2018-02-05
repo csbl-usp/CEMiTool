@@ -150,26 +150,23 @@ DT::datatable(params, rownames=F)
 ```
 
 ## Input parameters##
-<!-- ### The following parameters were provided for each CEMiTool function: -->
 ```{r echo=FALSE, cache=FALSE, label=input-parameters}
-if(length(cem@input_params) == 0){
-    writeLines("### No parameters provided for this CEMiTool run")
-}else{
-    writeLines("### The following parameters were provided for each CEMiTool function:")
-    inputs <- cem@input_params
-    str(inputs)
-}
+    if(length(cem@input_params) == 0){
+        writeLines("### No parameters provided for this CEMiTool run")
+    }else{
+        writeLines("The following parameters were provided for each CEMiTool function:")
+        inputs <- cem@input_params
+        str(inputs)
+    }
 
 ```
 ## Calls##
-<!-- ### This CEMiTool run was created using the following calls: -->
 ```{r echo=FALSE, cache=FALSE, label=calls}
-
-if(length(cem@input_params) == 0){
-    writeLines("### No calls given for this CEMiTool run")
-}else{
-    writeLines("### This CEMiTool run was created using the following calls:")
-}
-calls <- cem@calls
-calls
+    if(length(cem@input_params) == 0){
+        writeLines("### No calls given for this CEMiTool run")
+    }else{
+        writeLines("This CEMiTool run was created using the following calls:")
+        calls <- cem@calls
+        calls
+    }
 ```
