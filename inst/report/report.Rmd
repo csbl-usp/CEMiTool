@@ -169,4 +169,3 @@ DT::datatable(params, rownames=F)
         calls <- cem@calls
         calls
     }
-```
