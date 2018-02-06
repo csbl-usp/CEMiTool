@@ -72,25 +72,18 @@ if (!interactive()) {
     # verbosity
     p$verbose <- parameters[["verbose"]]
 
-    # gene column
-    gene_column <- parameters[["gene_column"]]
-
     # expression file
     if(p$verbose){
         message("Reading expression file ...")
     }
     p$expr <- data.table::fread(parameters[["exprsfile"]], data.table=FALSE)
-    if(!gene_column %in% colnames(p$expr)) {
-        stop("Please give a valid column containing gene symbols.")
-    }
-
+    
     # remove the column containing gene symbols
     if(p$verbose) {
         message("Setting row names ...")
     }
-    rownames(p$expr) <- p$expr[[gene_column]]
-    col_to_remove <- which(gene_column %in% colnames(p$expr))
-    p$expr <- p$expr[, -col_to_remove]
+    rownames(p$expr) <- p$expr[,1]
+    p$expr[,1] <- NULL
 
     # verify if all columns are numeric
     if(!all(sapply(p$expr, is.numeric))){
