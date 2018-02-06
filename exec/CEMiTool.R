@@ -2,42 +2,36 @@
 
 "CEMiTool - Co-Expression Modules identification Tool
 
-Usage: cemitool.R EXPRSFILE  --output=<dir> [--sample-annot=<annot> --samples-column=<samplecol> --class-column=<classcol>
-                                             --no-filter (--filter-pval=<p>|--ngenes=<ngenes>) --vst --eps
-                                             --network-type=<nettype> --tom-type=<tomtype>
-                                             --interactions=<inter> --pathways=<gmt> --ora-pvalue=<p>
-                                             --cor-method=<cor> --no-merge --rank-method
-                                             --min-module-size=<min> --diss-thresh=<thresh>
-                                             --center-func=<fun> --directed --verbose]
+Usage: cemitool.R EXPRSFILE  --output=<dir> [--sample-annot=<annot> --samples-column=<samplecol> --class-column=<classcol> --no-filter (--filter-pval=<p>|--ngenes=<ngenes>) --vst --eps --network-type=<nettype> --tom-type=<tomtype> --interactions=<inter> --pathways=<gmt> --ora-pvalue=<p> --cor-method=<cor> --no-merge --rank-method --min-module-size=<min> --diss-thresh=<thresh> --center-func=<fun> --directed --verbose]
 
 Input:
   EXPRSFILE                         a normalized expression file .tsv format
 
 Options:
-  -h --help                         show this help message
-  --version                         show program version
-  -s <annot> --sample-annot=<annot> sample annotation, must have a column with sample names and class
-  --samples-column=<samplecol>      the column name containing sample names in template file [default: SampleName]
-  --class-column=<classcol>         the column name containing classes in template file [default: Class]
-  -i <int> --interactions=<int>     gene interaction file, must have two columns
-  -p <gmt> --pathways=<gmt>         GMT file name (Gene Matrix Transposed format)
-  --ora-pvalue=<p>                  p-value cutoff to be used on over representation analysis [default: 0.05]
-  --no-filter                       does not filter the expression data.frame
-  --filter-pval=<p>                 p-value to be used in the filtering step [default: 0.1]
-  --vst                             apply Variance Stabilizing Transformation
-  --ngenes=<ngenes>                 number of genes remaining after filtering
-  --eps=<eps>                       epsilon [default: 0.1]
-  -c <cor> --cor-method=<cor>       correlation method (spearman or pearson) [default: pearson]
-  --network-type=<nettype>          network type, 'signed' or 'unsigned' [default: unsigned]
-  --tom-type=<nettype>              TOM type, 'signed' or 'unsigned' [default: signed]
-  --no-merge                        does not merge related modules based on eigengene similarity
-  --rank-method                     rank method [default: mean]
-  --min-module-size=<min>           minimum module size [default: 30]
-  --diss-thresh=<thresh>            module merging correlation threshold for eigengene similarity [default: 0.8]
-  --center-func=<fun>               metric used for centering [default: mean]
-  --directed                        the interactions are directed
-  -o <dir> --output=<dir>           output directory
-  -v --verbose                      display progress messages
+  -h --help                          show this help message
+  --version                          show program version
+  -s <annot> --sample-annot=<annot>  sample annotation, must have a column with sample names and class
+  --samples-column=<samplecol>       the column name containing sample names in template file [default: SampleName]
+  --class-column=<classcol>          the column name containing classes in template file [default: Class]
+  -i <int> --interactions=<int>      gene interaction file, must have two columns
+  -p <gmt> --pathways=<gmt>          GMT file name (Gene Matrix Transposed format)
+  --ora-pvalue=<p>                   p-value cutoff to be used on over representation analysis [default: 0.05]
+  --no-filter                        does not filter the expression data.frame
+  --filter-pval=<p>                  p-value to be used in the filtering step [default: 0.1]
+  --vst                              apply Variance Stabilizing Transformation
+  --ngenes=<ngenes>                  number of genes remaining after filtering
+  --eps=<eps>                        epsilon [default: 0.1]
+  -c <cor> --cor-method=<cor>        correlation method (spearman or pearson) [default: pearson]
+  --network-type=<nettype>           network type, 'signed' or 'unsigned' [default: unsigned]
+  --tom-type=<nettype>               TOM type, 'signed' or 'unsigned' [default: signed]
+  --no-merge                         does not merge related modules based on eigengene similarity
+  --rank-method                      rank method [default: mean]
+  --min-module-size=<min>            minimum module size [default: 30]
+  --diss-thresh=<thresh>             module merging correlation threshold for eigengene similarity [default: 0.8]
+  --center-func=<fun>                metric used for centering [default: mean]
+  --directed                         the interactions are directed
+  -o <dir> --output=<dir>            output directory
+  -v --verbose                       display progress messages
 
 Authors:
   Pedro S T Russo - pedro.russo at usp.br
