@@ -148,24 +148,3 @@ params <- data.frame(Parameter=names(params_list),
 params <- merge(desc_df, params, all.y=TRUE)
 DT::datatable(params, rownames=F)
 ```
-
-## Input parameters##
-```{r echo=FALSE, cache=FALSE, label=input-parameters}
-    if(length(cem@input_params) == 0){
-        writeLines("### No parameters provided for this CEMiTool run")
-    }else{
-        writeLines("The following parameters were provided for each CEMiTool function:")
-        inputs <- cem@input_params
-        str(inputs)
-    }
-
-```
-## Calls##
-```{r echo=FALSE, cache=FALSE, label=calls}
-    if(length(cem@input_params) == 0){
-        writeLines("### No calls given for this CEMiTool run")
-    }else{
-        writeLines("This CEMiTool run was created using the following calls:")
-        calls <- cem@calls
-        calls
-    }
