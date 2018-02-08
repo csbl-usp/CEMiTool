@@ -64,9 +64,9 @@ setMethod('find_modules', signature('CEMiTool'),
         stop("Please specify only set_beta or force_beta!")
     }
 
-    vars <- mget(ls())
-    vars$expr <- NULL
-    cem <- get_args(cem, vars=vars)
+    #vars <- mget(ls())
+    #vars$expr <- NULL
+    #cem <- get_args(cem, vars=vars)
 
     expr_t <- t(expr)
     names(expr_t) <- rownames(expr)

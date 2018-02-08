@@ -129,7 +129,7 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
     }
     cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot,
         sample_name_column=sample_name_column, class_column=class_column)
-    cem <- get_args(cem, vars=mget(ls()))
+    #cem <- get_args(cem, vars=mget(ls()))
     return(cem)
 }
 
@@ -177,7 +177,7 @@ setGeneric("expr_data<-", function(cem, value) {
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
     function(cem, value){
-        cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
         cem@expression <- value
         cem@selected_genes <- rownames(cem@expression)
         return(cem)
@@ -425,7 +425,7 @@ cemitool <- function(expr,
                    class_column=class_column)
     
     # keep input parameters
-    results <- get_args(cem=results, vars=mget(ls()))
+    #results <- get_args(cem=results, vars=mget(ls()))
 
     if (filter) {
         if(!missing(n_genes)){

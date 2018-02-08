@@ -50,9 +50,9 @@ setMethod('plot_profile', signature('CEMiTool'),
         if(is.null(modules)){
                stop("No modules in this CEMiTool object.")
         }
-        vars <- mget(ls())
-        vars$modules <- NULL
-        cem <- get_args(cem=cem, vars=vars)
+        #vars <- mget(ls())
+        #vars$modules <- NULL
+        #cem <- get_args(cem=cem, vars=vars)
 
         modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
         expr <- expr_data(cem)
@@ -168,7 +168,7 @@ setMethod('plot_ora', signature('CEMiTool'),
             stop("No ORA data! Did you run mod_ora()?")
         }
           
-        cem <- get_args(cem=cem, vars=mget(ls()))
+        #cem <- get_args(cem=cem, vars=mget(ls()))
         ora_splitted <- split(cem@ora, cem@ora$Module)
         mod_cols <- mod_colors(cem)
         res <- lapply(ora_splitted, function(x){
@@ -269,7 +269,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
         if(length(cem@enrichment) == 0){
             stop("No GSEA data! Did you run mod_gsea()?")
         }
-        cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
 
         stats <- names(cem@enrichment)
         enrichment <- lapply(cem@enrichment, function(stat){
@@ -363,7 +363,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
         if(length(interactions_data(cem)) == 0){
             stop("No interactions information! Did you run interactions_data()?")
         }
-            cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
         mod_cols <- mod_colors(cem)
         mod_names <- names(cem@interactions)
         mod_names <- mod_names[which(mod_names!="Not.Correlated")]
@@ -487,7 +487,7 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
           if(nrow(cem@fit_indices) == 0){
             stop("No fit indices data! Did you run find_modules()?")
         }
-        cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
 
         fit <- cem@fit_indices
         fit$new_fit <- -sign(fit[, 3])*fit[, 2]
@@ -540,7 +540,7 @@ setMethod('plot_mean_k', signature('CEMiTool'),
         if(nrow(cem@fit_indices) == 0){
               stop("No fit indices data! Did you run find_modules()?")
         }
-          cem <- get_args(cem, vars=mget(ls()))
+        # cem <- get_args(cem, vars=mget(ls()))
         fit <- cem@fit_indices
 
         pl <- ggplot(fit, aes_(x=~Power, y=~mean.k.)) +

@@ -103,7 +103,7 @@ setGeneric('mod_ora', function(cem, ...) {
 #' @rdname mod_ora
 setMethod('mod_ora', signature(cem='CEMiTool'),
     function(cem, gmt, verbose=FALSE) {
-        cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
         if (verbose) {
             message('Running ORA')
         }
@@ -213,7 +213,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
             return(cem)
         }
 
-        cem <- get_args(cem, vars=mget(ls()))
+        #cem <- get_args(cem, vars=mget(ls()))
 
         if (verbose) {
             message('Running GSEA')

@@ -48,9 +48,9 @@ setMethod('filter_expr', signature('CEMiTool'),
             stop("CEMiTool object has no expression file!")
         }
 
-        vars <- mget(ls())
-        vars$expr <- NULL
-        cem <- get_args(cem=cem, vars=vars)
+        #vars <- mget(ls())
+        #vars$expr <- NULL
+        #cem <- get_args(cem=cem, vars=vars)
 
         expr <- expr_pct_filter(expr, pct)
 
