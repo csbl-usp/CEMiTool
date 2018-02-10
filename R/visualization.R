@@ -201,7 +201,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
 
     comsub <- function(x){
         #split the first and last element by character
-        d_x <- strsplit(x[c(1, length(x)), ""]
+        d_x <- strsplit(x[c(1, length(x))], "")
         #search for the first not common element, and so, get the last matching one
         der_com <- match(FALSE, do.call("==", d_x))-1
         return(substr(x, 1, der_com + 1))
