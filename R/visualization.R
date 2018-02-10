@@ -199,11 +199,28 @@ setMethod('plot_ora', signature('CEMiTool'),
 plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
                             graph_color="#4169E1", title="Over Representation Analysis"){
 
+    comsub <- function(x){
+        #split the first and last element by character
+        d_x <- strsplit(x[c(1, length(x)), ""]
+        #search for the first not common element, and so, get the last matching one
+        der_com <- match(FALSE, do.call("==", d_x))-1
+        return(substr(x, 1, der_com + 1))
+    }
+
     es[, "GeneSet"] <- es[, "ID"]
 
     # limits name length
     ovf_rows <- which(nchar(es[, "GeneSet"]) > max_length) # overflow
-    es[ovf_rows, "GeneSet"] <-  paste0(strtrim(es[ovf_rows, "GeneSet"], max_length), "...")
+    ovf_data <- es[ovf_rows, "GeneSet"]
+    test <- strtrim(ovf_data, max_length)
+    dupes <- duplicated(test) | duplicated(test, fromLast=T)
+    if(sum(dupes) > 0){
+        test[dupes] <- ovf_data[dupes]
+        test[dupes] <- comsub(test[dupes])
+        max_length <- max(nchar(test))
+    }
+
+    es[ovf_rows, "GeneSet"] <-  paste0(strtrim(test, max_length), "...")
     es[, "GeneSet"] <- stringr::str_wrap(es[, "GeneSet"], width = 20)
 
     # order bars
