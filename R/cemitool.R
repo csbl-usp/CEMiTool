@@ -27,7 +27,7 @@ setOldClass('gtable')
 #' @slot mean_k_plot ggplot graph with mean network connectivity.
 #' @slot barplot_ora list of ggplot graphs with over-representation analysis results per module.
 #' @slot sample_tree_plot gtable containing sample dendrogram with class labels and clinical data
-#' 	 (if available in sample_annotation(cem)).
+#'      (if available in sample_annotation(cem)).
 #' @slot mean_var_plot Mean x variance scatterplot.
 #' @slot hist_plot Expression histogram.
 #' @slot qq_plot Quantile-quantile plot.
@@ -58,32 +58,34 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 beta_r2_plot='list',
                                 mean_k_plot='list',
                                 barplot_ora='list',
-								sample_tree_plot='gtable',
-								mean_var_plot='gg',
-								hist_plot='gg',
-								qq_plot='gg',
+                                sample_tree_plot='gtable',
+                                mean_var_plot='gg',
+                                hist_plot='gg',
+                                qq_plot='gg',
                                 sample_name_column='vector',
                                 class_column='vector',
                                 mod_colors='character',
                                 parameters='list',
+                                input_params='list',
+                                calls='list',
                                 adjacency='matrix'))
 
 setMethod("initialize", signature="CEMiTool",
-          function(.Object, expression,
-                   sample_name_column="SampleName",
-                   class_column="Class", ...){
-              .Object@sample_name_column <- sample_name_column
-              .Object@class_column <- class_column
-              arguments <- list(...)
-              for( arg_name in names(arguments) ) {
-                  slot(.Object, arg_name) <- arguments[[arg_name]]
-              }
-              if (!missing(expression)) {
-                  slot(.Object, 'expression') <- expression
-                  slot(.Object, 'selected_genes') <- rownames(expression)
-              }
-              return(.Object)
-          })
+    function(.Object, expression,
+             sample_name_column="SampleName",
+             class_column="Class", ...){
+        .Object@sample_name_column <- sample_name_column
+        .Object@class_column <- class_column
+        arguments <- list(...)
+        for( arg_name in names(arguments) ) {
+            slot(.Object, arg_name) <- arguments[[arg_name]]
+        }
+        if (!missing(expression)) {
+            slot(.Object, 'expression') <- expression
+            slot(.Object, 'selected_genes') <- rownames(expression)
+        }
+        return(.Object)
+    })
 
 #' Create a CEMiTool object
 #'
@@ -111,22 +113,24 @@ setMethod("initialize", signature="CEMiTool",
 #' identical(cem, cem2)
 #' @export
 new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
-		sample_name_column="SampleName", class_column="Class"){
-	if(nrow(sample_annot) > 0){
-		if(!sample_name_column %in% names(sample_annot)){
-		    stop("Please supply a data.frame with a column named ",
-				sample_name_column,
-				" or change the sample_name_column argument.")
-			}
-		if(!class_column %in% names(sample_annot)){
-			stop("Please supply a data.frame with a column named ",
-				class_column,
-				" or change the class_column argument.")
-		}
-	}
+        sample_name_column="SampleName", class_column="Class"){
+
+    if(nrow(sample_annot) > 0){
+        if(!sample_name_column %in% names(sample_annot)){
+            stop("Please supply a data.frame with a column named ",
+                sample_name_column,
+                " or change the sample_name_column argument.")
+            }
+        if(!class_column %in% names(sample_annot)){
+            stop("Please supply a data.frame with a column named ",
+                class_column,
+                " or change the class_column argument.")
+        }
+    }
     cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot,
-		sample_name_column=sample_name_column, class_column=class_column)
-	return(cem)
+        sample_name_column=sample_name_column, class_column=class_column)
+    #cem <- get_args(cem, vars=mget(ls()))
+    return(cem)
 }
 
 #' Retrieve and set expression attribute
@@ -150,33 +154,34 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 #' @rdname expr_data
 #' @export
 setGeneric("expr_data", function(cem, ...) {
-            standardGeneric("expr_data")
-          })
+    standardGeneric("expr_data")
+})
 
 #' @rdname expr_data
 setMethod("expr_data", signature("CEMiTool"),
-         function(cem, filtered=TRUE){
-            if (filtered) {
-                return(cem@expression[cem@selected_genes,])
-            } else {
-                return(cem@expression)
-            }
-         })
+    function(cem, filtered=TRUE){
+       if (filtered) {
+           return(cem@expression[cem@selected_genes,])
+       } else {
+           return(cem@expression)
+       }
+    })
 
 
 #' @rdname expr_data
 #' @export
 setGeneric("expr_data<-", function(cem, value) {
-            standardGeneric("expr_data<-")
-          })
+    standardGeneric("expr_data<-")
+})
 
 #' @rdname expr_data
 setReplaceMethod("expr_data", signature("CEMiTool"),
-         function(cem, value){
-            cem@expression <- value
-            cem@selected_genes <- rownames(cem@expression)
-            return(cem)
-         })
+    function(cem, value){
+        #cem <- get_args(cem, vars=mget(ls()))
+        cem@expression <- value
+        cem@selected_genes <- rownames(cem@expression)
+        return(cem)
+    })
 
 
 
@@ -195,52 +200,52 @@ setReplaceMethod("expr_data", signature("CEMiTool"),
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors", function(cem) {
-            standardGeneric("mod_colors")
-          })
+    standardGeneric("mod_colors")
+})
 
 #' @rdname mod_colors
 setMethod("mod_colors", signature("CEMiTool"),
-         function(cem){
-            mod_names <- module_names(cem)
-            nmod <- length(mod_names)
-            cols <- cem@mod_colors
-            if(nmod != 0) {
-                if(length(cem@mod_colors) == 0){
-                    if(nmod <= 16) {
-                        cols <- rainbow(16, s = 1, v = 0.7)[1:nmod]
-                    } else {
-                        cols <- rep(rainbow(16, s = 1, v = 0.7), ceiling(nmod/16))[1:nmod]
-                    }
-                    names(cols) <- mod_names
-                } else {
-		    if(is.null(names(cem@mod_colors))){
-			warning("mod_colors should be a character vector with names corresponding to the modules")
-		    } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
-                        warning("mod_colors names do not match with modules!")
-                    }
-                }
-            }
-            return(cols)
-         } )
+    function(cem){
+       mod_names <- mod_names(cem)
+       nmod <- length(mod_names)
+       cols <- cem@mod_colors
+       if(nmod != 0) {
+           if(length(cem@mod_colors) == 0){
+               if(nmod <= 16) {
+                   cols <- rainbow(16, s = 1, v = 0.7)[1:nmod]
+               } else {
+                   cols <- rep(rainbow(16, s = 1, v = 0.7), ceiling(nmod/16))[1:nmod]
+               }
+               names(cols) <- mod_names
+           } else {
+               if(is.null(names(cem@mod_colors))){
+                   warning("mod_colors should be a character vector with names corresponding to the modules")
+               } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
+                   warning("mod_colors names do not match with modules!")
+               }
+           }
+       }
+       return(cols)
+    })
 
 #' @rdname mod_colors
 #' @export
 setGeneric("mod_colors<-", function(cem, value) {
-            standardGeneric("mod_colors<-")
-          })
+    standardGeneric("mod_colors<-")
+})
 
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
-         function(cem, value){
-			mod_names <- module_names(cem)
-            cem@mod_colors <- value
-            if(is.null(names(cem@mod_colors))){
-		stop("mod_colors should be a character vector with names corresponding to the modules")
-	    } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
-                stop("mod_colors names do not match with modules!")
-            }
-            return(cem)
-         } )
+    function(cem, value){
+        mod_names <- mod_names(cem)
+        cem@mod_colors <- value
+        if(is.null(names(cem@mod_colors))){
+            stop("mod_colors should be a character vector with names corresponding to the modules")
+        } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
+            stop("mod_colors names do not match with modules!")
+        }
+        return(cem)
+    })
 
 
 #' Retrive or set the sample_annotation attribute
@@ -276,48 +281,47 @@ setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
 #' @rdname sample_annotation
 #' @export
 setGeneric("sample_annotation", function(cem) {
-            standardGeneric("sample_annotation")
-          })
+    standardGeneric("sample_annotation")
+})
 
 #' @rdname sample_annotation
 setMethod("sample_annotation", signature("CEMiTool"),
-         function(cem){
-            return(cem@sample_annotation)
-         } )
+    function(cem){
+        return(cem@sample_annotation)
+    })
 
 #' @rdname sample_annotation
 #' @export
 setGeneric("sample_annotation<-", function(cem, sample_name_column="SampleName", class_column="Class", value) {
-            standardGeneric("sample_annotation<-")
-          })
+    standardGeneric("sample_annotation<-")
+})
 
 #' @rdname sample_annotation
 setReplaceMethod("sample_annotation", signature("CEMiTool"),
-         function(cem, sample_name_column="SampleName", class_column="Class", value){
-            if(!sample_name_column %in% colnames(value)){
-                stop("Please supply a data.frame with a column named ",
-                     sample_name_column,
-                     " or change the sample_name_column argument.")
-            }
-            if(!class_column %in% colnames(value)){
-                stop("Please supply a data.frame with a column named ",
-                     class_column,
-                     " or change the class_column argument.")
-            }
-            if(min(table(value[, class_column])) == 1){
-                warning("There is at least one class with only 1 sample in it. Results may be suboptimal.")
-            }
-            cem@sample_annotation <- value
-			cem@sample_name_column <- sample_name_column
-			cem@class_column <- class_column
-            return(cem)
-         } )
+    function(cem, sample_name_column="SampleName", class_column="Class", value){
+       if(!sample_name_column %in% colnames(value)){
+           stop("Please supply a data.frame with a column named ",
+                sample_name_column,
+                " or change the sample_name_column argument.")
+       }
+       if(!class_column %in% colnames(value)){
+           stop("Please supply a data.frame with a column named ",
+                class_column,
+                " or change the class_column argument.")
+       }
+       if(min(table(value[, class_column])) == 1){
+           warning("There is at least one class with only 1 sample in it. Results may be suboptimal.")
+       }
+       cem@sample_annotation <- value
+       cem@sample_name_column <- sample_name_column
+       cem@class_column <- class_column
+       return(cem)
+    })
 
 
 #' Full gene co-expression analysis
 #'
-#' Defines co-expression modules and functionally characterizes
-#' each one of them.
+#' Defines co-expression modules and runs several different analyses.
 #'
 #' @param expr Gene expression \code{data.frame}.
 #' @param annot Sample annotation \code{data.frame}.
@@ -326,13 +330,14 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param filter Logical. If TRUE, will filter expression data.
 #' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
 #' @param apply_vst Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
-#' Currently ignored if parameter \code{filter} is FALSE.
+#'           Currently ignored if parameter \code{filter} is FALSE.
 #' @param n_genes Number of genes left after filtering.
+#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1. 
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default is \code{"pearson"}.
 #' @param cor_function A character string indicating the correlation function to be used. Supported functions are
-#' currently 'cor' and 'bicor'. Default is \code{"cor"}
+#'           currently 'cor' and 'bicor'. Default is \code{"cor"}
 #' @param network_type A character string indicating if network type should be computed
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}
 #' @param tom_type  A character string indicating if the TOM type should be computed
@@ -342,11 +347,18 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param class_column A character string indicating the class column name of the
 #'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
+#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#'        (the default) or "median".
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param plot Logical. If \code{TRUE}, plots all figures.
+#' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups  
+#'           defined by the class_column slot in the sample annotation file. Ignored if there is no 
+#'           sample_annotation file. Default \code{TRUE}.
+#' @param center_func Character string indicating the centrality measure to show in
+#'        the plot. Either 'mean' (the default) or 'median'.
 #' @param directed Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
@@ -384,21 +396,25 @@ cemitool <- function(expr,
                      filter_pval=0.1,
                      apply_vst=FALSE,
                      n_genes,
+                     eps=0.1,
                      cor_method=c('pearson', 'spearman'),
-        		     cor_function='cor',
+                     cor_function='cor',
                      network_type='unsigned',
                      tom_type='signed',
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
+                     rank_method="mean",
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=FALSE,
+                     order_by_class=TRUE,
+                     center_func="mean",
                      directed=FALSE,
                      verbose=FALSE
-                     )
-{
+                     ){
+
     if (missing(expr)) {
         stop('Please provide expression data!')
     }
@@ -407,12 +423,15 @@ cemitool <- function(expr,
     results <- new('CEMiTool', expression=expr,
                    sample_name_column=sample_name_column,
                    class_column=class_column)
+    
+    # keep input parameters
+    #results <- get_args(cem=results, vars=mget(ls()))
 
     if (filter) {
         if(!missing(n_genes)){
             results <- filter_expr(results, n_genes=n_genes, apply_vst=apply_vst)
         } else {
-            results <- filter_expr(results, pval=filter_pval, apply_vst=apply_vst)
+            results <- filter_expr(results, filter_pval=filter_pval, apply_vst=apply_vst)
         }
         if (length(results@selected_genes) <= 0) {
             stop('Stopping analysis, no gene left for analysis. Maybe try to change the filter parameters.')
@@ -425,28 +444,29 @@ cemitool <- function(expr,
             message("Including sample annotation ...")
         }
         sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
-	}
+    }
 
-	if(plot){
-		if(verbose){
-			message("Plotting diagnostic plots ...")
-    	    message("...Plotting mean and variance scatterplot ...")
-	        message("...Plotting expression histogram ...")
-	        message("...Plotting qq plot ...")
-	        message("...Plotting sample tree ...")
-		}
-		  results <- plot_mean_var(results)
-	    results <- plot_hist(results)
-	    results <- plot_qq(results)
-	    results <- plot_sample_tree(results)
-	}
+    if(plot){
+        if(verbose){
+            message("Plotting diagnostic plots ...")
+            message("...Plotting mean and variance scatterplot ...")
+            message("...Plotting expression histogram ...")
+            message("...Plotting qq plot ...")
+            message("...Plotting sample tree ...")
+        }
+        results <- plot_mean_var(results)
+        results <- plot_hist(results)
+        results <- plot_qq(results)
+        results <- plot_sample_tree(results)
+    }
 
     if(verbose){
         message("Finding modules ...")
     }
     results <- find_modules(results,
                             cor_method=match.arg(cor_method),
-			    			cor_function=cor_function,
+                            cor_function=cor_function,
+                            eps=0.1,
                             min_ngen=min_ngen,
                             merge_similar=merge_similar,
                             diss_thresh=diss_thresh,
@@ -454,17 +474,17 @@ cemitool <- function(expr,
                             tom_type=tom_type,
                             verbose=verbose)
     if(verbose){
-      message("Plotting beta x R squared curve ...")
-      message("Plotting mean connectivity curve ...")
+        message("Plotting beta x R squared curve ...")
+        message("Plotting mean connectivity curve ...")
     }
 
     results <- plot_beta_r2(results)
     results <- plot_mean_k(results)
 
-	if(is.na(results@parameters$beta)){
-	  message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
-		return(results)
-	}
+    if(is.na(results@parameters$beta)){
+        message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
+        return(results)
+    }
 
     if (!missing(interactions)){
         if(verbose){
@@ -474,12 +494,12 @@ cemitool <- function(expr,
     }
 
 
-	if (!missing(annot)){
-		if(verbose){
+    if (!missing(annot)){
+        if(verbose){
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
-        results <- mod_gsea(results, verbose=verbose)
+        results <- mod_gsea(results, rank_method=rank_method, verbose=verbose)
     }
 
     # if user provides .gmt file
@@ -488,7 +508,7 @@ cemitool <- function(expr,
             message("Running over representation analysis ...")
         }
         #run mod_ora
-        results <- mod_ora(results, gmt_in=gmt, verbose=verbose)
+        results <- mod_ora(results, gmt=gmt, verbose=verbose)
     }
 
     # plots all desired charts
@@ -496,7 +516,7 @@ cemitool <- function(expr,
         if(verbose){
             message("Generating profile plots ...")
         }
-        results <- plot_profile(results)
+        results <- plot_profile(results, order_by_class=order_by_class, center_func=center_func)
 
         if (length(results@enrichment) > 0) {
             if(verbose){
@@ -528,6 +548,18 @@ cemitool <- function(expr,
         results <- plot_beta_r2(results)
         results <- plot_mean_k(results)
     }
+
+
+    results@calls <- results@calls["cemitool", drop=FALSE]
+    results@input_params <- results@input_params["cemitool", drop=FALSE]
+
+    #results@input_params <- as.list(results@input_params$cemitool)
+    #results@calls <- as.list(results@calls$cemitool)
+    
+    #cem@input_params <- list()
+    #cem@calls <- list()
+    #results <- get_args(cem=results, vars=mget(ls()))
+
     return(results)
 }
 
@@ -552,16 +584,15 @@ setGeneric('nmodules', function(cem) {
 
 #' @rdname nmodules
 setMethod('nmodules', signature(cem='CEMiTool'),
-          function(cem) {
-              n <- 0
-              if(nrow(cem@module) > 0){
-                  n <- length(unique(cem@module$modules))
-              } else {
-                  warning("Run cemitool function to get modules!")
-              }
-              return(n)
-          }
-)
+    function(cem) {
+        n <- 0
+        if(nrow(cem@module) > 0){
+            n <- length(unique(cem@module$modules))
+        } else {
+            warning("Run cemitool function to get modules!")
+        }
+        return(n)
+    })
 
 #' Get module names in a CEMiTool object
 #'
@@ -571,29 +602,29 @@ setMethod('nmodules', signature(cem='CEMiTool'),
 #'
 #' @return Module names
 #'
-#' @rdname module_names
+#' @rdname mod_names
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Get module names
-#' module_names(cem)
+#' mod_names(cem)
 #'
 #' @export
-setGeneric('module_names', function(cem, include_NC=TRUE) {
-    standardGeneric('module_names')
+setGeneric('mod_names', function(cem, include_NC=TRUE) {
+    standardGeneric('mod_names')
 })
 
-#' @rdname module_names
-setMethod('module_names', signature(cem='CEMiTool'),
+#' @rdname mod_names
+setMethod('mod_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
               if(nrow(cem@module) > 0){
-                  mods <- unique(cem@module$modules)
+                  mods <- names(sort(table(cem@module$modules), decreasing=T))
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }
               } else {
-                  warning("Run cemitool function to get modules!")
+                  warning("No modules in this CEMiTool object.")
               }
               return(mods)
           }
@@ -625,25 +656,25 @@ setGeneric('module_genes', function(cem, module=NULL) {
 
 #' @rdname module_genes
 setMethod('module_genes', signature(cem='CEMiTool'),
-          function(cem, module=NULL){
-              #mod_names <- unique(cem@module[, "modules"])
-              res <- NULL
-              if(nrow(cem@module) > 0){
-                  res <- cem@module
-              }else{
-                  message("Run cemitool function to get modules!")
-		  return(res)
-              }
-              mod_names <- unique(cem@module[, "modules"])
-              if(!is.null(module)){
-                  if(module %in% mod_names){
-                      res <- res[res$modules==module,]
-                  }else{
-                      stop("Undefined module!")
-                  }
-              }
-              return(res)
-          }
+    function(cem, module=NULL){
+        #mod_names <- unique(cem@module[, "modules"])
+        res <- NULL
+        if(nrow(cem@module) > 0){
+            res <- cem@module
+        }else{
+            message("No modules in this CEMiTool object.")
+            return(res)
+        }
+        mod_names <- unique(cem@module[, "modules"])
+        if(!is.null(module)){
+            if(module %in% mod_names){
+                res <- res[res$modules==module,]
+            }else{
+                stop("Undefined module!")
+            }
+        }
+        return(res)
+    }
 )
 
 #' Print a cemitool object
@@ -654,75 +685,75 @@ setMethod('module_genes', signature(cem='CEMiTool'),
 #'
 #' @export
 setMethod('show', signature(object='CEMiTool'),
-          function(object) {
-              cat("CEMiTool Object\n")
-              cat("- Number of modules:", suppressWarnings(nmodules(object)), "\n")
-              cat("- Modules: ")
-              if(nrow(object@module) == 0){
-                  cat("null\n")
-              } else {
-                  cat("\b\b (data.frame: ", nrow(object@module), "x", ncol(object@module), "): \n", sep="")
-                  print(object@module[1:3, ])
-              }
-              cat("- Expression file: ")
-              if(nrow(object@expression) == 0){
-                  cat("null\n")
-              } else {
-                  cat("data.frame with", nrow(object@expression), "genes and", ncol(object@expression), "samples\n")
-              }
-              if(is.character(object@selected_genes)){
-                  cat("- Selected data:", length(object@selected_genes), "genes selected\n")
-              }
-              cat("- Gene Set Enrichment Analysis: ")
-              if(length(object@enrichment)!=3) {
-                  cat("null\n")
-              } else {
-                  cat("\n    List containing 3 data.frames:\n")
-                  cat("        - $ es   : Enrichment Scores ")
-                  cat("(", nrow(object@enrichment$es), "x", ncol(object@enrichment$es), ") \n", sep="")
-                  cat("        - $ nes  : Normalized Enrichment Scores ")
-                  cat("(", nrow(object@enrichment$nes), "x", ncol(object@enrichment$nes), ") \n", sep="")
-                  cat("        - $ pval : p-value ")
-                  cat("(", nrow(object@enrichment$pval), "x", ncol(object@enrichment$pval), ") \n", sep="")
-              }
-              cat("- Over Representation Analysis: ")
-              if(nrow(object@ora)==0) {
-                  cat("null\n")
-              } else {
-                  cat("\b\b (data.frame: ", nrow(object@ora), "x", ncol(object@ora), "): \n", sep="")
-                  print(object@ora[1:3, c('Module', "ID", "p.adjust")])
-              }
-              cat("- Profile plot: ")
-              if(length(object@profile_plot)==0) {
-                  cat("null\n")
-              } else {
-                  cat("ok\n")
-              }
-              cat("- Enrichment plot: ")
-              if(!is.ggplot(object@enrichment_plot)) {
-                  cat("null\n")
-              } else {
-                  cat("ok\n")
-              }
-              cat("- ORA barplot: ")
-              if(length(object@barplot_ora)==0) {
-                  cat("null\n")
-              } else {
-                  cat("ok\n")
-              }
-              cat("- Beta x R2 plot: ")
-              if(!is.ggplot(object@beta_r2_plot)) {
-                  cat("null\n")
-              } else {
-                  cat("ok\n")
-              }
-              cat("- Mean connectivity plot: ")
-              if(!is.ggplot(object@mean_k_plot)) {
-                  cat("null\n")
-              } else {
-                  cat("ok\n")
-              }
-          }
+    function(object) {
+        cat("CEMiTool Object\n")
+        cat("- Number of modules:", suppressWarnings(nmodules(object)), "\n")
+        cat("- Modules: ")
+        if(nrow(object@module) == 0){
+            cat("null\n")
+        } else {
+            cat("\b\b (data.frame: ", nrow(object@module), "x", ncol(object@module), "): \n", sep="")
+            print(object@module[1:3, ])
+        }
+        cat("- Expression file: ")
+        if(nrow(object@expression) == 0){
+            cat("null\n")
+        } else {
+            cat("data.frame with", nrow(object@expression), "genes and", ncol(object@expression), "samples\n")
+        }
+        if(is.character(object@selected_genes)){
+            cat("- Selected data:", length(object@selected_genes), "genes selected\n")
+        }
+        cat("- Gene Set Enrichment Analysis: ")
+        if(length(object@enrichment)!=3) {
+            cat("null\n")
+        } else {
+            cat("\n    List containing 3 data.frames:\n")
+            cat("        - $ es   : Enrichment Scores ")
+            cat("(", nrow(object@enrichment$es), "x", ncol(object@enrichment$es), ") \n", sep="")
+            cat("        - $ nes  : Normalized Enrichment Scores ")
+            cat("(", nrow(object@enrichment$nes), "x", ncol(object@enrichment$nes), ") \n", sep="")
+            cat("        - $ pval : p-value ")
+            cat("(", nrow(object@enrichment$pval), "x", ncol(object@enrichment$pval), ") \n", sep="")
+        }
+        cat("- Over Representation Analysis: ")
+        if(nrow(object@ora)==0) {
+            cat("null\n")
+        } else {
+            cat("\b\b (data.frame: ", nrow(object@ora), "x", ncol(object@ora), "): \n", sep="")
+            print(object@ora[1:3, c('Module', "ID", "p.adjust")])
+        }
+        cat("- Profile plot: ")
+        if(length(object@profile_plot)==0) {
+            cat("null\n")
+        } else {
+            cat("ok\n")
+        }
+        cat("- Enrichment plot: ")
+        if(!is.ggplot(object@enrichment_plot)) {
+            cat("null\n")
+        } else {
+            cat("ok\n")
+        }
+        cat("- ORA barplot: ")
+        if(length(object@barplot_ora)==0) {
+            cat("null\n")
+        } else {
+            cat("ok\n")
+        }
+        cat("- Beta x R2 plot: ")
+        if(!is.ggplot(object@beta_r2_plot)) {
+            cat("null\n")
+        } else {
+            cat("ok\n")
+        }
+        cat("- Mean connectivity plot: ")
+        if(!is.ggplot(object@mean_k_plot)) {
+            cat("null\n")
+        } else {
+            cat("ok\n")
+        }
+    }
 )
 
 #' Save the CEMiTool object in files
@@ -746,43 +777,43 @@ setGeneric('write_files', function(cem, ...) {
 
 #' @rdname write_files
 setMethod('write_files', signature(cem='CEMiTool'),
-          function(cem, directory="./Tables", force=FALSE) {
-              if(dir.exists(directory)){
-                  if(!force){
-                      stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
-                  }
-              } else {
-                  dir.create(directory)
-              }
-              if(nrow(cem@module) > 0){
-                  write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
-              }
-              if(length(cem@selected_genes) > 0){
-                  writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
-              }
-              if(length(cem@enrichment) > 0){
-                  write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=FALSE)
-                  write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=FALSE)
-                  write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=FALSE)
-              }
-              if(nrow(cem@ora) > 0){
-                  write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=FALSE)
-              }
-              if(length(cem@interactions) > 0){
-		  mod_ints <- lapply(names(cem@interactions), function(x){
-	              mod_int <- igraph::get.edgelist(cem@interactions[[x]])
-	              if(nrow(mod_int) > 0 ){
-		          cbind(x, mod_int)
-       		      }
-		  })
-		  int_df <- do.call("rbind", mod_ints)
-		  colnames(int_df) <- c("Module", "Gene1", "Gene2")
-                  write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)
-              }
-              if(length(cem@parameters) > 0){
-                  params <- cem@parameters
-                  param_df <- data.frame(Parameter=names(params), Value=as.character(params))
-                  write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=FALSE)
-              }
-          }
+    function(cem, directory="./Tables", force=FALSE) {
+        if(dir.exists(directory)){
+            if(!force){
+                stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
+            }
+        } else {
+            dir.create(directory)
+        }
+        if(nrow(cem@module) > 0){
+            write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
+        }
+        if(length(cem@selected_genes) > 0){
+            writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
+        }
+        if(length(cem@enrichment) > 0){
+            write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=FALSE)
+            write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=FALSE)
+            write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=FALSE)
+        }
+        if(nrow(cem@ora) > 0){
+            write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=FALSE)
+        }
+        if(length(cem@interactions) > 0){
+            mod_ints <- lapply(names(cem@interactions), function(x){
+                mod_int <- igraph::get.edgelist(cem@interactions[[x]])
+                if(nrow(mod_int) > 0 ){
+                    cbind(x, mod_int)
+                }
+            })
+            int_df <- do.call("rbind", mod_ints)
+            colnames(int_df) <- c("Module", "Gene1", "Gene2")
+            write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)
+        }
+        if(length(cem@parameters) > 0){
+            params <- cem@parameters
+            param_df <- data.frame(Parameter=names(params), Value=as.character(params))
+            write.table(param_df, file.path(directory, "parameters.tsv"), sep="\t", row.names=FALSE)
+        }
+    }
 )

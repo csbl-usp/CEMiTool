@@ -16,7 +16,7 @@ get_cemitool_r2_beta(cem, ...)
 \item{...}{Optional parameters.}
 
 \item{eps}{A value indicating the accepted interval between successive
-      values of R squared to use to calculate the selected beta. 
+   values of R squared to use to calculate the selected beta. 
 Default: 0.1.}
 }
 \value{

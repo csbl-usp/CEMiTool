@@ -3,7 +3,7 @@ context('mod_colors')
 test_that('mod_colors input is a named character vector', {
 	mod_cols <- mod_colors(cem)
 	expect_is(mod_cols, "character")
-	expect_named(mod_cols, module_names(cem))
+	expect_named(mod_cols, mod_names(cem))
 })
 
 test_that('mod_colors returns the correct errors when given bad input', {

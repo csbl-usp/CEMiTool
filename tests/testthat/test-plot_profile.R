@@ -9,5 +9,5 @@ test_that('plot_profile throws an error when there are no modules', {
 
 test_that('plot_profile returns as many plots as modules', {
 	cem <- plot_profile(cem)
-    expect_equal(length(module_names(cem)), length(cem@profile_plot))
+    expect_equal(length(mod_names(cem)), length(cem@profile_plot))
 })

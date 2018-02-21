@@ -6,7 +6,7 @@ NULL
 #' Filter gene expression table
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param pval P-value cutoff for gene selection.
+#' @param filter_pval P-value cutoff for gene selection.
 #' @param n_genes Number of genes to be selected.
 #' @param pct Percentage of most expressed genes to keep (before variance filter).
 #' @param apply_vst Logical. If TRUE, will apply variance stabilizing transform before filtering data.
@@ -34,82 +34,83 @@ setGeneric('filter_expr', function(cem, ...) {
     standardGeneric('filter_expr')
 })
 
-
 #' @rdname filter_expr
 #' @export
 setMethod('filter_expr', signature('CEMiTool'),
-        function(cem, pval=0.1, n_genes, pct=0.75, apply_vst=FALSE){
-              if(!missing(n_genes)){
-                  if(!missing(pval)){
-                      stop("Please specify exclusively pval or n_genes.")
-                  }
-              }
-              expr <- expr_data(cem, filtered=FALSE)
-	      if(nrow(expr) == 0){
-	          stop("CEMiTool object has no expression file!")
-	      } 
+    function(cem, filter_pval=0.1, n_genes, pct=0.75, apply_vst=FALSE){
+        if(!missing(n_genes)){
+            if(!missing(filter_pval)){
+                stop("Please specify exclusively filter_pval or n_genes.")
+            }
+        }
+        expr <- expr_data(cem, filtered=FALSE)
+        if(nrow(expr) == 0){
+            stop("CEMiTool object has no expression file!")
+        }
 
-              expr <- expr_pct_filter(expr, pct)
+        #vars <- mget(ls())
+        #vars$expr <- NULL
+        #cem <- get_args(cem=cem, vars=vars)
 
-              #expr_var <- apply(expr, 1, var)
-              temp <- as.matrix(expr)
-              rownames(temp) <- rownames(expr)
-              colnames(temp) <- names(expr)
-              expr <- temp
-             
-              
-              expr_var <- matrixStats::rowVars(expr)
-              
-              expr <- expr[which(expr_var!=0),]
+        expr <- expr_pct_filter(expr, pct)
 
-              if(!missing(n_genes)){
-                  n_genes <- min(n_genes, nrow(expr))
-              }
+        temp <- as.matrix(expr)
+        rownames(temp) <- rownames(expr)
+        colnames(temp) <- names(expr)
+        expr <- temp
 
-              if (apply_vst){
-                  expr <- vst(expr)
-                  temp <- data.frame(expr)
-                  rownames(temp) <- rownames(expr)
-                  names(temp) <- colnames(expr)
-                  expr_data(cem) <- temp
-              }
+        expr_var <- matrixStats::rowVars(expr)
 
-              expr_var <- matrixStats::rowVars(expr)
-              names(expr_var) <- rownames(expr)
+        expr <- expr[which(expr_var!=0),]
 
-              mean_var <- mean(expr_var)
-              var_var <- var(expr_var)
+        if(!missing(n_genes)){
+            n_genes <- min(n_genes, nrow(expr))
+        }
 
-              ah <- mean_var^2/var_var + 2
-              bh <- mean_var*(ah - 1)
+        if (apply_vst){
+            expr <- vst(expr)
+            temp <- data.frame(expr)
+            rownames(temp) <- rownames(expr)
+            names(temp) <- colnames(expr)
+            expr_data(cem) <- temp
+        }
 
-              p <- sapply(expr_var, function(x) {
-                  ig <- pracma::gammainc(bh/x, ah)['uppinc']
-                  g <- gamma(ah)
-                  return(1 - ig/g)
-              })
+        expr_var <- matrixStats::rowVars(expr)
+        names(expr_var) <- rownames(expr)
 
-              names(p) <- gsub('.uppinc', '', names(p))
+        mean_var <- mean(expr_var)
+        var_var <- var(expr_var)
 
-              if(!missing(n_genes)){
-                  pval <- sort(p)[n_genes]
-                  names(pval) <- NULL
-              }
+        ah <- mean_var^2/var_var + 2
+        bh <- mean_var*(ah - 1)
 
-              selected <- which(p <= pval)
+        p <- sapply(expr_var, function(x) {
+            ig <- pracma::gammainc(bh/x, ah)['uppinc']
+            g <- gamma(ah)
+            return(1 - ig/g)
+        })
 
-              if (length(selected) > 0) {
-                  cem@selected_genes <- names(selected)
-              } else {
-                  cem@selected_genes <- selected
-                  warning('No gene left after the filtering')
-              }
+        names(p) <- gsub('.uppinc', '', names(p))
 
-              cem@parameters <- c(cem@parameters,
-                                  n_genes=length(selected),
-                                  filter_pval=pval)
-              return(cem)
-          })
+        if(!missing(n_genes)){
+            filter_pval <- sort(p)[n_genes]
+            names(filter_pval) <- NULL
+        }
+
+        selected <- which(p <= filter_pval)
+
+        if (length(selected) > 0) {
+            cem@selected_genes <- names(selected)
+        } else {
+            cem@selected_genes <- selected
+            warning('No gene left after the filtering')
+        }
+
+        cem@parameters <- c(cem@parameters,
+                            n_genes=length(selected),
+                            filter_pval=filter_pval)
+        return(cem)
+    })
 
 #' Perform variance stabilizing transformation on expression file.
 #'

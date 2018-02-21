@@ -5,11 +5,13 @@
 \title{Full gene co-expression analysis}
 \usage{
 cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
-  apply_vst = FALSE, n_genes, cor_method = c("pearson", "spearman"),
-  cor_function = "cor", network_type = "unsigned", tom_type = "signed",
-  sample_name_column = "SampleName", class_column = "Class",
-  merge_similar = TRUE, ora_pval = 0.05, min_ngen = 30,
-  diss_thresh = 0.8, plot = FALSE, directed = FALSE, verbose = FALSE)
+  apply_vst = FALSE, n_genes, eps = 0.1, cor_method = c("pearson",
+  "spearman"), cor_function = "cor", network_type = "unsigned",
+  tom_type = "signed", sample_name_column = "SampleName",
+  class_column = "Class", merge_similar = TRUE, rank_method = "mean",
+  ora_pval = 0.05, min_ngen = 30, diss_thresh = 0.8, plot = FALSE,
+  order_by_class = TRUE, center_func = "mean", directed = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -28,6 +30,8 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
 Currently ignored if parameter \code{filter} is FALSE.}
 
 \item{n_genes}{Number of genes left after filtering.}
+
+\item{eps}{A value for accepted R-squared interval between subsequent beta values. Default is 0.1.}
 
 \item{cor_method}{A character string indicating which correlation coefficient is
 to be computed. One of \code{"pearson"} or \code{"spearman"}.
@@ -50,6 +54,9 @@ annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
 
+\item{rank_method}{Character string indicating how to rank genes. Either "mean" 
+(the default) or "median".}
+
 \item{ora_pval}{P-value for overrepresentation analysis. Default \code{0.05}.}
 
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
@@ -59,6 +66,13 @@ Default \code{0.8}.}
 
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
 
+\item{order_by_class}{Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
+defined by the class_column slot in the sample annotation file. Ignored if there is no 
+sample_annotation file. Default \code{TRUE}.}
+
+\item{center_func}{Character string indicating the centrality measure to show in
+the plot. Either 'mean' (the default) or 'median'.}
+
 \item{directed}{Logical. If \code{TRUE}, the igraph objects in interactions slot will be directed.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
@@ -67,8 +81,7 @@ Default \code{0.8}.}
 Object of class \code{CEMiTool}
 }
 \description{
-Defines co-expression modules and functionally characterizes
-each one of them.
+Defines co-expression modules and runs several different analyses.
 }
 \examples{
 \dontrun{

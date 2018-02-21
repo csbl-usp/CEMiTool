@@ -27,5 +27,7 @@ test_that('find_modules throws errors with innapropriate set_beta values', {
 	expect_error(invisible(capture.output(find_modules(cem, set_beta="foo"))))
 })
 
-
+test_that('find_modules throws error when set_beta and force_beta are given together', {
+	expect_error(invisible(capture.output(find_modules(cem, set_beta=7, force_beta=TRUE))))		  
+})
 

@@ -1,0 +1,36 @@
+citHeader("To cite CEMiTool in publications use:")
+
+citEntry(entry = "Article",
+  title        = "CEMiTool: a Bioconductor package for performing comprehensive modular co-expression analyses",
+  author       = personList(as.person("Pedro de Sa Tavares Russo"),
+                            as.person("Gustavo Rodrigues Ferreira"),
+                            as.person("Lucas Esteves Cardozo"),
+                            as.person("Matheus Carvalho Burger"),
+                            as.person("Raul Arias-Carrasco"),
+                            as.person("Sandra Regina Maruyama"),
+                            as.person("Thiago Dominguez Crespo Hirata"),
+                            as.person("Diogenes Saulo Lima"),
+                            as.person("Fernando Marcon Passos"),
+                            as.person("Kiyoshi Ferreira Fukutani"),
+                            as.person("Melissa Lever"),
+                            as.person("Joao Santana Silva"),
+                            as.person("Vinicius Maracaja-Coutinho"),
+                            as.person("Helder Takashi Imoto Nakaya")
+                            ),
+  journal      = "BMC Bioinformatics",
+  year         = "2018",
+  volume       = "19",
+  number       = "56",
+  pages        = "1--13",
+  doi          = "10.1186/s12859-018-2053-1",
+  url          = "https://doi.org/10.1186/s12859-018-2053-1",
+
+  textVersion  =
+  paste("Pedro S. T. Russo, Gustavo R. Ferreira, Lucas E. Cardozo, Matheus C. Burger,",
+        "Raul Arias-Carrasco, Sandra R. Maruyama, Thiago D. C. Hirata, Diogenes S. Lima,",
+        "Fernando M. Passos, Kiyoshi F. Fukutani, Melissa Lever, Joao S. Silva,",
+        "Vinicius Maracaja-Coutinho", "Helder I. Nakaya",
+        "CEMiTool: a Bioconductor package for performing comprehensive modular co-expression analyses",
+        "BMC Bioinformatics, 19:56, 1-13.",
+        "URL https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2053-1")
+)

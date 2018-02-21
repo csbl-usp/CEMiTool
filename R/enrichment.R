@@ -26,11 +26,10 @@ read_gmt <- function(fname){
     gmt_genes <- lapply(gmt_list, function(x){x[3:length(x)]})
     names(gmt_desc) <- names(gmt_genes) <- gmt_names
     res <- do.call(rbind, lapply(names(gmt_genes),
-				function(n) cbind.data.frame(term=n, gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
-	res$term <- as.factor(res$term)
-	return(res)
+                function(n) cbind.data.frame(term=n, gene=gmt_genes[[n]], stringsAsFactors=FALSE)))
+    res$term <- as.factor(res$term)
+    return(res)
 }
-
 
 # Performs Over Representation Analysis for a list of genes and a GMT
 #
@@ -77,7 +76,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
 #' Performs overrepresentation analysis for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param gmt_in Object of class \code{data.frame} with 2 columns, one with
+#' @param gmt Object of class \code{data.frame} with 2 columns, one with
 #' pathways and one with genes
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
@@ -103,36 +102,37 @@ setGeneric('mod_ora', function(cem, ...) {
 
 #' @rdname mod_ora
 setMethod('mod_ora', signature(cem='CEMiTool'),
-          function(cem, gmt_in, verbose=FALSE) {
-              if (verbose) {
-                  message('Running ORA')
-              }
-              message("Using all genes in GMT file as universe.")
-              allgenes <- unique(gmt_in[, "gene"])
-	      	  if(is.null(module_genes(cem))){
-	          	  warning("No modules in CEMiTool object! Did you run find_modules()?")
-	          	  return(cem)
-	       	  }
-              mods <- split(cem@module[, "genes"], cem@module[, "modules"])
-              res_list <- lapply(names(mods), ora, gmt_in, allgenes, mods)
-              if (all(lapply(res_list, nrow) == 0)){
-                  warning("Enrichment is NULL. Either your gmt file is inadequate or your modules really aren't enriched for any of the pathways in the gmt file.")
-			      return(cem)
-              }
-              names(res_list) <- names(mods)
-
-              res <- lapply(names(res_list), function(x){
-                  if(nrow(res_list[[x]]) > 0){
-                      as.data.frame(cbind(x, res_list[[x]]))
-                  }
-              })
-              res <- do.call(rbind, res)
-              names(res)[names(res) == "x"] <- "Module"
-              
-              rownames(res) <- NULL
-              cem@ora <- res
+    function(cem, gmt, verbose=FALSE) {
+        #cem <- get_args(cem, vars=mget(ls()))
+        if (verbose) {
+            message('Running ORA')
+        }
+        message("Using all genes in GMT file as universe.")
+        allgenes <- unique(gmt[, "gene"])
+        if(is.null(module_genes(cem))){
+              warning("No modules in CEMiTool object! Did you run find_modules()?")
               return(cem)
-          }
+        }
+        mods <- split(cem@module[, "genes"], cem@module[, "modules"])
+        res_list <- lapply(names(mods), ora, gmt, allgenes, mods)
+        if (all(lapply(res_list, nrow) == 0)){
+            warning("Enrichment is NULL. Either your gmt file is inadequate or your modules really aren't enriched for any of the pathways in the gmt file.")
+            return(cem)
+        }
+        names(res_list) <- names(mods)
+
+        res <- lapply(names(res_list), function(x){
+            if(nrow(res_list[[x]]) > 0){
+                as.data.frame(cbind(x, res_list[[x]]))
+            }
+        })
+        res <- do.call(rbind, res)
+        names(res)[names(res) == "x"] <- "Module"
+
+        rownames(res) <- NULL
+        cem@ora <- res
+        return(cem)
+    }
 )
 
 #' Retrieve over representation analysis (ORA) results
@@ -158,15 +158,17 @@ setGeneric("ora_data", function(cem) {
 
 #' @rdname ora_data
 setMethod("ora_data", signature("CEMiTool"),
-          function(cem){
-                  return(cem@ora)
-              })
+    function(cem){
+        return(cem@ora)
+    })
 
 #' Module Gene Set Enrichment Analysis 
 #'
 #' Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
+#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#' (the default) or "median".
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #' 
@@ -192,109 +194,113 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-          function(cem, verbose=FALSE) {
-		      if(nrow(expr_data(cem)) == 0){
-				  warning("CEMiTool object has no expression file!")
-		  	      return(cem)
-		      }
-
-              if (nrow(cem@sample_annotation)==0) {
-                  warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
-                  return(cem)
-              }
-              
-              if(is.null(module_genes(cem))){
-                  warning("No modules in CEMiTool object! Did you run find_modules()?")
-				  return(cem)
-              }
-
-              if (verbose) {
-                  message('Running GSEA')
-              }
-              
-              # creates gene sets from modules
-              modules <- unique(cem@module[, 'modules'])
-              gene_sets <- lapply(modules, function(mod){
-                  return(cem@module[cem@module[, 'modules']==mod, 'genes'])
-              })
-              names(gene_sets) <- modules
-              
-              annot <- cem@sample_annotation
-              class_col <- cem@class_column
-              sample_col <- cem@sample_name_column
-              classes <- unique(annot[, class_col])
-              
-              
-              # Check if expression samples are all in sample_annotation
-              expr_samples <- names(expr_data(cem))
-              annot_samples <- sample_annotation(cem)[, sample_col]
-              if(!all(expr_samples %in% annot_samples)){
-                  stop("Sample annotation file does not contain all samples in expression file. Please input new sample annotation file using function sample_annotation()")
-              }
-              if(length(expr_samples) < length(annot_samples)){
-                  warning("Expression file has less samples than annotation file. Cutting annotation file.")
-                  annot <- annot[annot[,sample_col] %in% expr_samples,]
-                  annot_samples <- annot[, sample_col]
-              }
-              
-              # expression to z-score
-              z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
-                                           center=TRUE, 
-                                           scale=TRUE)),
-                                   check.names = FALSE,
-                                   stringsAsFactors=FALSE)
-              
-              # calculates enrichment for each module for each class in annot
-              
-              gsea_list <- lapply(classes, function(class_group){
-                  
-                  if (verbose) {
-                      message('Calculating modules enrichment analysis for class ',
-                                     class_group)
-                  }
-                  # samples of class == class_group
-                  class_samples <- annot[annot[, class_col]==class_group, sample_col]
-                  
-                  # genes ranked by mean
-                  genes_ranked <- apply(z_expr[, class_samples, drop=FALSE], 1, mean)
-                  genes_ranked <- sort(genes_ranked, decreasing=TRUE)
-                  
-                  # BiocParallel setting up
-                  BiocParallel::register(BiocParallel::SerialParam())
-                  
-                  gsea_results <- fgsea::fgsea(pathways=gene_sets,
-                                               stats=genes_ranked,
-                                               minSize=15,
-                                               maxSize=500,
-                                               nperm=10000,
-                                               nproc=0)
-                  setDF(gsea_results)
-                  gsea_results[, 'leadingEdge'] <- unlist(lapply(gsea_results[, 'leadingEdge'],
-                                                                 function(ledges){
-                                                                     ledges <- paste(ledges, collapse=",")
-                                                                 }))
-                  columns <- colnames(gsea_results) 
-                  colnames(gsea_results) <- c(columns[1], paste0(columns[-1], "_", class_group))
-                  return(gsea_results)
-              })
-              # merging all classes gsea results into one data.frame
-              all_classes_df <- Reduce(function(x,y) {
-                  merge(x,y, all=TRUE, by='pathway')
-              }, gsea_list) 
-              
-              # separating ES / NES / pval
-              patterns <- list('es'='^ES_','nes'='^NES_', 'pval'='^pval_')
-              out_gsea <- lapply(patterns, function(pattern) {
-                  desired_stat <- all_classes_df[, c('pathway',
-                                                     grep(pattern, colnames(all_classes_df),value=TRUE))]
-                  colnames(desired_stat) <- gsub(pattern, '', colnames(desired_stat))
-                  return(desired_stat)
-              })
-              
-              names(out_gsea) <- names(patterns)
-              cem@enrichment <- out_gsea 
+    function(cem, rank_method="mean", verbose=FALSE) {
+        if(!tolower(rank_method) %in% c("mean", "median")){
+            stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
+        }
+        if(nrow(expr_data(cem)) == 0){
+            warning("CEMiTool object has no expression file!")
               return(cem)
-          })
+        }
+
+        if (nrow(cem@sample_annotation)==0) {
+            warning('Looks like your sample_annotation slot is empty. Cannot proceed with gene set enrichment analysis.')
+            return(cem)
+        }
+
+        if(is.null(module_genes(cem))){
+            warning("No modules in CEMiTool object! Did you run find_modules()?")
+            return(cem)
+        }
+
+        #cem <- get_args(cem, vars=mget(ls()))
+
+        if (verbose) {
+            message('Running GSEA')
+        }
+
+        # creates gene sets from modules
+        modules <- unique(cem@module[, 'modules'])
+        gene_sets <- lapply(modules, function(mod){
+            return(cem@module[cem@module[, 'modules']==mod, 'genes'])
+        })
+        names(gene_sets) <- modules
+
+        annot <- cem@sample_annotation
+        class_col <- cem@class_column
+        sample_col <- cem@sample_name_column
+        classes <- unique(annot[, class_col])
+
+        # Check if expression samples are all in sample_annotation
+        expr_samples <- names(expr_data(cem))
+        annot_samples <- sample_annotation(cem)[, sample_col]
+        if(!all(expr_samples %in% annot_samples)){
+            stop("Sample annotation file does not contain all samples in expression file. Please input new sample annotation file using function sample_annotation()")
+        }
+        if(length(expr_samples) < length(annot_samples)){
+            warning("Expression file has less samples than annotation file. Cutting annotation file.")
+            annot <- annot[annot[,sample_col] %in% expr_samples,]
+            annot_samples <- annot[, sample_col]
+        }
+
+        # expression to z-score
+        z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
+                                     center=TRUE, 
+                                     scale=TRUE)),
+                             check.names = FALSE,
+                             stringsAsFactors=FALSE)
+
+        # calculates enrichment for each module for each class in annot
+
+        gsea_list <- lapply(classes, function(class_group){
+
+            if (verbose) {
+                message('Calculating modules enrichment analysis for class ',
+                        class_group)
+            }
+            # samples of class == class_group
+            class_samples <- annot[annot[, class_col]==class_group, sample_col]
+
+            # genes ranked by rank_method
+            genes_ranked <- apply(z_expr[, class_samples, drop=FALSE], 1, tolower(rank_method))
+            genes_ranked <- sort(genes_ranked, decreasing=TRUE)
+
+            # BiocParallel setting up
+            BiocParallel::register(BiocParallel::SerialParam())
+
+            gsea_results <- fgsea::fgsea(pathways=gene_sets,
+                                         stats=genes_ranked,
+                                         minSize=15,
+                                         maxSize=500,
+                                         nperm=10000,
+                                         nproc=0)
+            setDF(gsea_results)
+            gsea_results[, 'leadingEdge'] <- unlist(lapply(gsea_results[, 'leadingEdge'],
+                                                           function(ledges){
+                                                               ledges <- paste(ledges, collapse=",")
+                                                           }))
+            columns <- colnames(gsea_results) 
+            colnames(gsea_results) <- c(columns[1], paste0(columns[-1], "_", class_group))
+            return(gsea_results)
+        })
+        # merging all classes gsea results into one data.frame
+        all_classes_df <- Reduce(function(x,y) {
+            merge(x,y, all=TRUE, by='pathway')
+        }, gsea_list) 
+
+        # separating ES / NES / pval
+        patterns <- list('es'='^ES_','nes'='^NES_', 'pval'='^pval_')
+        out_gsea <- lapply(patterns, function(pattern) {
+            desired_stat <- all_classes_df[, c('pathway',
+                                               grep(pattern, colnames(all_classes_df),value=TRUE))]
+            colnames(desired_stat) <- gsub(pattern, '', colnames(desired_stat))
+            return(desired_stat)
+        })
+
+        names(out_gsea) <- names(patterns)
+        cem@enrichment <- out_gsea 
+        return(cem)
+    })
 
 #' Retrieve Gene Set Enrichment Analysis (GSEA) results
 #'
@@ -318,6 +324,6 @@ setGeneric("gsea_data", function(cem) {
 
 #' @rdname gsea_data
 setMethod("gsea_data", signature("CEMiTool"),
-          function(cem){
-              return(cem@enrichment)
-          })
+    function(cem){
+        return(cem@enrichment)
+    })
