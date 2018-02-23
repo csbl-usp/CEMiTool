@@ -657,7 +657,7 @@ setMethod('save_plots', signature('CEMiTool'),
                 stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
             }
         }else{
-            dir.create(directory)
+            dir.create(directory, recursive=TRUE)
         }
         value <- match.arg(value)
         if(value == "all"){
