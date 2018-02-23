@@ -783,7 +783,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
                 stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
             }
         } else {
-            dir.create(directory)
+            dir.create(directory, recursive=TRUE)
         }
         if(nrow(cem@module) > 0){
             write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
