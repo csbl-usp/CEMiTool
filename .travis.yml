@@ -6,7 +6,7 @@ install:
 script:
  - docker container run --rm csblusp/cemitool:builder bash -c "R CMD build . && R CMD check --no-manual --no-build-vignettes --no-examples *tar.gz"
 after_success:
- - if [[ "$TRAVIS_BRANCH" = *"RELEASE"* ]] || [[ "$TRAVIS_BRANCH" = *"docker" ]]; then
+ - if [[ "$TRAVIS_BRANCH" = *"RELEASE"* ]] || [[ "$TRAVIS_BRANCH" = *"docker" ]] || [[ "$TRAVIS_BRANCH" = *"master"*]]; then
        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" ;
        docker build -t csblusp/cemitool -f docker/Dockerfile . ;
        docker push csblusp/cemitool;
