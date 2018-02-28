@@ -408,7 +408,7 @@ cemitool <- function(expr,
                      ora_pval=0.05,
                      min_ngen=30,
                      diss_thresh=0.8,
-                     plot=FALSE,
+                     plot=TRUE,
                      order_by_class=TRUE,
                      center_func="mean",
                      directed=FALSE,
@@ -783,7 +783,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
                 stop("Stopping analysis: ", directory, " already exists! Use force=TRUE to overwrite.")
             }
         } else {
-            dir.create(directory)
+            dir.create(directory, recursive=TRUE)
         }
         if(nrow(cem@module) > 0){
             write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)

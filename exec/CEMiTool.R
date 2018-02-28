@@ -2,7 +2,7 @@
 
 "CEMiTool - Co-Expression Modules identification Tool
 
-Usage: cemitool.R EXPRSFILE  --output=<dir> [--sample-annot=<annot> --samples-column=<samplecol> --class-column=<classcol> --no-filter (--filter-pval=<p>|--ngenes=<ngenes>) --vst --eps --network-type=<nettype> --tom-type=<tomtype> --interactions=<inter> --pathways=<gmt> --ora-pvalue=<p> --cor-method=<cor> --no-merge --rank-method --min-module-size=<min> --diss-thresh=<thresh> --center-func=<fun> --directed --verbose]
+Usage: cemitool.R EXPRSFILE  --output=<dir> [--sample-annot=<annot> --samples-column=<samplecol> --class-column=<classcol> --no-filter (--filter-pval=<p>|--ngenes=<ngenes>) --vst --eps --network-type=<nettype> --tom-type=<tomtype> --interactions=<inter> --pathways=<gmt> --ora-pvalue=<p> --cor-method=<cor> --no-merge --rank-method=<rank> --min-module-size=<min> --diss-thresh=<thresh> --center-func=<fun> --directed --verbose]
 
 Input:
   EXPRSFILE                         a normalized expression file .tsv format
@@ -25,7 +25,7 @@ Options:
   --network-type=<nettype>           network type, 'signed' or 'unsigned' [default: unsigned]
   --tom-type=<nettype>               TOM type, 'signed' or 'unsigned' [default: signed]
   --no-merge                         does not merge related modules based on eigengene similarity
-  --rank-method                      rank method [default: mean]
+  --rank-method=<rank                rank method [default: mean]
   --min-module-size=<min>            minimum module size [default: 30]
   --diss-thresh=<thresh>             module merging correlation threshold for eigengene similarity [default: 0.8]
   --center-func=<fun>                metric used for centering [default: mean]
