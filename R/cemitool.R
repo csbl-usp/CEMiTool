@@ -619,7 +619,7 @@ setMethod('mod_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
               if(nrow(cem@module) > 0){
-                  mods <- names(sort(table(cem@module$modules), decreasing=T))
+                  mods <- names(sort(table(cem@module$modules), decreasing=TRUE))
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }

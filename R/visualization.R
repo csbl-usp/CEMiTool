@@ -213,7 +213,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
     ovf_rows <- which(nchar(es[, "GeneSet"]) > max_length) # overflow
     ovf_data <- es[ovf_rows, "GeneSet"]
     test <- strtrim(ovf_data, max_length)
-    dupes <- duplicated(test) | duplicated(test, fromLast=T)
+    dupes <- duplicated(test) | duplicated(test, fromLast=TRUE)
     if(sum(dupes) > 0){
         test[dupes] <- ovf_data[dupes]
         test[dupes] <- comsub(test[dupes])
