@@ -530,7 +530,7 @@ cemitool <- function(expr,
                 message("Plotting over representation analysis results ...")
             }
 
-            results <- plot_ora(results)
+            results <- plot_ora(results, pv_cut=ora_pval)
         }
 
         if (length(results@interactions) > 0) {
