@@ -167,6 +167,7 @@ setMethod("ora_data", signature("CEMiTool"),
 #' Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
+#' @param gsea_scale If TRUE, transform data using z-score transformation. Default: TRUE
 #' @param rank_method Character string indicating how to rank genes. Either "mean" 
 #' (the default) or "median".
 #' @param verbose logical. Report analysis steps.
@@ -194,7 +195,7 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-    function(cem, rank_method="mean", verbose=FALSE) {
+    function(cem, gsea_scale=TRUE, rank_method="mean", verbose=FALSE) {
         if(!tolower(rank_method) %in% c("mean", "median")){
             stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
         }
@@ -244,12 +245,15 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         }
 
         # expression to z-score
-        z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
+        if(gsea_scale){
+            z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
                                      center=TRUE, 
                                      scale=TRUE)),
-                             check.names = FALSE,
-                             stringsAsFactors=FALSE)
-
+                                     check.names = FALSE,
+                                     stringsAsFactors=FALSE)
+        }else{
+            z_expr <- expr_data(cem, filtered=FALSE)
+        }
         # calculates enrichment for each module for each class in annot
 
         gsea_list <- lapply(classes, function(class_group){

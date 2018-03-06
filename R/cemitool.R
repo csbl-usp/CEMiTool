@@ -350,6 +350,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param rank_method Character string indicating how to rank genes. Either "mean" 
 #'        (the default) or "median".
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
+#' @param gsea_scale If TRUE, apply z-score transformation for GSEA analysis. Default is TRUE.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
@@ -406,6 +407,7 @@ cemitool <- function(expr,
                      merge_similar=TRUE,
                      rank_method="mean",
                      ora_pval=0.05,
+                     gsea_scale=TRUE,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=TRUE,
@@ -499,7 +501,7 @@ cemitool <- function(expr,
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
-        results <- mod_gsea(results, rank_method=rank_method, verbose=verbose)
+        results <- mod_gsea(results, gsea_scale=gsea_scale, rank_method=rank_method, verbose=verbose)
     }
 
     # if user provides .gmt file
