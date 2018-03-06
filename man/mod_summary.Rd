@@ -8,8 +8,8 @@
 \usage{
 mod_summary(cem, ...)
 
-\S4method{mod_summary}{CEMiTool}(cem, method = c("mean", "eigengene"),
-  verbose = FALSE)
+\S4method{mod_summary}{CEMiTool}(cem, method = c("mean", "median",
+  "eigengene"), verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -17,7 +17,7 @@ mod_summary(cem, ...)
 \item{...}{Optional parameters.}
 
 \item{method}{A character string indicating which summarization method 
-is to be used. Default 'mean'.}
+is to be used. Can be 'eigengene', 'mean' or 'median'. Default is 'mean'.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }

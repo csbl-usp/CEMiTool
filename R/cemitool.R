@@ -789,6 +789,15 @@ setMethod('write_files', signature(cem='CEMiTool'),
         }
         if(nrow(cem@module) > 0){
             write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
+
+            mean_summary <- mod_summary(cem, "mean")
+            write.table(mean_summary, file.path(directory, "summary_mean.tsv"), sep="\t", row.names=FALSE)
+
+            median_summary <- mod_summary(cem, "median")
+            write.table(median_summary, file.path(directory, "summary_median.tsv"), sep="\t", row.names=FALSE)
+
+            eg_summary <- mod_summary(cem, "eigengene")        
+            write.table(eg_summary, file.path(directory, "summary_eigengene.tsv"), sep="\t", row.names=FALSE)
         }
         if(length(cem@selected_genes) > 0){
             writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))

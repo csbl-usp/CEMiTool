@@ -706,7 +706,7 @@ setMethod('get_merged_mods', signature(cem='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param method A character string indicating which summarization method 
-#'                   is to be used. Default 'mean'. 
+#' is to be used. Can be 'eigengene', 'mean' or 'median'. Default is 'mean'. 
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #' @param ... Optional parameters.
 #'
@@ -726,7 +726,7 @@ setGeneric('mod_summary', function(cem, ...) {
 
 #' @rdname mod_summary
 setMethod('mod_summary', signature(cem='CEMiTool'),
-    function(cem, method=c('mean', 'eigengene'),
+    function(cem, method=c('mean', 'median', 'eigengene'),
              verbose=FALSE){
 
         method <- match.arg(method)
@@ -741,21 +741,27 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 
         modules <- unique(cem@module[, 'modules'])
 
+        expr <- expr_data(cem)
+        if(nrow(expr) == 0){
+            stop("CEMiTool object has no expression file!")
+        }
+
         # mean expression of genes in modules
-        if (method == 'mean') {
-            expr <- data.table(expr_data(cem), keep.rownames=TRUE)
+        if (method == 'mean' | method == 'median') {
+            func <- get(method)
+            expr <- data.table(expr, keep.rownames=TRUE)
             expr_melt <- melt(expr, id='rn', variable.name='samples',
                                value.name='expression')
             expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
-            summarized <- expr_melt[, list(mean=mean(expression)),
+            summarized <- expr_melt[, list(method=func(expression)),
                                      by=c('samples', 'modules')]
-            summarized <- dcast(summarized, modules~samples, value.var='mean')
+            summarized <- dcast(summarized, modules~samples, value.var="method")
             setDF(summarized)
 
             return(summarized)
             # eigengene for each module
         } else if (method == 'eigengene') {
-            expr_t <- t(expr_data(cem))
+            expr_t <- t(expr)
             colnames(expr_t) <- rownames(expr)
             rownames(expr_t) <- colnames(expr)
             me_list <- WGCNA::moduleEigengenes(expr_t, 
