@@ -170,6 +170,8 @@ setMethod("ora_data", signature("CEMiTool"),
 #' @param gsea_scale If TRUE, transform data using z-score transformation. Default: TRUE
 #' @param rank_method Character string indicating how to rank genes. Either "mean" 
 #' (the default) or "median".
+#' @param gsea_min_size Minimum gene set size
+#' @param gsea_max_size Maximum gene set size
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #' 
@@ -195,7 +197,8 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-    function(cem, gsea_scale=TRUE, rank_method="mean", verbose=FALSE) {
+    function(cem, gsea_scale=TRUE, rank_method="mean", 
+             gsea_min_size=15, gsea_max_size=500, verbose=FALSE) {
         if(!tolower(rank_method) %in% c("mean", "median")){
             stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
         }
@@ -274,8 +277,8 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
 
             gsea_results <- fgsea::fgsea(pathways=gene_sets,
                                          stats=genes_ranked,
-                                         minSize=15,
-                                         maxSize=500,
+                                         minSize=gsea_min_size,
+                                         maxSize=gsea_max_size,
                                          nperm=10000,
                                          nproc=0)
             setDF(gsea_results)
