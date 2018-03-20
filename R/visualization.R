@@ -134,7 +134,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n number of modules to show
-#' @param pv_cut p-value significance cutoff. Default is 0.01.
+#' @param pv_cut p-value significance cutoff. Default is 0.05.
 #' @param ... parameters to plot_ora_single
 #'
 #' @return Object of class \code{CEMiTool} with ORA plots
@@ -160,7 +160,7 @@ setGeneric('plot_ora', function(cem, ...) {
 
 #' @rdname plot_ora
 setMethod('plot_ora', signature('CEMiTool'),
-    function(cem, n=10, pv_cut=0.01, ...){
+    function(cem, n=10, pv_cut=0.05, ...){
         if(length(unique(cem@module$modules)) == 0){
             stop("No modules in CEMiTool object! Did you run find_modules()?")
         }
@@ -196,7 +196,7 @@ setMethod('plot_ora', signature('CEMiTool'),
 #' @param title title of the graph
 #'
 #' @return a list with ggplot2 object and the number of significant gene sets
-plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
+plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.05,
                             graph_color="#4169E1", title="Over Representation Analysis"){
 
     comsub <- function(x){
@@ -213,7 +213,7 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.01,
     ovf_rows <- which(nchar(es[, "GeneSet"]) > max_length) # overflow
     ovf_data <- es[ovf_rows, "GeneSet"]
     test <- strtrim(ovf_data, max_length)
-    dupes <- duplicated(test) | duplicated(test, fromLast=T)
+    dupes <- duplicated(test) | duplicated(test, fromLast=TRUE)
     if(sum(dupes) > 0){
         test[dupes] <- ovf_data[dupes]
         test[dupes] <- comsub(test[dupes])

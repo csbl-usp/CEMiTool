@@ -350,6 +350,9 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param rank_method Character string indicating how to rank genes. Either "mean" 
 #'        (the default) or "median".
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
+#' @param gsea_scale If TRUE, apply z-score transformation for GSEA analysis. Default is \code{TRUE}
+#' @param gsea_min_size Minimum size of gene sets for GSEA analysis. Default is \code{15}
+#' @param gsea_max_size Maximum size of gene sets for GSEA analysis. Default is \code{500}
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
@@ -406,6 +409,9 @@ cemitool <- function(expr,
                      merge_similar=TRUE,
                      rank_method="mean",
                      ora_pval=0.05,
+                     gsea_scale=TRUE,
+                     gsea_min_size=15,
+                     gsea_max_size=500,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=TRUE,
@@ -499,7 +505,8 @@ cemitool <- function(expr,
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
-        results <- mod_gsea(results, rank_method=rank_method, verbose=verbose)
+        results <- mod_gsea(results, gsea_scale=gsea_scale, rank_method=rank_method, 
+                            gsea_min_size=gsea_min_size, gsea_max_size=gsea_max_size, verbose=verbose)
     }
 
     # if user provides .gmt file
@@ -530,7 +537,7 @@ cemitool <- function(expr,
                 message("Plotting over representation analysis results ...")
             }
 
-            results <- plot_ora(results)
+            results <- plot_ora(results, pv_cut=ora_pval)
         }
 
         if (length(results@interactions) > 0) {
@@ -619,7 +626,7 @@ setMethod('mod_names', signature(cem='CEMiTool'),
           function(cem, include_NC=TRUE) {
               mods <- NULL
               if(nrow(cem@module) > 0){
-                  mods <- names(sort(table(cem@module$modules), decreasing=T))
+                  mods <- names(sort(table(cem@module$modules), decreasing=TRUE))
                   if(!include_NC && ("Not.Correlated" %in% mods)){
                       mods <- mods[mods != "Not.Correlated"]
                   }
@@ -787,6 +794,15 @@ setMethod('write_files', signature(cem='CEMiTool'),
         }
         if(nrow(cem@module) > 0){
             write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
+
+            mean_summary <- mod_summary(cem, "mean")
+            write.table(mean_summary, file.path(directory, "summary_mean.tsv"), sep="\t", row.names=FALSE)
+
+            median_summary <- mod_summary(cem, "median")
+            write.table(median_summary, file.path(directory, "summary_median.tsv"), sep="\t", row.names=FALSE)
+
+            eg_summary <- mod_summary(cem, "eigengene")        
+            write.table(eg_summary, file.path(directory, "summary_eigengene.tsv"), sep="\t", row.names=FALSE)
         }
         if(length(cem@selected_genes) > 0){
             writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))

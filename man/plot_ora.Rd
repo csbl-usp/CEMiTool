@@ -8,7 +8,7 @@
 \usage{
 plot_ora(cem, ...)
 
-\S4method{plot_ora}{CEMiTool}(cem, n = 10, pv_cut = 0.01, ...)
+\S4method{plot_ora}{CEMiTool}(cem, n = 10, pv_cut = 0.05, ...)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -17,7 +17,7 @@ plot_ora(cem, ...)
 
 \item{n}{number of modules to show}
 
-\item{pv_cut}{p-value significance cutoff. Default is 0.01.}
+\item{pv_cut}{p-value significance cutoff. Default is 0.05.}
 }
 \value{
 Object of class \code{CEMiTool} with ORA plots

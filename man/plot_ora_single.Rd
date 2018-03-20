@@ -4,7 +4,7 @@
 \alias{plot_ora_single}
 \title{ORA visualization for one module}
 \usage{
-plot_ora_single(es, ordr_by = "p.adjust", max_length = 50, pv_cut = 0.01,
+plot_ora_single(es, ordr_by = "p.adjust", max_length = 50, pv_cut = 0.05,
   graph_color = "#4169E1", title = "Over Representation Analysis")
 }
 \arguments{
