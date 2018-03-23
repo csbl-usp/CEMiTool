@@ -342,6 +342,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}
 #' @param tom_type  A character string indicating if the TOM type should be computed
 #'        as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}
+#' @param set_beta A value to override the automatically selected beta value. Default is NULL.
+#' @param force_beta Whether or not to automatically force a beta value based on number of samples. Default is FALSE.
 #' @param sample_name_column A character string indicating the sample column
 #'        name of the annotation table.
 #' @param class_column A character string indicating the class column name of the
@@ -404,6 +406,8 @@ cemitool <- function(expr,
                      cor_function='cor',
                      network_type='unsigned',
                      tom_type='signed',
+                     set_beta=NULL,
+                     force_beta=FALSE, 
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
@@ -478,6 +482,8 @@ cemitool <- function(expr,
                             diss_thresh=diss_thresh,
                             network_type=network_type,
                             tom_type=tom_type,
+                            set_beta=set_beta,
+                            force_beta=force_beta,
                             verbose=verbose)
     if(verbose){
         message("Plotting beta x R squared curve ...")

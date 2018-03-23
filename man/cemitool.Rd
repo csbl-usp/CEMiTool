@@ -7,12 +7,12 @@
 cemitool(expr, annot, gmt, interactions, filter = TRUE, filter_pval = 0.1,
   apply_vst = FALSE, n_genes, eps = 0.1, cor_method = c("pearson",
   "spearman"), cor_function = "cor", network_type = "unsigned",
-  tom_type = "signed", sample_name_column = "SampleName",
-  class_column = "Class", merge_similar = TRUE, rank_method = "mean",
-  ora_pval = 0.05, gsea_scale = TRUE, gsea_min_size = 15,
-  gsea_max_size = 500, min_ngen = 30, diss_thresh = 0.8, plot = TRUE,
-  order_by_class = TRUE, center_func = "mean", directed = FALSE,
-  verbose = FALSE)
+  tom_type = "signed", set_beta = NULL, force_beta = FALSE,
+  sample_name_column = "SampleName", class_column = "Class",
+  merge_similar = TRUE, rank_method = "mean", ora_pval = 0.05,
+  gsea_scale = TRUE, gsea_min_size = 15, gsea_max_size = 500,
+  min_ngen = 30, diss_thresh = 0.8, plot = TRUE, order_by_class = TRUE,
+  center_func = "mean", directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -46,6 +46,10 @@ as \code{"signed"} or \code{"unsigned"}. Default is \code{"unsigned"}}
 
 \item{tom_type}{A character string indicating if the TOM type should be computed
 as \code{"signed"} or \code{"unsigned"}. Default is \code{"signed"}}
+
+\item{set_beta}{A value to override the automatically selected beta value. Default is NULL.}
+
+\item{force_beta}{Whether or not to automatically force a beta value based on number of samples. Default is FALSE.}
 
 \item{sample_name_column}{A character string indicating the sample column
 name of the annotation table.}
