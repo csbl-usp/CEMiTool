@@ -50,9 +50,9 @@ Defines co-expression modules
 }
 \examples{
 # Get example expression data
-data(expr)
+data(expr0)
 # Initialize CEMiTool object with expression
-cem <- new_cem(expr)
+cem <- new_cem(expr0)
 # Filter data
 cem <- filter_expr(cem)
 # Define network modules

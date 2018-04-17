@@ -28,9 +28,9 @@ a vector containing the chosen beta and corresponding R squared value.
 }
 \examples{
 # Get example expression data
-data(expr)
+data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr)
+cem <- new_cem(expr0)
 # Filter expression data
 cem <- filter_expr(cem)
 # Get modules and beta data

@@ -19,10 +19,12 @@ NULL
 #' @return An HTML file with an interactive report of CEMiTool analyses.
 #'
 #' @examples
+#' \dontrun{  
 #' # Get example CEMiTool object
 #' data(cem)
 #' generate_report(cem, output_format=c("pdf_document", "html_document"))
-#' 
+#' }
+#'
 #' @rdname generate_report
 #' @export
 setGeneric('generate_report', function(cem, ...) {

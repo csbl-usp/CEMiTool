@@ -97,13 +97,13 @@ Defines co-expression modules and runs several different analyses.
 \examples{
 \dontrun{
 # Get example expression data
-data(expr)
+data(expr0)
 # Run CEMiTool analyses
-cem <- cemitool(expr=expr)
+cem <- cemitool(expr=expr0)
 # Run CEMiTool applying Variance Stabilizing Transformation to data
-cem <- cemitool(expr=expr, apply_vst=TRUE)
+cem <- cemitool(expr=expr0, apply_vst=TRUE)
 # Run CEMiTool with additional processing messages
-cem <- cemitool(expr=expr, verbose=TRUE)
+cem <- cemitool(expr=expr0, verbose=TRUE)
 
 # Run full CEMiTool analysis
 ## Get example sample annotation data
@@ -114,7 +114,18 @@ gmt_in <- read_gmt(gmt_fname)
 ## Get example interactions file
 int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 ## Run CEMiTool
-cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in,
+cem <- cemitool(expr=expr0, annot=sample_annot, gmt=gmt_in,
     interactions=int_df, verbose=TRUE, plot=TRUE)
+
+# Create report as html file
+generate_report(cem, directory = "./Report", output_format="html_document")
+
+# Write analysis results into files
+write_files(cem, directory="./Tables", force=TRUE)
+
+# Save all plots
+save_plots(cem, "all", directory="./Plots")
 }
+
+
 }

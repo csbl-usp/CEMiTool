@@ -22,10 +22,10 @@ NULL
 #' @examples
 #' \dontrun{
 #' # Run cemitool twice on expr dataset. In each time, one sample will be removed
-#' data(expr)
+#' data(expr0)
 #' set.seed(10)
-#' dset1 <- expr[,-sample(1:ncol(expr), 1)]
-#' dset2 <- expr[,-sample(1:ncol(expr), 1)]
+#' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
+#' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
 #' cem1 <- cemitool(dset1) 
 #' cem2 <- cemitool(dset2) 
 #' cemoverlap_df <- cem_overlap(cem1, cem2)

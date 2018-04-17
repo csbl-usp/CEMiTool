@@ -33,9 +33,9 @@ and returns a CEMiTool object with an adjacency matrix in the adjacency slot.
 }
 \examples{
 # Get example expression data
-data(expr)
+data(expr0)
 # Initialize new CEMiTool object with expression 
-cem <- new_cem(expr)
+cem <- new_cem(expr0)
 # Filter expression data
 cem <- filter_expr(cem)
 # Calculate adjacency matrix with example beta value 8

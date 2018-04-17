@@ -1,8 +1,8 @@
 context("get_adj")
 
-data(expr)
+data(expr0)
 cem0 <- new_cem()
-cem <- new_cem(expr)
+cem <- new_cem(expr0)
 
 test_that("get_adj returns an error when no beta value is provided.", {
 	expect_error(cem <- get_adj(cem))

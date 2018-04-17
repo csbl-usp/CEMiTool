@@ -41,9 +41,9 @@ setOldClass('gtable')
 #'
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize CEMiTool object with expression
-#' cem <- new("CEMiTool", expression=expr)
+#' cem <- new("CEMiTool", expression=expr0)
 setClass('CEMiTool', slots=list(expression='data.frame',
                                 sample_annotation='data.frame',
                                 fit_indices='data.frame',
@@ -105,11 +105,11 @@ setMethod("initialize", signature="CEMiTool",
 #' # Create new CEMiTool object
 #' cem <- new_cem()
 #' # Create new CEMiTool object with expression and sample_annotation data
-#' data(expr)
+#' data(expr0)
 #' data(sample_annot)
-#' cem <- new_cem(expr, sample_annot, "SampleName", "Class")
+#' cem <- new_cem(expr0, sample_annot, "SampleName", "Class")
 #' # Equivalent to a call to new()
-#' cem2 <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+#' cem2 <- new("CEMiTool", expression=expr0, sample_annotation=sample_annot)
 #' identical(cem, cem2)
 #' @export
 new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
@@ -146,9 +146,9 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 #' # Initialize an empty CEMiTool object
 #' cem <- new_cem()
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Add expression file to CEMiTool object
-#' expr_data(cem) <- expr
+#' expr_data(cem) <- expr0
 #' # Check expression file
 #' head(expr_data(cem))
 #' @rdname expr_data
@@ -266,11 +266,11 @@ setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
 #'
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Get example sample_annotation data
 #' data(sample_annot)
 #' # Initialize CEMiTool object with expression
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Add sample annotation file to CEMiTool object
 #' sample_annotation(cem,
 #'     sample_name_column="SampleName",
@@ -372,13 +372,13 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @examples
 #' \dontrun{
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Run CEMiTool analyses
-#' cem <- cemitool(expr=expr)
+#' cem <- cemitool(expr=expr0)
 #' # Run CEMiTool applying Variance Stabilizing Transformation to data
-#' cem <- cemitool(expr=expr, apply_vst=TRUE)
+#' cem <- cemitool(expr=expr0, apply_vst=TRUE)
 #' # Run CEMiTool with additional processing messages
-#' cem <- cemitool(expr=expr, verbose=TRUE)
+#' cem <- cemitool(expr=expr0, verbose=TRUE)
 #'
 #' # Run full CEMiTool analysis
 #' ## Get example sample annotation data
@@ -389,9 +389,20 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' ## Get example interactions file
 #' int_df <- read.delim(system.file("extdata", "interactions.tsv", package = "CEMiTool"))
 #' ## Run CEMiTool
-#' cem <- cemitool(expr=expr, annot=sample_annot, gmt=gmt_in,
+#' cem <- cemitool(expr=expr0, annot=sample_annot, gmt=gmt_in,
 #'     interactions=int_df, verbose=TRUE, plot=TRUE)
+#'
+#' # Create report as html file
+#' generate_report(cem, directory = "./Report", output_format="html_document")
+#'
+#' # Write analysis results into files
+#' write_files(cem, directory="./Tables", force=TRUE)
+#' 
+#' # Save all plots
+#' save_plots(cem, "all", directory="./Plots")
 #' }
+#' 
+#' 
 #' @export
 cemitool <- function(expr,
                      annot,
@@ -777,11 +788,13 @@ setMethod('show', signature(object='CEMiTool'),
 #' @param ... Optional parameters
 #' @return A directory containing CEMiTool results in files.
 #' @examples
+#' \dontrun{
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#'
+#' }
+#' 
 #' @rdname write_files
 #' @export
 setGeneric('write_files', function(cem, ...) {

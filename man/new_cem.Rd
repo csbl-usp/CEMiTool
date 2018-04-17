@@ -32,10 +32,10 @@ Create a CEMiTool object
 # Create new CEMiTool object
 cem <- new_cem()
 # Create new CEMiTool object with expression and sample_annotation data
-data(expr)
+data(expr0)
 data(sample_annot)
-cem <- new_cem(expr, sample_annot, "SampleName", "Class")
+cem <- new_cem(expr0, sample_annot, "SampleName", "Class")
 # Equivalent to a call to new()
-cem2 <- new("CEMiTool", expression=expr, sample_annotation=sample_annot)
+cem2 <- new("CEMiTool", expression=expr0, sample_annotation=sample_annot)
 identical(cem, cem2)
 }

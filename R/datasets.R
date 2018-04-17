@@ -4,9 +4,9 @@
 #' In order to reduce package size, only the 4000 genes with the highest 
 #' variance were selected for this dataset. 
 #'
-#' @name expr 
+#' @name expr0 
 #' @docType data
-#' @usage data(expr)
+#' @usage data(expr0)
 #' @format An object of class \code{data.frame}
 #' @keywords datasets
 #' @references Querec TD, Akondy RS, Lee EK, Cao W et al. Systems biology 
@@ -15,10 +15,10 @@
 #' \href{https://www.ncbi.nlm.nih.gov/pubmed/19029902}{PubMed}
 #' @source \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse13485}{GEO}
 #' @examples
-#' data(expr)
+#' data(expr0)
 #' # Run CEMiTool analysis
-#' \dontrun{cemitool(expr)}
-"expr"
+#' \dontrun{cemitool(expr0)}
+"expr0"
 
 #' Yellow Fever Sample Annotation data 
 #'

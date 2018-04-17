@@ -66,7 +66,7 @@ in the annotation file.}
 
 \examples{
 # Get example expression data
-data(expr)
+data(expr0)
 # Initialize CEMiTool object with expression
-cem <- new("CEMiTool", expression=expr)
+cem <- new("CEMiTool", expression=expr0)
 }

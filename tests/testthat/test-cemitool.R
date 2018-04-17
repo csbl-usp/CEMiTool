@@ -1,13 +1,13 @@
 context('Cemitool methods')
 
 data(cem)
-data(expr)
+data(expr0)
 data(sample_annot)
 
 cem0 <- new_cem()
 
 cem_base <- cem0
-expr_data(cem_base) <- expr 
+expr_data(cem_base) <- expr0 
 
 sample_annotation(cem_base) <- sample_annot
 

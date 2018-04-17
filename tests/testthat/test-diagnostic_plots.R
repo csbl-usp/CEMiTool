@@ -1,6 +1,6 @@
 context("Diagnostic plots")
 
-data(expr)
+data(expr0)
 cem0 <- new_cem()
 
 test_that('diagnostic plot functions throw errors when there is no expression file', {

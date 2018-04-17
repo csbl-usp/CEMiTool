@@ -1,6 +1,6 @@
 context('find_modules')
 
-data(expr)
+data(expr0)
 cem0 <- new_cem()
 
 test_that('find_modules functions throw errors when there is no expression file', {
@@ -11,7 +11,7 @@ test_that('find_modules functions throw errors when there is no expression file'
 })
 
 cem <- cem0
-expr_data(cem) <- expr
+expr_data(cem) <- expr0
 cem <- filter_expr(cem)
 
 test_that('find_modules functions throw errors when there is no fit_indices slot', {

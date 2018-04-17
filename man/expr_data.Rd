@@ -36,9 +36,9 @@ Retrieve and set expression attribute
 # Initialize an empty CEMiTool object
 cem <- new_cem()
 # Get example expression data
-data(expr)
+data(expr0)
 # Add expression file to CEMiTool object
-expr_data(cem) <- expr
+expr_data(cem) <- expr0
 # Check expression file
 head(expr_data(cem))
 }

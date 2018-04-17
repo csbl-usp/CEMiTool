@@ -34,13 +34,13 @@ with gene symbols in the rows and sample names in the columns is needed, as foll
 ```{r}
 library("CEMiTool")
 # load expression data
-data(expr)
-head(expr[,1:4])
+data(expr0)
+head(expr0[,1:4])
 ```
 
 In this usage, the `cemitool` function receives the expression data, performs the co-expression modules analysis and returns a `CEMiTool` object:
 ```{r, results='hide'}
-cem <- cemitool(expr)
+cem <- cemitool(expr0)
 ```
 To see a summary of the slots inside the `CEMiTool` object we can use `print`
 ```{r}
@@ -99,7 +99,7 @@ Now you can construct a `CEMiTool` object with both expression data and sample a
 
 ```{r, results='hide'}
 # run cemitool with sample annotation
-cem <- cemitool(expr,sample_annot)
+cem <- cemitool(expr0,sample_annot)
 ```
 
 The sample annotation of your CEMiTool object can be retrieved and reassigned using the `sample_annotation(cem)` function. This function can also be used to define the columns with sample names and sample groupings (which are "SampleName" and "Class", by default):
@@ -191,7 +191,7 @@ Finally, a `CEMiTool` object with all of the components mentioned above can also
 ```{r, eval=FALSE}
 # run cemitool
 library(ggplot2)
-cem <- cemitool(expr, sample_annot, gmt_in, interactions=int_df, 
+cem <- cemitool(expr0, sample_annot, gmt_in, interactions=int_df, 
                 filter=TRUE, plot=TRUE, verbose=TRUE)
 # create report as pdf and html documents
 generate_report(cem, directory="./Report", 

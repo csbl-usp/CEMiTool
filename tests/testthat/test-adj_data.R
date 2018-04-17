@@ -1,8 +1,8 @@
 context('adj_data')
 
-data(expr)
+data(expr0)
 cem0 <- new_cem()
-cem <- new_cem(expr)
+cem <- new_cem(expr0)
 cem <- get_adj(cem, beta=7)
 adj <- adj_data(cem)
 

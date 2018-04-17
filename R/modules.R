@@ -28,9 +28,9 @@
 #'
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize CEMiTool object with expression
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter data
 #' cem <- filter_expr(cem)
 #' # Define network modules
@@ -211,9 +211,9 @@ setMethod("fit_data", signature("CEMiTool"),
 #' @return A list containing the soft-threshold selected by WGCNA and scale-free model parameters
 #' @examples 
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Get beta data
@@ -279,9 +279,9 @@ setMethod('get_beta_data', signature('CEMiTool'),
 #' @return The phi parameter
 #' @examples 
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Get modules and beta data
@@ -328,9 +328,9 @@ setMethod('get_phi', signature('CEMiTool'),
 #' @return A vector containing R squared value and the chosen beta parameter.
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Get modules and beta data
@@ -382,9 +382,9 @@ setMethod('get_cemitool_r2_beta', signature(cem='CEMiTool'),
 #' 
 #' @examples 
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Get modules and beta data
@@ -431,9 +431,9 @@ setMethod('get_connectivity', signature(cem='CEMiTool'),
 #'
 #' @examples 
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression 
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Calculate adjacency matrix with example beta value 8
@@ -503,9 +503,9 @@ setReplaceMethod('adj_data', signature(cem='CEMiTool'),
 #'
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Calculate adjacency matrix with example beta value 8
@@ -568,9 +568,9 @@ setMethod("get_adj", signature("CEMiTool"),
 #'
 #' @examples
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Calculate adjacency matrix with example beta value 8
@@ -645,9 +645,9 @@ setMethod('get_mods', signature(cem='CEMiTool'),
 #'
 #' @examples 
 #' # Get example expression data
-#' data(expr)
+#' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr)
+#' cem <- new_cem(expr0)
 #' # Filter expression data
 #' cem <- filter_expr(cem)
 #' # Calculate adjacency matrix with example beta value 8
