@@ -587,7 +587,6 @@ cemitool <- function(expr,
     return(results)
 }
 
-
 #' Get the number of modules in a CEMiTool object
 #'
 #' @param cem Object of class \code{CEMiTool}
