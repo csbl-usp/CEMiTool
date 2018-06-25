@@ -780,6 +780,41 @@ setMethod('show', signature(object='CEMiTool'),
     }
 )
 
+#' Transform module genes list to a gmt file
+#'
+#' @keywords internal
+#' 
+#' @param cem 
+#'
+#' @return A .gmt file containing module genes in each row
+#'
+module_to_gmt <- function(cem, directory="./Tables"){
+    if(nrow(cem@module) == 0){
+        stop("No modules in CEMiTool object! Did you run find_modules()?")
+    }else{
+        gene_modules <- cem@module
+        n_genes <- as.numeric(table(gene_modules[, "modules"]))
+        n_genes <- n_genes[1:(length(n_genes)-1)]
+        module_names <- as.character(unique(gene_modules[, "modules"]))
+        module_names <- module_names[-which(module_names =="Not.Correlated")]
+        module_names <- module_names[order(nchar(module_names), module_names)]
+        
+        gmt_df  <- as.data.frame(matrix("", ncol = max(n_genes), nrow = length(n_genes)), stringsAsFactors = FALSE)
+        
+        rownames(gmt_df) <- module_names
+        
+        for (i in 1:length(module_names)){
+            mod <- module_names[i]
+            selected <- gene_modules[gene_modules$modules == mod, "genes"]
+            gmt_df[mod, 1:(length(selected))] <- selected
+        }
+        
+        gmt_df <- as.data.frame(cbind(module_names, gmt_df))
+        write.table(gmt_df, file.path(directory, "modules_genes.gmt"), sep="\t", col.names = FALSE)
+    }
+}
+
+
 #' Save the CEMiTool object in files
 #'
 #' @param cem Object of class \code{CEMiTool}
@@ -822,6 +857,8 @@ setMethod('write_files', signature(cem='CEMiTool'),
 
             eg_summary <- mod_summary(cem, "eigengene")        
             write.table(eg_summary, file.path(directory, "summary_eigengene.tsv"), sep="\t", row.names=FALSE)
+            
+            module_to_gmt(cem, directory=directory)
         }
         if(length(cem@selected_genes) > 0){
             writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
