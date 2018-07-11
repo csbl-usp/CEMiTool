@@ -281,7 +281,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
                                          maxSize=gsea_max_size,
                                          nperm=10000,
                                          nproc=0)
-            setDF(gsea_results)
+            data.table::setDF(gsea_results)
             gsea_results[, 'leadingEdge'] <- unlist(lapply(gsea_results[, 'leadingEdge'],
                                                            function(ledges){
                                                                ledges <- paste(ledges, collapse=",")

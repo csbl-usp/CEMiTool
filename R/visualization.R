@@ -300,8 +300,8 @@ setMethod('plot_gsea', signature('CEMiTool'),
         pval <- enrichment[['pval']]
         nes <- enrichment[['nes']]
 
-        pval <- pval[rowSums(pval < pv_cut) >= 1,]
-        nes <- nes[rownames(pval),]
+        pval <- pval[rowSums(pval < pv_cut) >= 1, , drop=FALSE]
+        nes <- nes[rownames(pval), , drop=FALSE]
 
         # check if there is any signif. module
         if(nrow(nes) < 0){
