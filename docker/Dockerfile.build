@@ -1,11 +1,13 @@
-FROM r-base:3.4.0
+FROM r-base:3.5.1
 
 RUN apt-get update &&\
     apt-get install -y --no-install-recommends libssl-dev\
-    libssh2-1-dev libcurl4-openssl-dev pandoc libxml2-dev
+    libssh2-1-dev libcurl4-openssl-dev pandoc libxml2-dev\
+    libudunits2-dev
 
 ADD . /CEMiTool
 
 WORKDIR /CEMiTool
 
-RUN Rscript docker/install-deps.R
+RUN ls /usr/bin
+RUN /usr/bin/Rscript docker/install-deps.R
