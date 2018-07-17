@@ -9,5 +9,4 @@ ADD . /CEMiTool
 
 WORKDIR /CEMiTool
 
-RUN ls /usr/bin
 RUN /usr/bin/Rscript docker/install-deps.R
