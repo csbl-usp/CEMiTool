@@ -809,7 +809,7 @@ module_to_gmt <- function(cem, directory="./Tables"){
         }
 
         gmt_df <- as.data.frame(cbind(module_names, gmt_df))
-        write.table(gmt_df, file.path(directory, "modules_genes.gmt"), sep="\t", col.names = FALSE)
+        write.table(gmt_df, file.path(directory, "modules_genes.gmt"), sep="\t", col.names = FALSE, quote=FALSE)
     }
 }
 
