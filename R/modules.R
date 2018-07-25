@@ -753,7 +753,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
             expr_melt <- melt(expr, id='rn', variable.name='samples',
                                value.name='expression')
             expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
-            summarized <- expr_melt[, list(method=func(expression)),
+            summarized <- expr_melt[, list(method=as.double(func(expression))),
                                      by=c('samples', 'modules')]
             summarized <- dcast(summarized, modules~samples, value.var="method")
             setDF(summarized)
