@@ -32,6 +32,7 @@ For the most basic usage of `CEMiTool` only a `data.frame` containing expression
 with gene symbols in the rows and sample names in the columns is needed, as following:
 
 ```{r}
+BiocManager::install("CEMiTool")
 library("CEMiTool")
 # load expression data
 data(expr0)
