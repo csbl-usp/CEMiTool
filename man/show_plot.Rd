@@ -9,7 +9,8 @@
 show_plot(cem, value)
 
 \S4method{show_plot}{CEMiTool}(cem, value = c("profile", "gsea", "ora",
-  "interaction", "beta_r2", "mean_k", "sample_tree", "mean_var", "hist", "qq"))
+  "interaction", "beta_r2", "mean_k", "sample_tree", "mean_var", "hist",
+  "qq"))
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

@@ -8,10 +8,11 @@
 \usage{
 find_modules(cem, ...)
 
-\S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson", "spearman"),
-  cor_function = "cor", eps = 0.1, set_beta = NULL, force_beta = FALSE,
-  min_ngen = 20, merge_similar = TRUE, network_type = "unsigned",
-  tom_type = "signed", diss_thresh = 0.8, verbose = FALSE)
+\S4method{find_modules}{CEMiTool}(cem, cor_method = c("pearson",
+  "spearman"), cor_function = "cor", eps = 0.1, set_beta = NULL,
+  force_beta = FALSE, min_ngen = 20, merge_similar = TRUE,
+  network_type = "unsigned", tom_type = "signed", diss_thresh = 0.8,
+  verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

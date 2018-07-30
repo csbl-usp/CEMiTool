@@ -9,8 +9,8 @@
 save_plots(cem, ...)
 
 \S4method{save_plots}{CEMiTool}(cem, value = c("all", "profile", "gsea",
-  "ora", "interaction", "beta_r2", "mean_k", "sample_tree", "mean_var", "hist",
-  "qq"), force = FALSE, directory = "./Plots")
+  "ora", "interaction", "beta_r2", "mean_k", "sample_tree", "mean_var",
+  "hist", "qq"), force = FALSE, directory = "./Plots")
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

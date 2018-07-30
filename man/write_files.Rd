@@ -8,7 +8,8 @@
 \usage{
 write_files(cem, ...)
 
-\S4method{write_files}{CEMiTool}(cem, directory = "./Tables", force = FALSE)
+\S4method{write_files}{CEMiTool}(cem, directory = "./Tables",
+  force = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}

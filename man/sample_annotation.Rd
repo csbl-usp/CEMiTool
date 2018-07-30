@@ -15,8 +15,8 @@ sample_annotation(cem)
 sample_annotation(cem, sample_name_column = "SampleName",
   class_column = "Class") <- value
 
-\S4method{sample_annotation}{CEMiTool}(cem, sample_name_column = "SampleName",
-  class_column = "Class") <- value
+\S4method{sample_annotation}{CEMiTool}(cem,
+  sample_name_column = "SampleName", class_column = "Class") <- value
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}

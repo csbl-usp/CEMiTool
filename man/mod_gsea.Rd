@@ -8,8 +8,9 @@
 \usage{
 mod_gsea(cem, ...)
 
-\S4method{mod_gsea}{CEMiTool}(cem, gsea_scale = TRUE, rank_method = "mean",
-  gsea_min_size = 15, gsea_max_size = 500, verbose = FALSE)
+\S4method{mod_gsea}{CEMiTool}(cem, gsea_scale = TRUE,
+  rank_method = "mean", gsea_min_size = 15, gsea_max_size = 500,
+  verbose = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}

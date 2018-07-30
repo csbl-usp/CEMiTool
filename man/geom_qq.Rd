@@ -19,11 +19,13 @@ stat_qq_line(mapping = NULL, data = NULL, geom = "path",
 
 geom_qq(mapping = NULL, data = NULL, geom = "point",
   position = "identity", ..., distribution = stats::qnorm,
-  dparams = list(), na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+  dparams = list(), na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE)
 
 stat_qq(mapping = NULL, data = NULL, geom = "point",
   position = "identity", ..., distribution = stats::qnorm,
-  dparams = list(), na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+  dparams = list(), na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE)
 }
 \arguments{
 \item{mapping}{Parameter to ggplot}
@@ -57,8 +59,6 @@ the data}
 ggplot
 }
 \description{
-Geom qq
-
 `geom_qq` and `stat_qq` produce quantile-quantile plots. `geom_qq_line` and
 `stat_qq_line` compute the slope and intercept of the line connecting the
 points at specified quartiles of the theoretical and sample distributions. These
