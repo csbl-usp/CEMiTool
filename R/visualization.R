@@ -403,6 +403,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
         res <- lapply(mod_names, function(name){
                    plot_interaction(ig_obj=cem@interactions[[name]],
                                     n=n, color=mod_cols[name], name=name,
+                                    mod_genes=module_genes(cem, name)$genes,
                                     coexp_hubs=hubs[[name]])
                })
         names(res) <- mod_names
@@ -411,7 +412,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
         return(cem)
     })
 
-plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
+plot_interaction <- function(ig_obj, n, color, name, mod_genes, coexp_hubs){
     degrees <- igraph::degree(ig_obj, normalized=FALSE)
     ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
     max_n <- min(n, length(degrees))
@@ -446,7 +447,7 @@ plot_interaction <- function(ig_obj, n, color, name, coexp_hubs){
     plotcord[which(plotcord[, "vertex.names"] %in% sel_vertex), "shouldLabel"] <- TRUE
     plotcord$Degree_cut <- cut(plotcord$Degree, breaks=3, labels=FALSE)
     plotcord$in_mod <- TRUE
-    mod_genes <- cem@module[cem@module$modules==name,]$genes
+    #mod_genes <- cem@module[cem@module$modules==name,]$genes
     not_in <- setdiff(plotcord[,"vertex.names"], mod_genes)
     plotcord[which(plotcord[, "vertex.names"] %in% not_in), "in_mod"] <- FALSE
 
