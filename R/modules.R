@@ -68,6 +68,11 @@ setMethod('find_modules', signature('CEMiTool'),
     #vars$expr <- NULL
     #cem <- get_args(cem, vars=vars)
 
+    cem@parameters$cor_method <- cor_method
+    cem@parameters$min_ngen <- min_ngen
+    cem@parameters$merge_similar <- merge_similar
+    cem@parameters$diss_thresh <- diss_thresh
+
     expr_t <- t(expr)
     names(expr_t) <- rownames(expr)
     rownames(expr_t) <- colnames(expr)
@@ -123,15 +128,26 @@ setMethod('find_modules', signature('CEMiTool'),
         return(cem)
     }
 
+    cem@parameters$r2 <- r2
+    cem@parameters$beta <- beta
+    cem@parameters$phi <- phi
+
     # Get adjacency matrix
     cem <- get_adj(cem, beta=beta)
 
     # Get modules
     mods <- get_mods(cem, tom_type=tom_type, min_ngen=min_ngen)
+    n_mods <- length(unique(mods))
+    cem@parameters$n_mods <- n_mods
+
+    if(all(mods == 0)){
+        message("No significant co-expression was found - all genes placed in the 'Not.Correlated' module")
+        cem@parameters$n_mods <- NA
+        return(cem)
+    }
 
     # Number of modules
-    n_mods <- length(unique(mods))
-    if (n_mods <= 1) {
+    if (n_mods == 0) {
         message('No modules found.')
         return(cem)
     }
@@ -152,16 +168,16 @@ setMethod('find_modules', signature('CEMiTool'),
                       modules=new_names[as.character(mods)], 
                       stringsAsFactors=FALSE)
 
-    params <- list('cor_method'=cor_method,
-                   'min_ngen'=min_ngen,
-                   'merge_similar'=merge_similar,
-                   'diss_thresh'=diss_thresh,
-                   'r2'=r2, 
-                   'beta'=beta, 
-                   'phi'=phi,
-                   'n_mods'=n_mods)
+    #params <- list('cor_method'=cor_method,
+    #               'min_ngen'=min_ngen,
+    #               'merge_similar'=merge_similar,
+    #               'diss_thresh'=diss_thresh,
+    #               'r2'=r2, 
+    #               'beta'=beta, 
+    #               'phi'=phi,
+    #               'n_mods'=n_mods)
 
-    cem@parameters <- c(cem@parameters, params)
+    #cem@parameters <- c(cem@parameters, params)
     cem@module <- out
     return(cem)
 

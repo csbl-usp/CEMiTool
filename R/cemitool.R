@@ -509,6 +509,10 @@ cemitool <- function(expr,
         return(results)
     }
 
+    if(is.na(results@parameters$n_mods)){
+        return(results)
+    }
+
     if (!missing(interactions)){
         if(verbose){
             message("Including interactions ...")
