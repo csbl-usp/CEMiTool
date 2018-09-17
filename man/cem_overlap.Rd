@@ -4,17 +4,16 @@
 \alias{cem_overlap}
 \title{Integrates CEMiTool analyses}
 \usage{
-cem_overlap(..., analyses_list = NULL, fraction = 1)
+cem_overlap(analyses, fraction = 0, desired_table = "adjacency")
 }
 \arguments{
-\item{...}{Objects of class \code{CEMiTool}, data.frames or character string containing
-the path to a file with genes and modules.}
-
-\item{analyses_list}{List of objects of class \code{CEMiTool}, data.frames or character
-strings containing the path to files with genes and modules.}
+\item{analyses}{List of objects of class \code{CEMiTool}}
 
 \item{fraction}{The fraction of objects in which an edge pair must be present to 
-be selected (default = 1, accepts values from 0-1)}
+be selected (default = 0, accepts values from 0-1)}
+
+\item{desired_table}{Character string indicating the type of output to be returned.
+Default: 'adjacency'.}
 }
 \value{
 Object of class \code{data.frame} containing edgelist describing common 
@@ -25,22 +24,18 @@ Returns the occurrence of edges between different analyses
 }
 \details{
 The method assumes that all genes inside each module are connected to
-every other gene from the same module.
+every other gene from the same module. Argument desired_table must be one of 
+\code{spearman} (returns Spearman's rho), \code{pearson} (Pearson's R), 
+\code{b_correlations} (returns adjacency list defined in CEMiTool object),
+\code{adjacency} (returns discretized edges)
 }
 \examples{
-\dontrun{
-# Run cemitool twice on expr dataset. In each time, one sample will be removed
+# Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
 cem1 <- cemitool(dset1) 
 cem2 <- cemitool(dset2) 
-cemoverlap_df <- cem_overlap(cem1, cem2)
-# Can also be run with a list: cemoverlap_df <- cemoverlap(list(cem1, cem2))
-
-# Different types of objects can be combined as well, and invalid objects will
-be removed, with a warning
-cemoverlap_df <- cem_overlap(cem1, cem2, module_genes(cem), NA, 1, NULL)
-}
+cem_overlap_df <- cem_overlap(list(cem1, cem2))
 }

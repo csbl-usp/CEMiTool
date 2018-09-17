@@ -68,3 +68,11 @@ get_args <- function(cem, vars){
     cem@calls <- calls
     return(cem)
 }
+
+stop_if <- function (expr, error) {
+        if (expr) stop(error, call. = FALSE)
+}
+
+flip_vector <- function(x){
+        return(setNames(names(x), x))
+}

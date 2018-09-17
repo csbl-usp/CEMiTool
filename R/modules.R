@@ -1,6 +1,6 @@
 #' @importFrom grDevices pdf
 #' @importFrom grDevices colorRampPalette
-#' @import data.table
+#' @importFrom data.table data.table melt dcast
 #' @import WGCNA
 
 .datatable.aware <- TRUE
@@ -766,13 +766,13 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
         if (method == 'mean' | method == 'median') {
             func <- get(method)
             expr <- data.table(expr, keep.rownames=TRUE)
-            expr_melt <- melt(expr, id='rn', variable.name='samples',
+            expr_melt <- data.table::melt(expr, id='rn', variable.name='samples',
                                value.name='expression')
             expr_melt <- merge(expr_melt, cem@module, by.x='rn', by.y='genes')
             summarized <- expr_melt[, list(method=as.double(func(expression))),
                                      by=c('samples', 'modules')]
-            summarized <- dcast(summarized, modules~samples, value.var="method")
-            setDF(summarized)
+            summarized <- data.table::dcast(summarized, modules~samples, value.var="method")
+            data.table::setDF(summarized)
 
             return(summarized)
             # eigengene for each module
@@ -785,7 +785,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
             me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=TRUE)
             setnames(me_eigen, c('modules', colnames(expr)))
             me_eigen[, modules := gsub('^ME', '', modules)]
-            setDF(me_eigen)
+            data.table::setDF(me_eigen)
 
             return(me_eigen)
         }

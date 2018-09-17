@@ -1,13 +1,12 @@
 #' @import ggplot2
 #' @importFrom sna gplot.layout.fruchtermanreingold
-#' @import data.table
+#' @importFrom data.table melt
 #' @importFrom ggrepel geom_label_repel
-#' @importFrom igraph degree
-#' @importFrom igraph set_vertex_attr
+#' @importFrom igraph degree set_vertex_attr
 #' @import intergraph
 #' @importFrom scales squish
 #' @import stringr
-#' @import network
+#' @importFrom network as.matrix.network.adjacency as.matrix.network.edgelist get.vertex.attribute
 #' @import grid
 NULL
 
@@ -64,7 +63,7 @@ setMethod('plot_profile', signature('CEMiTool'),
             # subsets from expr all genes inside module mod
             genes <- cem@module[cem@module[,'modules']==mod, 'genes']
             expr[, 'id'] <- rownames(expr)
-            mod_expr <- melt(expr[genes,], 'id',
+            mod_expr <- data.table::melt(expr[genes,], 'id',
                               variable.name='sample',
                               value.name='expression')
 

@@ -1,5 +1,5 @@
 #' @importFrom pracma gammainc
-#' @import matrixStats
+#' @importFrom matrixStats rowVars rowMeans2
 #'
 NULL
 

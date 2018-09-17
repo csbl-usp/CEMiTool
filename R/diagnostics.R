@@ -1,5 +1,5 @@
 #' @import grid
-#' @import gridExtra
+#' @importFrom gridExtra arrangeGrob
 #' @import ggplot2
 #' @import ggdendro
 #' @import gtable
