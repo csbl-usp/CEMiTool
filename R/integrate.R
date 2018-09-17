@@ -571,6 +571,7 @@ stat_overlap_mods <- function(analyses, comp_group, subject_col=NULL, ...){
 #' @keywords internal
 #'
 mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
+    names(analyses) <- paste0("cem_", seq_along(analyses))
     new_mods_per_cem <- lapply(analyses, function(cem){
         tmpmod <- subset(module_genes(cem), modules != 'Not.Correlated')
         spmod <- split(tmpmod$genes, tmpmod$modules)
@@ -586,8 +587,9 @@ mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
             fis <- slot(gene_ovlp, 'pval')
             # fmod_len <- paste0(fmod_name, '//', length(firstlev))
             # smod_len <- paste0(smod_name, '//', length(seclev))
-            mod_ord <- sort(c(fmod_name, smod_name))
-            df_row <- c(mod_ord, jac, fis)
+            mod_ord <- sort(c(fmod_name, smod_name)) 
+            #df_row <- c(mod_ord, jac, fis)
+            df_row <- data.frame(mod_ord[1], mod_ord[2], jac, fis, stringsAsFactors = FALSE)
             return(df_row)
         }, names(new_mods), new_mods)
         do.call(rbind, second_lev)
@@ -620,6 +622,7 @@ mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
 #' @return A \code{data.frame} containing the results
 #' @keywords internal
 mod_info <- function(analyses, df_output, gsea_metric="nes"){
+    names(analyses) <- paste0("cem_", seq_along(analyses))
     info_mod <- Map(function(cemname, cem){
         # tmpmod <- subset(cem@module, modules != 'Not.Correlated')
         scores <- Map(function(scrname, scr){
@@ -681,11 +684,11 @@ mod_activity <- function(analyses, comp_group, subject_col){
             tmptop <- toptables %>%
                 filter(gene %in% mod) %>%
                 group_by(comparison) %>%
-                summarise(fc_median = median(logFC), p_median = median(P.Value)) %>%
+                summarise(fc_median = median(logFC)) %>%
                 ungroup() %>%
                 mutate(module = paste0(cemname, '.', modname)) %>%
-                select(comparison, module, fc_median, p_median) %>%
-                gather(key = parameter, value = value, fc_median, p_median)
+                select(comparison, module, fc_median) %>%
+                gather(key = parameter, value = value, fc_median)
             tmptop 
         }, names(cemsp), cemsp)
         cem_actv <- do.call(rbind, c(cem_actv, make.row.names = FALSE))
@@ -698,4 +701,41 @@ mod_activity <- function(analyses, comp_group, subject_col){
     return(mod_mean)
 }
 
+plot_similarity <- function(df_output, weight_col="logfdr"){
+    ig_obj <- igraph::graph_from_data_frame(df_output, directed=FALSE)
+    ig_obj <- igraph::simplify(ig_obj)
+    degrees <- igraph::degree(ig_obj, normalized=FALSE)
+    ig_obj <- igraph::set_vertex_attr(ig_obj, "degree", value = degrees)
+    ig_obj <- igraph::set.edge.attribute(ig_obj, "weight", value=df_output[[weight_col]])
+    
+    plotcord <- data.frame(igraph::layout.drl(ig_obj, options=list(simmer.attraction=0, 
+                                                                   simmer.temperature=400)))
+    net_obj <- intergraph::asNetwork(ig_obj)
+    edglist <- network::as.matrix.network.edgelist(net_obj)
+    
+    edges <- data.frame(plotcord[edglist[,1],], plotcord[edglist[,2],])
+    edges$Weight <- network::get.edge.attribute(net_obj, "weight")
+    colnames(edges) <- c("X1","Y1","X2","Y2", "Weight")
+    
+    plotcord$Degree <- network::get.vertex.attribute(net_obj, "degree")
+    plotcord$Names <- network::get.vertex.attribute(net_obj, "vertex.names")
+    
+    
+    ggplot() + 
+        geom_segment(aes(x=X1, y=Y1, xend=X2, yend=Y2, size = Weight), 
+                     data=edges, alpha=0.5, colour="#DDDDDD") + 
+        geom_point(aes(X1, X2, size=plotcord$Degree, alpha=0.9), data=plotcord) + 
+        geom_text(aes(x=X1, y=X2, label=Names),hjust=0, vjust=0, data=plotcord) +
+        scale_color_brewer(palette="Set1") +
+        ggplot2::theme_bw(base_size = 12, base_family = "") +
+        ggplot2::theme(axis.text = ggplot2::element_blank(),
+                       axis.ticks = ggplot2::element_blank(),
+                       axis.title = ggplot2::element_blank(),
+                       legend.key = ggplot2::element_blank(),
+                       panel.background = ggplot2::element_rect(fill = "white",
+                                                                colour = NA),
+                       panel.border = ggplot2::element_blank(),
+                       panel.grid = ggplot2::element_blank()) + 
+        guides(alpha=FALSE)
+}
 
