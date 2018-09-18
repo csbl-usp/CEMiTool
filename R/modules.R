@@ -1,6 +1,6 @@
 #' @importFrom grDevices pdf
 #' @importFrom grDevices colorRampPalette
-#' @importFrom data.table data.table melt dcast
+#' @importFrom data.table data.table melt dcast setnames
 #' @import WGCNA
 
 .datatable.aware <- TRUE
