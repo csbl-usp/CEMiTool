@@ -38,8 +38,8 @@ NULL
 #' set.seed(10)
 #' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 #' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1) 
-#' cem2 <- cemitool(dset2) 
+#' cem1 <- cemitool(dset1, plot=FALSE) 
+#' cem2 <- cemitool(dset2, plot=FALSE) 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' @rdname cem_overlap
 #' @export
@@ -118,6 +118,63 @@ cem_overlap <- function(analyses, fraction = 0, desired_table = 'adjacency'){
     }
 }
 
+#' Generates communities from edgelist 
+#'
+#' Returns communities from edgelist created by cemoverlap function.
+#'
+#' @param mod_intersection_df Module intersection dataframe obtained from cemoverlap function
+#' @param presence_as_weights Logical. Should sums of node pair occurence be considered edge weights?
+#' @param smallest_community Minimal number of genes in community (default:15)
+#' @param method Character string denoting an \code{igraph} package clustering function. 
+#' One of 'cluster_fast_greedy',  'cluster_edge_betweenness', 'cluster_fast_greedy',
+#'  'cluster_label_prop', 'cluster_leading_eigen', 'cluster_louvain', 'cluster_optimal', 
+#'  'cluster_spinglass' or 'cluster_walktrap'. Default: 'cluster_fast_greedy'
+#'
+#' @details Function takes edgelist as inputs and generates communities using functions 
+#'    provided in igraph package (default:'cluster_fast_greedy')
+#' 
+#' @return A list containing the genes present in each community detected
+#'
+#' @export 
+#' @examples
+#' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
+#' data(expr0)
+#' set.seed(10)
+#' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
+#' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
+#' cem1 <- cemitool(dset1, plot=FALSE) 
+#' cem2 <- cemitool(dset2, plot=FALSE) 
+#' cem_overlap_df <- cem_overlap(list(cem1, cem2))
+#' comm_overlap_df <- overlap_community(cem_overlap_df)
+overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
+                              smallest_community = 15, 
+                              method = c('cluster_fast_greedy', 'cluster_edge_betweenness', 
+                                         'cluster_fast_greedy', 'cluster_label_prop', 
+                                         'cluster_leading_eigen', 'cluster_louvain', 
+                                         'cluster_optimal', 'cluster_spinglass', 
+                                         'cluster_walktrap')){
+    
+    method <- match.arg(method)
+    edgemat <- as.matrix(mod_intersection_df[,c('gene1', 'gene2')])
+    edgegraph <- igraph::graph_from_edgelist(edgemat, directed = FALSE)
+    if(presence_as_weights){
+        weight <- mod_intersection_df[, 'proportion']
+        edgegraph$weight <- weight
+    }
+    commfunc <- get(method)
+    comm <- commfunc(edgegraph)
+    comm <- igraph::communities(comm)
+    comm <- as.list(comm)
+    names(comm) <- paste0('CM', seq_along(1:length(comm)))
+    len_vec <- sapply(comm, length)
+    names(comm) <- ifelse(len_vec >= smallest_community, 
+                          names(comm), 
+                          paste0(names(comm), '.SMALL'))
+    comm <- comm[order(len_vec, decreasing = TRUE)]
+    # comm <- comm[sapply(comm, length) >= smallest_community]
+    return(comm)
+}
+
 #' Enriches communities 
 #'
 #' Returns enrichment of communities from edgelist created by cemoverlap function.
@@ -144,8 +201,8 @@ cem_overlap <- function(analyses, fraction = 0, desired_table = 'adjacency'){
 #' set.seed(10)
 #' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 #' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1) 
-#' cem2 <- cemitool(dset2) 
+#' cem1 <- cemitool(dset1, plot=FALSE) 
+#' cem2 <- cemitool(dset2, plot=FALSE) 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' 
 #' comm_overlap <- overlap_community(cem_overlap_df)
@@ -240,6 +297,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
 #' @keywords internal 
 #'
 #' @examples
+#' \dontrun{
 #' # Create a mock expressionset to test functions 
 #' mockexpset <- matrix(rnorm(15000), ncol = 15)
 #' colnames(mockexpset) <- paste0('GSM', seq(1, 15))
@@ -259,6 +317,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
 #' cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
 #'                  comp_group = 'skin_healthy', samp_annot = samp_annot, exprs = mockexpset)
 #' limma_result2 <- do.call(makeLimmaComp, cont_mat2)
+#' }
 makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'all',
                            comp_group = 'none', subject_col=NULL, exprs){
     
@@ -314,6 +373,7 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
 #' @return A list with one data.frame per comparison
 #' @keywords internal 
 #' @examples 
+#' \dontrun{
 #' # Create a mock expressionset to test functions 
 #'       mockexpset <- matrix(rnorm(15000), ncol = 15)
 #'       colnames(mockexpset) <- paste0('GSM', seq(1, 15))
@@ -335,6 +395,7 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
 #'                                  comp_group = 'skin_healthy', samp_annot = samp_annot, 
 #'                                  exprs = mockexpset)
 #'       limma_result2 <- do.call(makeLimmaComp, cont_mat2)
+#' }
 makeLimmaComp <- function(exprs, design, cont.matrix){
     fit <- lmFit(exprs, design)
     fit2 <- contrasts.fit(fit, cont.matrix)
@@ -350,62 +411,6 @@ makeLimmaComp <- function(exprs, design, cont.matrix){
     return(toptbs)
 }
 
-#' Generates communities from edgelist 
-#'
-#' Returns communities from edgelist created by cemoverlap function.
-#'
-#' @param mod_intersection_df Module intersection dataframe obtained from cemoverlap function
-#' @param presence_as_weights Logical. Should sums of node pair occurence be considered edge weights?
-#' @param smallest_community Minimal number of genes in community (default:15)
-#' @param method Character string denoting an \code{igraph} package clustering function. 
-#' One of 'cluster_fast_greedy',  'cluster_edge_betweenness', 'cluster_fast_greedy',
-#'  'cluster_label_prop', 'cluster_leading_eigen', 'cluster_louvain', 'cluster_optimal', 
-#'  'cluster_spinglass' or 'cluster_walktrap'. Default: 'cluster_fast_greedy'
-#'
-#' @details Function takes edgelist as inputs and generates communities using functions 
-#'    provided in igraph package (default:'cluster_fast_greedy')
-#' 
-#' @return A list containing the genes present in each community detected
-#'
-#' @export 
-#' @examples
-#' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
-#' data(expr0)
-#' set.seed(10)
-#' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1) 
-#' cem2 <- cemitool(dset2) 
-#' cem_overlap_df <- cem_overlap(list(cem1, cem2))
-#' comm_overlap_df <- overlap_community(cem_overlap_df)
-overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
-                              smallest_community = 15, 
-                              method = c('cluster_fast_greedy', 'cluster_edge_betweenness', 
-                                         'cluster_fast_greedy', 'cluster_label_prop', 
-                                         'cluster_leading_eigen', 'cluster_louvain', 
-                                         'cluster_optimal', 'cluster_spinglass', 
-                                         'cluster_walktrap')){
-    
-    method <- match.arg(method)
-    edgemat <- as.matrix(mod_intersection_df[,c('gene1', 'gene2')])
-    edgegraph <- igraph::graph_from_edgelist(edgemat, directed = FALSE)
-    if(presence_as_weights){
-        weight <- mod_intersection_df[, 'proportion']
-        edgegraph$weight <- weight
-    }
-    commfunc <- get(method)
-    comm <- commfunc(edgegraph)
-    comm <- igraph::communities(comm)
-    comm <- as.list(comm)
-    names(comm) <- paste0('CM', seq_along(1:length(comm)))
-    len_vec <- sapply(comm, length)
-    names(comm) <- ifelse(len_vec >= smallest_community, 
-                          names(comm), 
-                          paste0(names(comm), '.SMALL'))
-    comm <- comm[order(len_vec, decreasing = TRUE)]
-    # comm <- comm[sapply(comm, length) >= smallest_community]
-    return(comm)
-}
 
 #' Plot module edge co-membership
 #'
@@ -415,14 +420,27 @@ overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
 #' @export
 #'
 #' @examples
-#' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
+#' # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
 #' data(expr0)
+#' data(sample_annot)
 #' set.seed(10)
-#' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1) 
-#' cem2 <- cemitool(dset2) 
-#' cem_overlap_df <- cem_overlap(list(cem1, cem2))
+#' dset1 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(11)
+#' dset2 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(12)
+#' dset3 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(13)
+#' dset4 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(14)
+#' dset5 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' 
+#' cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+#' cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
+#' cem3 <- cemitool(dset3, sample_annot, plot=FALSE) 
+#' cem4 <- cemitool(dset4, sample_annot, plot=FALSE) 
+#' cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
+#' 
+#' cem_overlap_df <- cem_overlap(list(cem1, cem2, cem3, cem4, cem5))
 #' plot_comembership(cem_overlap_df)
 plot_comembership <- function(cem_overlap_df){
     
@@ -456,8 +474,8 @@ plot_comembership <- function(cem_overlap_df){
 #' set.seed(10)
 #' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 #' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1, sample_annot) 
-#' cem2 <- cemitool(dset2, sample_annot) 
+#' cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+#' cem2 <- cemitool(dset2, sample_annot, plot=FALSE) 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' comm_overlap_df <- overlap_community(cem_overlap_df)
 #' plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)
@@ -524,19 +542,17 @@ plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 #' data(expr0)
 #' set.seed(10)
 #' dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 #' dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-#' cem1 <- cemitool(dset1, sample_annot) 
-#' cem2 <- cemitool(dset2, sample_annot)
-#' mod_stats <- stat_overlap_mods(list(cem1, cem2), comp_group="g0")
+#' cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+#' cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
+#' mod_stats <- stat_overlap_mods(analyses=list(cem1, cem2), comp_group="g0")
+#' }
 stat_overlap_mods <- function(analyses, comp_group, subject_col=NULL, ...){
-    # Analyses_list
-    # cutoff for fisher pvalue, fdr or jaccard index (no cutoff as default) 
-    # gsea_metric = 'nes'. Metric can also be 'pval' or 'es'
-    
     if(is.null(names(analyses))){
         names(analyses) <- paste0('cem', seq_along(analyses)) 
     }
@@ -701,7 +717,39 @@ mod_activity <- function(analyses, comp_group, subject_col){
     return(mod_mean)
 }
 
-plot_similarity <- function(df_output, weight_col="logfdr"){
+#' Plot study module similarity
+#'
+#' @param mod_stats List output from function \code{stat_overlap_mods}
+#' @param weight_col Character string denoting the weighting column for module similarity.
+#' One of "Jaccard", "Fisherp", "fdr", "logp" or "logfdr". Default: "logfdr". 
+#'
+#' @return A plot showing the similarity between study modules
+#' @export
+#'
+#' @examples
+#' # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
+#' data(expr0)
+#' data(sample_annot)
+#' set.seed(10)
+#' dset1 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(11)
+#' dset2 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(12)
+#' dset3 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(13)
+#' dset4 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' set.seed(14)
+#' dset5 <- expr0[,-sample(1:ncol(expr0), 10)]
+#' 
+#' cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+#' cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
+#' cem3 <- cemitool(dset3, sample_annot, plot=FALSE) 
+#' cem4 <- cemitool(dset4, sample_annot, plot=FALSE) 
+#' cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
+#' mod_stats <- stat_overlap_mods(list(cem1, cem2, cem3, cem4, cem5), comp_group="g0")
+#' plot_similarity(mod_stats)
+plot_similarity <- function(mod_stats, weight_col="logfdr"){
+    df_output <- mod_stats[[1]]
     ig_obj <- igraph::graph_from_data_frame(df_output, directed=FALSE)
     ig_obj <- igraph::simplify(ig_obj)
     degrees <- igraph::degree(ig_obj, normalized=FALSE)
@@ -725,7 +773,7 @@ plot_similarity <- function(df_output, weight_col="logfdr"){
         geom_segment(aes(x=X1, y=Y1, xend=X2, yend=Y2, size = Weight), 
                      data=edges, alpha=0.5, colour="#DDDDDD") + 
         geom_point(aes(X1, X2, size=plotcord$Degree, alpha=0.9), data=plotcord) + 
-        geom_text(aes(x=X1, y=X2, label=Names),hjust=0, vjust=0, data=plotcord) +
+        geom_text(aes(x=X1, y=X2, label=Names), hjust=0, vjust=0, data=plotcord) +
         scale_color_brewer(palette="Set1") +
         ggplot2::theme_bw(base_size = 12, base_family = "") +
         ggplot2::theme(axis.text = ggplot2::element_blank(),

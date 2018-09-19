@@ -20,6 +20,7 @@ A list with one data.frame per comparison
 Make LIMMA comparisons
 }
 \examples{
+\dontrun{
 # Create a mock expressionset to test functions 
       mockexpset <- matrix(rnorm(15000), ncol = 15)
       colnames(mockexpset) <- paste0('GSM', seq(1, 15))
@@ -41,5 +42,6 @@ Make LIMMA comparisons
                                  comp_group = 'skin_healthy', samp_annot = samp_annot, 
                                  exprs = mockexpset)
       limma_result2 <- do.call(makeLimmaComp, cont_mat2)
+}
 }
 \keyword{internal}

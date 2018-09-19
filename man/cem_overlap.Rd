@@ -35,7 +35,7 @@ data(expr0)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1) 
-cem2 <- cemitool(dset2) 
+cem1 <- cemitool(dset1, plot=FALSE) 
+cem2 <- cemitool(dset2, plot=FALSE) 
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 }

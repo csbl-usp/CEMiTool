@@ -29,8 +29,8 @@ data(sample_annot)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, sample_annot) 
-cem2 <- cemitool(dset2, sample_annot) 
+cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+cem2 <- cemitool(dset2, sample_annot, plot=FALSE) 
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 comm_overlap_df <- overlap_community(cem_overlap_df)
 plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)

@@ -32,6 +32,7 @@ A list containing LIMMA contrast and design matrices
 Make a LIMMA contrast matrix
 }
 \examples{
+\dontrun{
 # Create a mock expressionset to test functions 
 mockexpset <- matrix(rnorm(15000), ncol = 15)
 colnames(mockexpset) <- paste0('GSM', seq(1, 15))
@@ -51,5 +52,6 @@ limma_result1 <- do.call(makeLimmaComp, cont_mat1)
 cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
                  comp_group = 'skin_healthy', samp_annot = samp_annot, exprs = mockexpset)
 limma_result2 <- do.call(makeLimmaComp, cont_mat2)
+}
 }
 \keyword{internal}

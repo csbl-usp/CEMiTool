@@ -23,12 +23,14 @@ A list containing overlap statistics, node and study information and module acti
 Calculate module overlap statistics
 }
 \examples{
+\dontrun{
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, sample_annot) 
-cem2 <- cemitool(dset2, sample_annot)
-mod_stats <- stat_overlap_mods(list(cem1, cem2), comp_group="g0")
+cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
+mod_stats <- stat_overlap_mods(analyses=list(cem1, cem2), comp_group="g0")
+}
 }
