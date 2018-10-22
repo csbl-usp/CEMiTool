@@ -11,6 +11,10 @@
 #' @import fgsea
 #' @importFrom plyr rbind.fill
 #' @importFrom utils combn
+#' @importFrom WGCNA cor
+#' @importFrom ff as.ffdf ff ffdforder 
+#' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf
+#' @importFrom matrixStats rowSums2 rowMedians
 NULL
 
 #' Integrates CEMiTool analyses
@@ -18,10 +22,11 @@ NULL
 #' Returns the occurrence of edges between different analyses
 #'
 #' @param analyses List of objects of class \code{CEMiTool}
-#' @param fraction The fraction of objects in which an edge pair must be present to 
-#' be selected (default = 0, accepts values from 0-1)
+#' @param num_studies The minimum number of objects in the \code{analyses} list in
+#' which an edge pair must be present to be selected (default = 0)
 #' @param desired_table Character string indicating the type of output to be returned.
 #' Default: 'adjacency'.
+#' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #'
 #' @return Object of class \code{data.frame} containing edgelist describing common 
 #' edges between the networks defined in module slots from the input objects
@@ -43,80 +48,129 @@ NULL
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' @rdname cem_overlap
 #' @export
-cem_overlap <- function(analyses, fraction = 0, desired_table = 'adjacency'){
+cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', verbose=TRUE){
     if(is.null(names(analyses))){
         names(analyses) <- paste0('cem', seq_along(analyses))
     }
+    study_names <- names(analyses)
+    if(verbose) message("Running overlap. May take a while.")
     analyses <- Filter(Negate(is.null), analyses)
     edgelist <- lapply(seq_along(analyses), function(index){
-        cem_obj <- analyses[[index]]
-        cem <- module_genes(cem_obj)
+        cem_genes <- module_genes(analyses[[index]])
         cem_name <- names(analyses[index])
+        if(verbose) message(cem_name)
         # Splits by module  
-        mods <- split(cem[,'genes'], cem[,'modules'])
+        mods <- split(cem_genes[,'genes'], cem_genes[,'modules'])
         mods_log <- sapply(mods, length) < 2
         mods <- mods[!mods_log]
         mods <- mods[names(mods) != 'Not.Correlated']
         # combines all genes inside each module
-        per_mod <- lapply(mods, function(mod) {
-            # Compute pairwise correlations between genes in modules
-            if(desired_table %in% c('pearson', 'spearman')){
-                mod_cor <- data.table::melt(cor(t(cem_obj@expression[mod,]), method = desired_table))
-                mod_gg <- t(apply(mod_cor[,c(1,2)], 1, sort))
-                mod_outp <- data.table(mod_gg, mod_cor[,3,drop = TRUE])
-                colnames(mod_outp) <- c('gene1', 'gene2', cem_name)
-                # Filter out nodes connecting to itself
-                mod_outp <- subset(mod_outp, gene1 != gene2)
-                # Filter out duplicated nodes
-                mod_outp <- subset(mod_outp, !duplicated(mod_outp))
-                return(mod_outp)
-            }else if(desired_table == 'adjacency'){
-                mod_outp <- do.call(rbind, lapply(gRbase::combnPrim(mod, 2, simplify = FALSE), sort))
-                mod_outp <- data.frame(mod_outp, TRUE)
-                colnames(mod_outp) <- c('gene1', 'gene2', cem_name)
-                rownames(mod_outp) <- NULL
-                return(mod_outp)
-            }else if(desired_table == 'b_correlations'){
-                adj_mod <- cem_obj@adjacency[mod,mod]
-                adj_mod <- melt(adj_mod)
-                colnames(adj_mod) <- c('gene1', 'gene2', cem_name)
-                # Filter out nodes connecting to itself
-                adj_mod <- subset(adj_mod, gene1 != gene2)
-                # Filter out duplicated nodes
-                adj_mod <- subset(adj_mod, !duplicated(adj_mod))
-                return(adj_mod)
-            }
-        })
-        edges <- do.call(rbind, c(per_mod, make.row.names = FALSE))
+        
+        if(desired_table %in% c('pearson', 'spearman')){
+            per_mod <- lapply(names(mods), function(mod_name){
+                if(verbose) message("Module ", mod_name, " of object ", cem_name)
+                mod_expr <- expr_data(analyses[[index]])[mods[[mod_name]], ]
+                mod_expr <- t(mod_expr[ order(row.names(mod_expr)), ])
+                mod_expr <- cor(mod_expr)
+                mod_expr[upper.tri(mod_expr, diag=TRUE)] <- NA
+                mod_expr <- melt(mod_expr)
+                names(mod_expr) <- c("gene1", "gene2", "value")
+                mod_expr <- mod_expr[!is.na(mod_expr$value), ]
+                mod_expr <- ff::as.ffdf(mod_expr)
+                return(mod_expr)
+            })
+        }else if(desired_table == "adjacency"){
+            per_mod <- 
+                lapply(names(mods), function(mod_name){
+                    if(verbose) message("Module ", mod_name, " of object ", cem_name)
+                    mod_outp <- 
+                        do.call(rbind, lapply(gRbase::combnPrim(mods[[mod_name]], 
+                                                                2, simplify = FALSE), 
+                                              sort))
+                    mod_outp <- data.frame(mod_outp, TRUE)
+                    colnames(mod_outp) <- c('gene1', 'gene2', cem_name)
+                    rownames(mod_outp) <- NULL
+                    mod_outp <- ff::as.ffdf(mod_outp)
+                    return(mod_outp)
+                })
+        }else if(desired_table == "b_correlations"){
+            per_mod <- 
+                lapply(names(mods), function(mod_name){
+                    if(verbose) message("Module ", mod_name, " of object ", cem_name)
+                    adj_mod <- 
+                        adj_data(analyses[[index]])[mods[[mod_name]], mods[[mod_name]]]
+                    adj_mod[upper.tri(adj_mod, diag=TRUE)] <- NA
+                    adj_mod <- melt(adj_mod)
+                    adj_mod <- adj_mod[!is.na(adj_mod$value), ]
+                    colnames(adj_mod) <- c('gene1', 'gene2', cem_name)
+                    adj_mod <- ff::as.ffdf(adj_mod)
+                    return(adj_mod)
+                })
+        }
+        #edges <- do.call(rbind, c(per_mod, make.row.names = FALSE))
+        edges <- do.call("ffdfrbind.fill", per_mod)
+        rownames(edges) <- 1:nrow(edges)
         return(edges)
     })
+    rm(analyses)
     # Merges all studies
-    out <- Reduce(function(...){merge(..., by=c('gene1', 'gene2'), all=TRUE)}, edgelist)
-    data.table::setDF(out)
+    if(verbose) message("Merging...")
+    out <- Reduce(function(...){outer_join_merge(...)}, edgelist)
+    if(verbose) message("Merged!")
+    colnames(out)[!colnames(out) %in% c('gene1', 'gene2')] <- study_names
     # Sum of studies containing pair and order dataframe by sum of occurrences 
-    study_names <- colnames(out)[!colnames(out) %in% c('gene1', 'gene2')]
+    presentin <- ncol(out[, study_names]) - matrixStats::rowSums2(is.na(out[, study_names]))
+    out$edgeCount <- ff::ff(presentin)
+    out$proportion <- ff::ff(presentin/length(study_names))
+    # Keep only edges present in at least the number 
+    #of cemitool objects specified in 'num_studies' variable
+    out <- subset(out, edgeCount >= num_studies)
     if(desired_table %in% c('spearman', 'pearson', 'b_correlations')){
-        presentin <- apply(out[,study_names], 1, function(x) length(x) - sum(is.na(x)))
-        cor_median <- apply(out[,study_names], 1, function(x) median(x, na.rm = TRUE))
-        out <- out %>%
-            mutate(edgeCount = presentin, proportion = edgeCount/length(study_names),
-                   edgeCorMedian = cor_median) %>%
-            # Keep only edges present in at least the proportion of cemitool objects specified in 'fraction' variable
-            filter(proportion >= fraction) %>%
-            arrange(desc(proportion), desc(edgeCorMedian)) %>%
-            as.data.frame()
-        return(out)
-    } else{
-        presentin <- apply(out[,study_names], 1, function(x) length(x) - sum(is.na(x)))
-        out <- out %>%
-            mutate(edgeCount = presentin, proportion = edgeCount/length(study_names))%>%
-            # Keep only edges present in at least the proportion of cemitool objects specified in 'fraction' variable
-            filter(proportion >= fraction) %>%
-            arrange(desc(proportion)) %>%
-            as.data.frame()
-        return(out)
+        cor_median <- matrixStats::rowMedians(as.matrix(out[, study_names]), na.rm=TRUE)
+        out$edgeCorMedian <- ff::ff(cor_median)
+        idx <- ff::ffdforder(out[c("proportion", "edgeCorMedian")], decreasing=TRUE)
+    }else{
+        idx <- ff::ffdforder(out[c("proportion")], decreasing=TRUE)
     }
+    out <- out[idx, ]
+    return(out)
 }
+
+#' Calculate full outer join for two ffdf objects
+#'
+#' @param x An \code{ffdf} object
+#' @param y An \code{ffdf} object
+#'
+#' @return A \code{ffdf} object containing the join result
+#' @keywords internal
+#'
+outer_join_merge <- function(x, y){
+    # do a left outer join
+    leftjoin <- merge(x, y, by = c('gene1', 'gene2'), all.x = TRUE)
+    list_index <- ncol(x) - 2
+    names(leftjoin) <- c("gene1", "gene2", paste0("value", seq(1, list_index + 1)))
+    
+    # do a right outer join (it's just a left outer join with the objects swapped)
+    rightjoin <- merge(y, x, by = c('gene1', 'gene2'), all.x = TRUE, suffixes=c(".y", ".x"))
+    names(rightjoin) <- c("gene1", "gene2", paste0("value", list_index + 1), paste0("value", seq(1, list_index)))
+    
+    if(inherits(leftjoin, "ffdf") & inherits(rightjoin, "ffdf")){
+        stacked <- ffbase::ffdfrbind.fill(leftjoin, rightjoin)
+    }else{
+        stacked <- plyr::rbind.fill(leftjoin, rightjoin)    
+    }
+    # remove duplicate rows
+    stacked_names <- names(stacked)
+    not_columns <- stacked_names[!stacked_names %in% c("gene1", "gene2")]
+    stacked_genes <- stacked[setdiff(stacked_names, not_columns)]
+    
+    rownames(stacked) <- NULL
+    rownames(stacked_genes) <- NULL
+    uniques <- stacked[!duplicated.ffdf(stacked_genes), ]
+    
+    return(uniques)
+}
+
 
 #' Generates communities from edgelist 
 #'
@@ -444,13 +498,13 @@ makeLimmaComp <- function(exprs, design, cont.matrix){
 #' plot_comembership(cem_overlap_df)
 plot_comembership <- function(cem_overlap_df){
     
-    x <- table(cem_overlap_df$proportion)
+    x <- table(cem_overlap_df$edgeCount[])
     x <- as.data.frame(x)
     x$Var1 <- as.factor(round(as.numeric(as.character(x$Var1)), digits = 3))
     
     ggplot(x, aes(x=Var1, y=Freq, group=1)) +
         geom_line(color="darkgrey") + 
-        labs(x="Fraction of CEMiTool objects", y="Number of edges", title="Edge co-membership") +
+        labs(x="Number of CEMiTool objects", y="Number of edges", title="Edge co-membership") +
         theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
         scale_x_discrete(limits=levels(x$Var1))
 }
@@ -481,7 +535,9 @@ plot_comembership <- function(cem_overlap_df){
 #' plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)
 plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num){
     overlap_df <- cem_overlap_df
+    
     cem_num <- grep("cem", names(overlap_df), value=TRUE)
+    
     stop_if(study_num > length(cem_num), "Variable study_num cannot exceed number of studies")
     overlap_df <- overlap_df[overlap_df$edgeCount >= study_num, ]
     
@@ -767,7 +823,6 @@ plot_similarity <- function(mod_stats, weight_col="logfdr"){
     
     plotcord$Degree <- network::get.vertex.attribute(net_obj, "degree")
     plotcord$Names <- network::get.vertex.attribute(net_obj, "vertex.names")
-    
     
     ggplot() + 
         geom_segment(aes(x=X1, y=Y1, xend=X2, yend=Y2, size = Weight), 

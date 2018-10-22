@@ -4,16 +4,19 @@
 \alias{cem_overlap}
 \title{Integrates CEMiTool analyses}
 \usage{
-cem_overlap(analyses, fraction = 0, desired_table = "adjacency")
+cem_overlap(analyses, num_studies = 0, desired_table = "adjacency",
+  verbose = TRUE)
 }
 \arguments{
 \item{analyses}{List of objects of class \code{CEMiTool}}
 
-\item{fraction}{The fraction of objects in which an edge pair must be present to 
-be selected (default = 0, accepts values from 0-1)}
+\item{num_studies}{The minimum number of objects in the \code{analyses} list in
+which an edge pair must be present to be selected (default = 0)}
 
 \item{desired_table}{Character string indicating the type of output to be returned.
 Default: 'adjacency'.}
+
+\item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
 Object of class \code{data.frame} containing edgelist describing common 
