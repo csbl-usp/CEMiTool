@@ -1,4 +1,5 @@
 install.packages('devtools')
-source('https://bioconductor.org/biocLite.R')
-biocLite(c('gRbase', 'preprocessCore', 'impute', 'clusterProfiler'))
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c('gRbase', 'preprocessCore', 'impute'))
 devtools::install_deps(dep=T)
