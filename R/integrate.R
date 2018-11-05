@@ -14,7 +14,8 @@
 #' @importFrom WGCNA cor
 #' @importFrom ff as.ffdf ff ffdforder 
 #' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf
-#' @importFrom matrixStats rowSums2 rowMedians
+#' @importFrom matrixStats rowSums2 rowMedians rowMeans2 rowSds
+#' @importFrom RColorBrewer brewer.pal
 NULL
 
 #' Integrates CEMiTool analyses
@@ -48,6 +49,7 @@ NULL
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' @rdname cem_overlap
 #' @export
+
 cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', verbose=TRUE){
     if(is.null(names(analyses))){
         names(analyses) <- paste0('cem', seq_along(analyses))
@@ -55,23 +57,33 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
     study_names <- names(analyses)
     if(verbose) message("Running overlap. May take a while.")
     analyses <- Filter(Negate(is.null), analyses)
-    edgelist <- lapply(seq_along(analyses), function(index){
+    expr_dfs <- lapply(analyses, expr_data)
+    if(desired_table == "b_correlations"){
+        adj_list <- lapply(analyses, adj_data)
+        names(adj_list) <- study_names
+    }
+    # combines all genes inside each module
+    genes <- lapply(seq_along(analyses), function(index){
         cem_genes <- module_genes(analyses[[index]])
         cem_name <- names(analyses[index])
-        if(verbose) message(cem_name)
-        # Splits by module  
         mods <- split(cem_genes[,'genes'], cem_genes[,'modules'])
         mods_log <- sapply(mods, length) < 2
         mods <- mods[!mods_log]
         mods <- mods[names(mods) != 'Not.Correlated']
-        # combines all genes inside each module
-        
+    })
+    names(genes) <- study_names
+    names(expr_dfs) <- study_names
+    rm(analyses)
+    gc()
+    edgelist <- lapply(names(expr_dfs), function(cem_name){
+        if(verbose) message(cem_name)
         if(desired_table %in% c('pearson', 'spearman')){
-            per_mod <- lapply(names(mods), function(mod_name){
+            per_mod <- lapply(names(genes[[cem_name]]), function(mod_name){
                 if(verbose) message("Module ", mod_name, " of object ", cem_name)
-                mod_expr <- expr_data(analyses[[index]])[mods[[mod_name]], ]
+                mod_expr <- expr_dfs[[cem_name]][genes[[cem_name]][[mod_name]], ]
                 mod_expr <- t(mod_expr[ order(row.names(mod_expr)), ])
-                mod_expr <- cor(mod_expr)
+                mod_expr <- WGCNA::cor(mod_expr, method=desired_table, 
+                                       use="pairwise.complete.obs")
                 mod_expr[upper.tri(mod_expr, diag=TRUE)] <- NA
                 mod_expr <- melt(mod_expr)
                 names(mod_expr) <- c("gene1", "gene2", "value")
@@ -81,12 +93,11 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
             })
         }else if(desired_table == "adjacency"){
             per_mod <- 
-                lapply(names(mods), function(mod_name){
+                lapply(names(genes[[cem_name]]), function(mod_name){
                     if(verbose) message("Module ", mod_name, " of object ", cem_name)
+                    
                     mod_outp <- 
-                        do.call(rbind, lapply(gRbase::combnPrim(mods[[mod_name]], 
-                                                                2, simplify = FALSE), 
-                                              sort))
+                        do.call(rbind, lapply(gRbase::combnPrim(genes[[cem_name]][[mod_name]], 2, simplify = FALSE), sort))
                     mod_outp <- data.frame(mod_outp, TRUE)
                     colnames(mod_outp) <- c('gene1', 'gene2', cem_name)
                     rownames(mod_outp) <- NULL
@@ -95,10 +106,9 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
                 })
         }else if(desired_table == "b_correlations"){
             per_mod <- 
-                lapply(names(mods), function(mod_name){
+                lapply(names(genes[[cem_name]]), function(mod_name){
                     if(verbose) message("Module ", mod_name, " of object ", cem_name)
-                    adj_mod <- 
-                        adj_data(analyses[[index]])[mods[[mod_name]], mods[[mod_name]]]
+                    adj_mod <- adj_list[[index]][genes[[index]][[mod_name]], genes[[index]][[mod_name]]]
                     adj_mod[upper.tri(adj_mod, diag=TRUE)] <- NA
                     adj_mod <- melt(adj_mod)
                     adj_mod <- adj_mod[!is.na(adj_mod$value), ]
@@ -107,16 +117,46 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
                     return(adj_mod)
                 })
         }
-        #edges <- do.call(rbind, c(per_mod, make.row.names = FALSE))
         edges <- do.call("ffdfrbind.fill", per_mod)
         rownames(edges) <- 1:nrow(edges)
         return(edges)
     })
-    rm(analyses)
+    names(edgelist) <- study_names
+    
+    if(num_studies > 0){
+        for(index in seq_along(edgelist)){
+            original_study <- rep(names(edgelist)[index], nrow(edgelist[[index]]))
+            edgelist[[index]]$object <- as.ff(as.factor(original_study))
+        }
+        
+        full_edgelist <- do.call("ffdfrbind.fill", edgelist)
+        full_edgelist$splitBy <- with(full_edgelist[, 1:3], 
+                                      as.ff(as.factor(paste(gene1, gene2, sep="_"))), 
+                                      by = 100000)
+        
+        tmp <- ffdfdply(full_edgelist, split=full_edgelist$splitBy, trace=TRUE, FUN=function(y){
+            res <- y %>% group_by(splitBy) %>% mutate(count=n())
+        })
+        
+        keep_edges <- subset(tmp, count >= num_studies)
+        
+        new_edgelist <- list()
+        for(study in study_names){
+            kept_edges <- subset(keep_edges, object == study)
+            rownames(kept_edges) <- NULL
+            kept_edges <- kept_edges[setdiff(colnames(kept_edges), c("object", "splitBy", "count"))]
+            new_edgelist[[study]] <- kept_edges
+        }
+        
+        edgelist <- new_edgelist    
+    }
+    
     # Merges all studies
+    #out <- Reduce(function(...){merge(..., by=c('gene1', 'gene2'), all=TRUE)}, edgelist2)
     if(verbose) message("Merging...")
     out <- Reduce(function(...){outer_join_merge(...)}, edgelist)
     if(verbose) message("Merged!")
+    #data.table::setDF(out)
     colnames(out)[!colnames(out) %in% c('gene1', 'gene2')] <- study_names
     # Sum of studies containing pair and order dataframe by sum of occurrences 
     presentin <- ncol(out[, study_names]) - matrixStats::rowSums2(is.na(out[, study_names]))
@@ -124,10 +164,14 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
     out$proportion <- ff::ff(presentin/length(study_names))
     # Keep only edges present in at least the number 
     #of cemitool objects specified in 'num_studies' variable
-    out <- subset(out, edgeCount >= num_studies)
+    ######## out <- subset(out, edgeCount >= num_studies)
     if(desired_table %in% c('spearman', 'pearson', 'b_correlations')){
         cor_median <- matrixStats::rowMedians(as.matrix(out[, study_names]), na.rm=TRUE)
         out$edgeCorMedian <- ff::ff(cor_median)
+        cor_sd <- matrixStats::rowSds(as.matrix(out[, study_names]), na.rm=TRUE)
+        out$edgeSd <- ff::ff(cor_sd)
+        cor_mean <- matrixStats::rowMeans2(as.matrix(out[, study_names]), na.rm=TRUE)
+        out$edgeCorMean <- ff::ff(cor_mean)
         idx <- ff::ffdforder(out[c("proportion", "edgeCorMedian")], decreasing=TRUE)
     }else{
         idx <- ff::ffdforder(out[c("proportion")], decreasing=TRUE)
@@ -135,6 +179,7 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
     out <- out[idx, ]
     return(out)
 }
+
 
 #' Calculate full outer join for two ffdf objects
 #'
@@ -203,10 +248,9 @@ outer_join_merge <- function(x, y){
 overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
                               smallest_community = 15, 
                               method = c('cluster_fast_greedy', 'cluster_edge_betweenness', 
-                                         'cluster_fast_greedy', 'cluster_label_prop', 
-                                         'cluster_leading_eigen', 'cluster_louvain', 
-                                         'cluster_optimal', 'cluster_spinglass', 
-                                         'cluster_walktrap')){
+                                         'cluster_label_prop', 'cluster_leading_eigen',
+                                         'cluster_louvain', 'cluster_optimal', 
+                                         'cluster_spinglass', 'cluster_walktrap')){
     
     method <- match.arg(method)
     edgemat <- as.matrix(mod_intersection_df[,c('gene1', 'gene2')])
@@ -234,8 +278,7 @@ overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
 #' Returns enrichment of communities from edgelist created by cemoverlap function.
 #'
 #' @param community_list Community list obtained from overlap community function
-#' @param list_of_cem List of CEMiTool objects
-#' @param list_of_cem_names Character vector to name list of CEMiTool objects
+#' @param analyses List of CEMiTool objects
 #' @param comp_group Which group will be used as base for comparison. If 'none', 
 #' then all combinations of comparisons will be made
 #' @param subject_col Column containing subject information in sample annotation slot of CEMiTool objects 
@@ -270,18 +313,20 @@ overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
 #' mod_enrich <- enrich_mods(comm_overlap, list(cem1, cem2), comp_group='g0')
 #' @rdname enrich_mods
 #' @export 
-enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_group, subject_col=NULL, run_fgsea = FALSE){
-    if(!missing(list_of_cem_names)){
-        names(list_of_cem) <- list_of_cem_names 
-    }else{
-        names(list_of_cem) <- paste0('cem_', seq_along(1:length(list_of_cem)))
+enrich_mods <- function(community_list, analyses, 
+                        comp_group = 'none', subject_col=NULL, 
+                        run_fgsea = FALSE){
+    if(is.null(names(analyses))){
+        names(analyses) <- paste0('cem', seq_along(analyses))
     }
+    
     # Setting
-    mod_exp <- Map(function(cem, cemname){
+    mod_exp <- Map(function(cem, cem_name){
         annot <- sample_annotation(cem)
         annot <- annot[annot[[cem@sample_name_column]] %in% names(expr_data(cem)), ]
-        contmat <- makeContMatrix(samp_annot = annot, class_column = cem@class_column,
-                                  comp_group = comp_group, exprs = expr_data(cem), subject_col = subject_col) 
+        contmat <- makeContMatrix(sample_annot = annot, class_column = cem@class_column,
+                                  comp_group = comp_group, expr = expr_data(cem), 
+                                  subject_col = subject_col) 
         toptables <- do.call(makeLimmaComp, contmat)
         iter_comp <- Map(function(comp, compname){
             if(run_fgsea){
@@ -307,7 +352,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
                 }
                 scaled <- per_up - per_do
                 scaled_percentage <- c(per_up, per_do, scaled, fcs_pert, compname, modname, 
-                                       cemname, paste0(compname, '_in_', cemname), gsea_vec)
+                                       cem_name, paste0(compname, '_in_', cem_name), gsea_vec)
                 return(scaled_percentage)
             }, community_list, names(community_list))
             percentage_in_comparison <- as.data.frame(do.call(rbind, percentage_in_comparison))
@@ -320,7 +365,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
         }, toptables, names(toptables))
         p_incomp_df <- do.call(rbind, iter_comp)
         return(p_incomp_df)
-    }, list_of_cem, names(list_of_cem))
+    }, analyses, names(analyses))
     mod_exp_df <- as.data.frame(do.call(rbind, mod_exp))
     ncolumns <- c('percentage_up', 'percentage_down', 'scaled_percentage', 'score_mod',
                   'pval', 'padj', 'ES', 'NES', 'nMoreExtreme', 'size')
@@ -336,7 +381,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
 
 #' Make a LIMMA contrast matrix
 #'
-#' @param samp_annot Sample annotation \code{data.frame}
+#' @param sample_annot Sample annotation \code{data.frame}
 #' @param class_column Character string indicating the sample 
 #' grouping column. Default: "Class"
 #' @param which_groups Optional character vector to use if selecting groups 
@@ -345,7 +390,7 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
 #' If "none" (the default), compares all groups against each other. 
 #' @param subject_col Optional character string indicating a column containing 
 #' subject information 
-#' @param exprs Optional expression matrix for direct compatibility with makeLimmaComp 
+#' @param expr Optional expression matrix for direct compatibility with makeLimmaComp 
 #'
 #' @return A list containing LIMMA contrast and design matrices
 #' @keywords internal 
@@ -358,24 +403,27 @@ enrich_mods <- function(community_list, list_of_cem, list_of_cem_names, comp_gro
 #' set.seed(100)
 #' rownames(mockexpset) <- apply(replicate(n = 1000, sample(letters, 8)),
 #'     2, function(x) paste(x, collapse = '')) 
-#' samp_annot <- data.frame(geo_accession = colnames(mockexpset), 
+#' sample_annot <- data.frame(geo_accession = colnames(mockexpset), 
 #'                   group = c(rep('skin_healthy', 5), rep('degree1', 5), rep('degree2', 5)), 
 #'                   subject = paste0('S', c(rep(1:5),rep(1:5), rep(1:5))))
 #' # Testing function below 
 #' # Paired
 #' cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
 #'                  comp_group = 'skin_healthy', subject_col= 'subject', 
-#'                  samp_annot = samp_annot, exprs = mockexpset)
+#'                  sample_annot = sample_annot, expr = mockexpset)
 #' limma_result1 <- do.call(makeLimmaComp, cont_mat1)
 #' # Unpaired
 #' cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-#'                  comp_group = 'skin_healthy', samp_annot = samp_annot, exprs = mockexpset)
+#'                  comp_group = 'skin_healthy', sample_annot = sample_annot, expr = mockexpset)
 #' limma_result2 <- do.call(makeLimmaComp, cont_mat2)
 #' }
-makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'all',
-                           comp_group = 'none', subject_col=NULL, exprs){
+makeContMatrix <- function(sample_annot, class_column = 'Class', which_groups = 'all',
+                           comp_group = 'none', subject_col=NULL, expr){
     
-    groups <- unique(samp_annot[[class_column]])
+    groups <- as.character(unique(sample_annot[[class_column]]))
+    stop_if(is.null(groups), 
+                       "No groups in the class column of the sample annotation data")
+    
     if(which_groups == 'all' && comp_group == 'none'){
         comparisons <- utils::combn(groups, 2, simplify = FALSE)
     }else if(which_groups == 'all' && comp_group != 'none'){
@@ -391,9 +439,9 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
         comparisons <- sapply(comparisons, 
                               function(x) strsplit(x, ' ', fixed = TRUE))
     }
-    design_levels <- factor(samp_annot[[class_column]])
+    design_levels <- factor(sample_annot[[class_column]])
     if(!is.null(subject_col)){
-        subject_levels <- factor(samp_annot[[subject_col]])
+        subject_levels <- factor(sample_annot[[subject_col]])
         design <- model.matrix(~0 + design_levels + subject_levels) 
         colnames(design) <- gsub('design_levels', '', colnames(design))
         colnames(design) <- gsub('subject_levels', '', colnames(design))
@@ -408,19 +456,18 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
         paste0(x[1], '_vs_',x[2]))
     cont_matrix <- do.call(limma::makeContrasts, comp)
     colnames(cont_matrix) <- contrasts_names
-    if(missing(exprs)){
+    if(missing(expr)){
         warning('An expression matrix must be submitted for direct compatibility with makeLimmaComp() function. Alternatively, a matrix can be added to the list object returned by this function.')
         ret_list <- list(design = design, cont.matrix = cont_matrix)
-    }
-    else{
-        ret_list <- list(design = design, cont.matrix = cont_matrix, exprs = exprs)
+    }else{
+        ret_list <- list(design = design, cont.matrix = cont_matrix, expr = expr)
     }
     return(ret_list)
 }
 
 #' Make LIMMA comparisons
 #'
-#' @param exprs Expression
+#' @param expr Expression
 #' @param design Design matrix
 #' @param cont.matrix Contrast matrix
 #'
@@ -434,7 +481,7 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
 #'       set.seed(100)
 #'       rownames(mockexpset) <- apply(replicate(n = 1000, sample(letters, 8)),
 #'                                   2, function(x) paste(x, collapse = '')) 
-#'       samp_annot <- data.frame(geo_accession = colnames(mockexpset), 
+#'       sample_annot <- data.frame(geo_accession = colnames(mockexpset), 
 #'                                group = c(rep('skin_healthy', 5), rep('degree1', 5), 
 #'                                          rep('degree2', 5)), 
 #'                                subject = paste0('S', c(rep(1:5),rep(1:5), rep(1:5))))
@@ -442,16 +489,16 @@ makeContMatrix <- function(samp_annot, class_column = 'Class', which_groups = 'a
 #'       # Paired
 #'       cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
 #'                                  comp_group = 'skin_healthy', subject_col= 'subject', 
-#'                                  samp_annot = samp_annot, exprs = mockexpset)
+#'                                  sample_annot = sample_annot, expr = mockexpset)
 #'       limma_result1 <- do.call(makeLimmaComp, cont_mat1)
 #'       # Unpaired
 #'       cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-#'                                  comp_group = 'skin_healthy', samp_annot = samp_annot, 
-#'                                  exprs = mockexpset)
+#'                                  comp_group = 'skin_healthy', sample_annot = sample_annot, 
+#'                                  expr = mockexpset)
 #'       limma_result2 <- do.call(makeLimmaComp, cont_mat2)
 #' }
-makeLimmaComp <- function(exprs, design, cont.matrix){
-    fit <- lmFit(exprs, design)
+makeLimmaComp <- function(expr, design, cont.matrix){
+    fit <- lmFit(expr, design)
     fit2 <- contrasts.fit(fit, cont.matrix)
     fit2 <- eBayes(fit2)
     coeffs <- colnames(cont.matrix)
@@ -503,7 +550,8 @@ plot_comembership <- function(cem_overlap_df){
     x$Var1 <- as.factor(round(as.numeric(as.character(x$Var1)), digits = 3))
     
     ggplot(x, aes(x=Var1, y=Freq, group=1)) +
-        geom_line(color="darkgrey") + 
+        geom_line(color="darkgrey") +
+        geom_text(aes(label=Freq)) +
         labs(x="Number of CEMiTool objects", y="Number of edges", title="Edge co-membership") +
         theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
         scale_x_discrete(limits=levels(x$Var1))
@@ -517,6 +565,8 @@ plot_comembership <- function(cem_overlap_df){
 #' \code{overlap_community}
 #' @param study_num Minimum number of studies an edge must be present in for it 
 #' to be included
+#' @param num_sd_cut Number of standard deviations an edge's mean must be above in order
+#' to be included in the final plot (Default: 2)
 #'
 #' @return A plot containing the consensus modules of the studies
 #' @export
@@ -533,13 +583,19 @@ plot_comembership <- function(cem_overlap_df){
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' comm_overlap_df <- overlap_community(cem_overlap_df)
 #' plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)
-plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num){
+plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num, num_sd_cut=2){
     overlap_df <- cem_overlap_df
     
     cem_num <- grep("cem", names(overlap_df), value=TRUE)
     
     stop_if(study_num > length(cem_num), "Variable study_num cannot exceed number of studies")
+    stop_if(study_num == 1, "Cannot do consensus of one study")
     overlap_df <- overlap_df[overlap_df$edgeCount >= study_num, ]
+    
+    if("edgeCorMean" %in% names(overlap_df)){
+        means <- overlap_df$edgeCorMean[]
+        overlap_df <- overlap_df[abs(means) >= num_sd_cut*sd(means), ]    
+    }
     
     ig_obj <- igraph::graph_from_data_frame(overlap_df, directed=FALSE)
     ig_obj <- igraph::simplify(ig_obj)
@@ -568,12 +624,15 @@ plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num){
     
     plotcord$Communities <- comms[plotcord$Names]
     
+    mycolors <- colorRampPalette(RColorBrewer::brewer.pal(name="Set1", n = 8))(30) 
+    
     ggplot() + 
         geom_segment(aes(x=X1, y=Y1, xend=X2, yend=Y2), 
                      data=edges, size = 0.5, alpha=0.5, colour="#DDDDDD") + 
         geom_point(aes(X1, X2, size=plotcord$Degree, alpha=0.9, 
                        color=Communities), data=plotcord) + 
-        scale_color_brewer(palette="Set1") +
+        scale_color_manual(values=mycolors) +
+        scale_size_continuous(name="Degree") +
         ggplot2::theme_bw(base_size = 12, base_family = "") +
         ggplot2::theme(axis.text = ggplot2::element_blank(),
                        axis.ticks = ggplot2::element_blank(),
@@ -615,7 +674,8 @@ stat_overlap_mods <- function(analyses, comp_group, subject_col=NULL, ...){
     stopifnot(sum(duplicated(names(analyses))) == 0)
     lapply(names(analyses), function(name) {
         if(length(gsea_data(analyses[[name]])) == 0){
-            stop("CEMiTool object '", name, "' has no enrichment slot! Please run function mod_gsea.")
+            stop("CEMiTool object '", name, 
+                 "' has no enrichment slot! Please run function mod_gsea.")
         }
     })
     
@@ -694,16 +754,18 @@ mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
 #' @return A \code{data.frame} containing the results
 #' @keywords internal
 mod_info <- function(analyses, df_output, gsea_metric="nes"){
-    names(analyses) <- paste0("cem_", seq_along(analyses))
-    info_mod <- Map(function(cemname, cem){
+    if(is.null(names(analyses))){
+        names(analyses) <- paste0("cem_", seq_along(analyses))    
+    }
+    info_mod <- Map(function(cem_name, cem){
         # tmpmod <- subset(cem@module, modules != 'Not.Correlated')
         scores <- Map(function(scrname, scr){
             scr <- scr %>%
                 gather(key = class, value = value, -pathway) %>%
-                mutate(cemname = cemname) %>%
+                mutate(cem_name = cem_name) %>%
                 mutate(metric = scrname) %>%
                 filter(pathway != 'Not.Correlated') %>%
-                unite(module, cemname, pathway, sep = '.') %>%
+                unite(module, cem_name, pathway, sep = '.') %>%
                 select(module, class, value, metric) %>%
                 as.data.frame()
             return(scr)}, names(cem@enrichment), cem@enrichment)
@@ -716,8 +778,8 @@ mod_info <- function(analyses, df_output, gsea_metric="nes"){
             group_by(modules) %>%
             summarise(mod_length = n()) %>%
             ungroup() %>%
-            mutate(cemname = cemname) %>%
-            unite(module, cemname, modules, sep = '.')
+            mutate(cem_name = cem_name) %>%
+            unite(module, cem_name, modules, sep = '.')
         cemdf <- merge(cemdf, scores, by = 'module')
         return(cemdf)
     }, names(analyses), analyses)
@@ -738,13 +800,13 @@ mod_info <- function(analyses, df_output, gsea_metric="nes"){
 #' @return A \code{data.frame} containing the results
 #' @keywords internal
 mod_activity <- function(analyses, comp_group, subject_col){
-    mod_mean <- Map(function(cemname, cem){
+    mod_mean <- Map(function(cem_name, cem){
         # Group and subject are hardcoded
         annot <- sample_annotation(cem)
         annot <- annot[annot[[cem@sample_name_column]] %in% names(expr_data(cem)), ]
-        contmat <- makeContMatrix(samp_annot  = annot, 
+        contmat <- makeContMatrix(sample_annot = annot, 
                                   class_column = cem@class_column,
-                                  comp_group = comp_group, exprs = expr_data(cem),
+                                  comp_group = comp_group, expr = expr_data(cem),
                                   subject_col = subject_col) 
         toptables <- do.call(makeLimmaComp, contmat)
         toptables <- do.call(rbind, c(toptables, make.row.names = FALSE))
@@ -758,7 +820,7 @@ mod_activity <- function(analyses, comp_group, subject_col){
                 group_by(comparison) %>%
                 summarise(fc_median = median(logFC)) %>%
                 ungroup() %>%
-                mutate(module = paste0(cemname, '.', modname)) %>%
+                mutate(module = paste0(cem_name, '.', modname)) %>%
                 select(comparison, module, fc_median) %>%
                 gather(key = parameter, value = value, fc_median)
             tmptop 

@@ -4,12 +4,12 @@
 \alias{makeContMatrix}
 \title{Make a LIMMA contrast matrix}
 \usage{
-makeContMatrix(samp_annot, class_column = "Class",
+makeContMatrix(sample_annot, class_column = "Class",
   which_groups = "all", comp_group = "none", subject_col = NULL,
-  exprs)
+  expr)
 }
 \arguments{
-\item{samp_annot}{Sample annotation \code{data.frame}}
+\item{sample_annot}{Sample annotation \code{data.frame}}
 
 \item{class_column}{Character string indicating the sample 
 grouping column. Default: "Class"}
@@ -23,7 +23,7 @@ If "none" (the default), compares all groups against each other.}
 \item{subject_col}{Optional character string indicating a column containing 
 subject information}
 
-\item{exprs}{Optional expression matrix for direct compatibility with makeLimmaComp}
+\item{expr}{Optional expression matrix for direct compatibility with makeLimmaComp}
 }
 \value{
 A list containing LIMMA contrast and design matrices
@@ -39,18 +39,18 @@ colnames(mockexpset) <- paste0('GSM', seq(1, 15))
 set.seed(100)
 rownames(mockexpset) <- apply(replicate(n = 1000, sample(letters, 8)),
     2, function(x) paste(x, collapse = '')) 
-samp_annot <- data.frame(geo_accession = colnames(mockexpset), 
+sample_annot <- data.frame(geo_accession = colnames(mockexpset), 
                   group = c(rep('skin_healthy', 5), rep('degree1', 5), rep('degree2', 5)), 
                   subject = paste0('S', c(rep(1:5),rep(1:5), rep(1:5))))
 # Testing function below 
 # Paired
 cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
                  comp_group = 'skin_healthy', subject_col= 'subject', 
-                 samp_annot = samp_annot, exprs = mockexpset)
+                 sample_annot = sample_annot, expr = mockexpset)
 limma_result1 <- do.call(makeLimmaComp, cont_mat1)
 # Unpaired
 cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-                 comp_group = 'skin_healthy', samp_annot = samp_annot, exprs = mockexpset)
+                 comp_group = 'skin_healthy', sample_annot = sample_annot, expr = mockexpset)
 limma_result2 <- do.call(makeLimmaComp, cont_mat2)
 }
 }

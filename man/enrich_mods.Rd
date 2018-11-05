@@ -4,15 +4,13 @@
 \alias{enrich_mods}
 \title{Enriches communities}
 \usage{
-enrich_mods(community_list, list_of_cem, list_of_cem_names, comp_group,
+enrich_mods(community_list, analyses, comp_group = "none",
   subject_col = NULL, run_fgsea = FALSE)
 }
 \arguments{
 \item{community_list}{Community list obtained from overlap community function}
 
-\item{list_of_cem}{List of CEMiTool objects}
-
-\item{list_of_cem_names}{Character vector to name list of CEMiTool objects}
+\item{analyses}{List of CEMiTool objects}
 
 \item{comp_group}{Which group will be used as base for comparison. If 'none', 
 then all combinations of comparisons will be made}

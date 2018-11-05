@@ -24,7 +24,7 @@ Imports: methods, scales, gRbase, dplyr, data.table (>= 1.9.4), WGCNA, grid,
         ggplot2, ggpmisc, ggthemes, ggrepel, sna, clusterProfiler, fgsea,
         stringr, knitr, rmarkdown, igraph, DT, htmltools, pracma,
         intergraph, grDevices, utils, network, matrixStats, ggdendro, 
-        gridExtra, gtable, GeneOverlap, limma, tidyr, plyr, ff, ffbase
+        gridExtra, gtable, GeneOverlap, limma, tidyr, plyr, ff, ffbase, RColorBrewer
 Suggests: testthat, BiocManager
 License: GPL-3
 Encoding: UTF-8

@@ -4,10 +4,10 @@
 \alias{makeLimmaComp}
 \title{Make LIMMA comparisons}
 \usage{
-makeLimmaComp(exprs, design, cont.matrix)
+makeLimmaComp(expr, design, cont.matrix)
 }
 \arguments{
-\item{exprs}{Expression}
+\item{expr}{Expression}
 
 \item{design}{Design matrix}
 
@@ -27,7 +27,7 @@ Make LIMMA comparisons
       set.seed(100)
       rownames(mockexpset) <- apply(replicate(n = 1000, sample(letters, 8)),
                                   2, function(x) paste(x, collapse = '')) 
-      samp_annot <- data.frame(geo_accession = colnames(mockexpset), 
+      sample_annot <- data.frame(geo_accession = colnames(mockexpset), 
                                group = c(rep('skin_healthy', 5), rep('degree1', 5), 
                                          rep('degree2', 5)), 
                                subject = paste0('S', c(rep(1:5),rep(1:5), rep(1:5))))
@@ -35,12 +35,12 @@ Make LIMMA comparisons
       # Paired
       cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
                                  comp_group = 'skin_healthy', subject_col= 'subject', 
-                                 samp_annot = samp_annot, exprs = mockexpset)
+                                 sample_annot = sample_annot, expr = mockexpset)
       limma_result1 <- do.call(makeLimmaComp, cont_mat1)
       # Unpaired
       cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-                                 comp_group = 'skin_healthy', samp_annot = samp_annot, 
-                                 exprs = mockexpset)
+                                 comp_group = 'skin_healthy', sample_annot = sample_annot, 
+                                 expr = mockexpset)
       limma_result2 <- do.call(makeLimmaComp, cont_mat2)
 }
 }

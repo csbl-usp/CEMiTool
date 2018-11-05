@@ -6,7 +6,7 @@
 \usage{
 overlap_community(mod_intersection_df, presence_as_weights = FALSE,
   smallest_community = 15, method = c("cluster_fast_greedy",
-  "cluster_edge_betweenness", "cluster_fast_greedy", "cluster_label_prop",
+  "cluster_edge_betweenness", "cluster_label_prop",
   "cluster_leading_eigen", "cluster_louvain", "cluster_optimal",
   "cluster_spinglass", "cluster_walktrap"))
 }

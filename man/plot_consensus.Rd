@@ -4,7 +4,8 @@
 \alias{plot_consensus}
 \title{Plot graph of consensus modules}
 \usage{
-plot_consensus(cem_overlap_df, comm_overlap_df, study_num)
+plot_consensus(cem_overlap_df, comm_overlap_df, study_num,
+  num_sd_cut = 2)
 }
 \arguments{
 \item{cem_overlap_df}{Output \code{data.frame} from function 
@@ -15,6 +16,9 @@ plot_consensus(cem_overlap_df, comm_overlap_df, study_num)
 
 \item{study_num}{Minimum number of studies an edge must be present in for it 
 to be included}
+
+\item{num_sd_cut}{Number of standard deviations an edge's mean must be above in order
+to be included in the final plot (Default: 2)}
 }
 \value{
 A plot containing the consensus modules of the studies
