@@ -797,15 +797,18 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n Number of genes to return in each module (default: 5).
+#' @param method Method for hub calculation. Either "adjacency" or "kME". 
+#' Default: "adjacency"
 #' @param ... Optional parameters.
 #'
-#' @return A \code{list} containing hub genes.
+#' @return A \code{list} containing hub genes for each module and the value of 
+#' the calculated method.
 #'
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Get module hubs
-#' hubs <- get_hubs(cem, n=10)
+#' hubs <- get_hubs(cem, n=10, "adjacency")
 #' 
 #' @rdname get_hubs
 #' @export
@@ -815,19 +818,51 @@ setGeneric('get_hubs', function(cem, ...) {
 
 #' @rdname get_hubs
 setMethod('get_hubs', signature(cem='CEMiTool'),
-    function(cem, n=5){
-        if(nrow(cem@adjacency) == 0){
-            stop("Make sure that you ran the method find_modules.")
-        }
-        mod2gene <- split(cem@module$genes, cem@module$modules)
-        hubs <- lapply(mod2gene, function(x){
-                                     if (length(x) > 1) {
-                                         mod_adj <- cem@adjacency[x, x]
-                                         top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
-                                         return(names(top))
-                                     } else {
-                                         return(character())
-                                     }
-                                 })
-        return(hubs)
+      function(cem, n=5, method="adjacency"){
+          if(nrow(cem@adjacency) == 0){
+              stop("Make sure that you ran the method find_modules.")
+          }
+          
+          if(method == "adjacency"){
+              mod2gene <- split(cem@module$genes, cem@module$modules)
+              hubs <- lapply(mod2gene, function(x){
+                  if (length(x) > 1) {
+                      mod_adj <- cem@adjacency[x, x]
+                      if(n == "all"){
+                          top <- sort(rowSums(mod_adj), decreasing=TRUE)
+                      }else{
+                          top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
+                      }
+                      return(top)
+                  } else {
+                      return(character())
+                  }
+              })
+              return(hubs)    
+          }else if(method == "kME"){
+              eigens <- mod_summary(cem, "eigengene")
+              rownames(eigens) <- eigens$modules
+              eigens$modules <- NULL
+              eigens <- as.data.frame(t(eigens))
+              
+              expr <- expr_data(cem, filtered=TRUE)
+              datExpr <- as.data.frame(t(expr))
+              kmes <- signedKME(datExpr, eigens)
+              names(kmes) <- names(eigens)
+              
+              kme_list <- as.list(kmes)
+              kme_list <- lapply(kme_list, function(x){
+                  names(x) <- rownames(kmes)
+                  x
+              })
+              hubs <- lapply(kme_list, function(x){
+                  if(n == "all"){
+                      top <- sort(x, decreasing=TRUE)
+                  }else{
+                      top <- head(sort(x, decreasing=TRUE), n = n)
+                  }
+                  return(top)
+              })
+              return(hubs)
+          }
     })

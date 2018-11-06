@@ -8,7 +8,7 @@
 \usage{
 get_hubs(cem, ...)
 
-\S4method{get_hubs}{CEMiTool}(cem, n = 5)
+\S4method{get_hubs}{CEMiTool}(cem, n = 5, method = "adjacency")
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
@@ -16,9 +16,13 @@ get_hubs(cem, ...)
 \item{...}{Optional parameters.}
 
 \item{n}{Number of genes to return in each module (default: 5).}
+
+\item{method}{Method for hub calculation. Either "adjacency" or "kME". 
+Default: "adjacency"}
 }
 \value{
-A \code{list} containing hub genes.
+A \code{list} containing hub genes for each module and the value of 
+the calculated method.
 }
 \description{
 Returns \code{n} genes in each module with high connectivity.
@@ -27,6 +31,6 @@ Returns \code{n} genes in each module with high connectivity.
 # Get example CEMiTool object
 data(cem)
 # Get module hubs
-hubs <- get_hubs(cem, n=10)
+hubs <- get_hubs(cem, n=10, "adjacency")
 
 }

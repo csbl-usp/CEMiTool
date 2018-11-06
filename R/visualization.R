@@ -383,7 +383,7 @@ setMethod('plot_interactions', signature('CEMiTool'),
         mod_cols <- mod_colors(cem)
         mod_names <- names(cem@interactions)
         mod_names <- mod_names[which(mod_names!="Not.Correlated")]
-        hubs <- get_hubs(cem)
+        hubs <- lapply(get_hubs(cem), names)
         zero_ints <- character()
         zero_ints <- lapply(names(cem@interactions), function(mod){
                         degree <- igraph::degree(cem@interactions[[mod]], normalized=FALSE)

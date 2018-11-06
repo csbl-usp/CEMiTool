@@ -12,8 +12,8 @@
 #' @importFrom plyr rbind.fill
 #' @importFrom utils combn
 #' @importFrom WGCNA cor
-#' @importFrom ff as.ffdf ff ffdforder 
-#' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf
+#' @importFrom ff as.ff as.ffdf ff ffdforder 
+#' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf ffdfdply
 #' @importFrom matrixStats rowSums2 rowMedians rowMeans2 rowSds
 #' @importFrom RColorBrewer brewer.pal
 NULL

@@ -20,7 +20,7 @@ cat("#", title, "{.tabset}")
 ```{r echo=FALSE, cache=FALSE, label=modules-stats}
     mod_df <- as.data.frame(table(cem@module$modules), stringsAsFactors=FALSE)
     colnames(mod_df) <- c("Module", "No.Genes")
-    hub_list <- get_hubs(cem, n=5)
+    hub_list <- lapply(get_hubs(cem, n=5, "adjacency"), names)
     Hubs <- sapply(hub_list, paste, collapse=", ")
     mod_df <- merge(mod_df, as.data.frame(Hubs), by.x="Module", by.y="row.names")
     modules <- as.character(mod_df[, "Module"])
