@@ -19,6 +19,7 @@ A plot showing the similarity between study modules
 Plot study module similarity
 }
 \examples{
+\dontrun{
 # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
 data(expr0)
 data(sample_annot)
@@ -40,4 +41,5 @@ cem4 <- cemitool(dset4, sample_annot, plot=FALSE)
 cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
 mod_stats <- stat_overlap_mods(list(cem1, cem2, cem3, cem4, cem5), comp_group="g0")
 plot_similarity(mod_stats)
+}
 }

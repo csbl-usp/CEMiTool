@@ -9,7 +9,7 @@
 mod_gsea(cem, ...)
 
 \S4method{mod_gsea}{CEMiTool}(cem, gsea_scale = TRUE,
-  rank_method = "mean", gsea_min_size = 15, gsea_max_size = 500,
+  rank_method = "mean", gsea_min_size = 15, gsea_max_size = 1000,
   verbose = FALSE)
 }
 \arguments{
@@ -22,9 +22,9 @@ mod_gsea(cem, ...)
 \item{rank_method}{Character string indicating how to rank genes. Either "mean" 
 (the default) or "median".}
 
-\item{gsea_min_size}{Minimum gene set size}
+\item{gsea_min_size}{Minimum gene set size (Default: 15).}
 
-\item{gsea_max_size}{Maximum gene set size}
+\item{gsea_max_size}{Maximum gene set size (Default: 1000).}
 
 \item{verbose}{logical. Report analysis steps.}
 }

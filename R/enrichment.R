@@ -62,7 +62,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
         }
         result <- data.frame(Module=character(), ID=character(),
                              Description=character(),
-                             GeneRation=numeric(), BgRatio=numeric(),
+                             GeneRatio=numeric(), BgRatio=numeric(),
                              pvalue=numeric(), p.adjust=numeric(),
                              qvalue=numeric(), geneID=character(),
                              Count=numeric(), stringsAsFactors=FALSE)
@@ -170,8 +170,8 @@ setMethod("ora_data", signature("CEMiTool"),
 #' @param gsea_scale If TRUE, transform data using z-score transformation. Default: TRUE
 #' @param rank_method Character string indicating how to rank genes. Either "mean" 
 #' (the default) or "median".
-#' @param gsea_min_size Minimum gene set size
-#' @param gsea_max_size Maximum gene set size
+#' @param gsea_min_size Minimum gene set size (Default: 15).
+#' @param gsea_max_size Maximum gene set size (Default: 1000).
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
 #' 
@@ -198,7 +198,7 @@ setGeneric('mod_gsea', function(cem, ...) {
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
     function(cem, gsea_scale=TRUE, rank_method="mean", 
-             gsea_min_size=15, gsea_max_size=500, verbose=FALSE) {
+             gsea_min_size=15, gsea_max_size=1000, verbose=FALSE) {
         if(!tolower(rank_method) %in% c("mean", "median")){
             stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
         }
