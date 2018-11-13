@@ -354,7 +354,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
 #' @param gsea_scale If TRUE, apply z-score transformation for GSEA analysis. Default is \code{TRUE}
 #' @param gsea_min_size Minimum size of gene sets for GSEA analysis. Default is \code{15}
-#' @param gsea_max_size Maximum size of gene sets for GSEA analysis. Default is \code{500}
+#' @param gsea_max_size Maximum size of gene sets for GSEA analysis. Default is \code{1000}
 #' @param min_ngen Minimal number of genes per submodule. Default \code{30}.
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
@@ -426,7 +426,7 @@ cemitool <- function(expr,
                      ora_pval=0.05,
                      gsea_scale=TRUE,
                      gsea_min_size=15,
-                     gsea_max_size=500,
+                     gsea_max_size=1000,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=TRUE,

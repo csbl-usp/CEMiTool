@@ -27,6 +27,7 @@ A plot containing the consensus modules of the studies
 Plot graph of consensus modules
 }
 \examples{
+\dontrun{
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 data(sample_annot)
@@ -38,4 +39,5 @@ cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 comm_overlap_df <- overlap_community(cem_overlap_df)
 plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)
+}
 }

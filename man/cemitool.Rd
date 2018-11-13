@@ -11,7 +11,7 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE,
   force_beta = FALSE, sample_name_column = "SampleName",
   class_column = "Class", merge_similar = TRUE, rank_method = "mean",
   ora_pval = 0.05, gsea_scale = TRUE, gsea_min_size = 15,
-  gsea_max_size = 500, min_ngen = 30, diss_thresh = 0.8,
+  gsea_max_size = 1000, min_ngen = 30, diss_thresh = 0.8,
   plot = TRUE, order_by_class = TRUE, center_func = "mean",
   directed = FALSE, verbose = FALSE)
 }
@@ -69,7 +69,7 @@ annotation table.}
 
 \item{gsea_min_size}{Minimum size of gene sets for GSEA analysis. Default is \code{15}}
 
-\item{gsea_max_size}{Maximum size of gene sets for GSEA analysis. Default is \code{500}}
+\item{gsea_max_size}{Maximum size of gene sets for GSEA analysis. Default is \code{1000}}
 
 \item{min_ngen}{Minimal number of genes per submodule. Default \code{30}.}
 

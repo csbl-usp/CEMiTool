@@ -12,8 +12,8 @@
 #' @importFrom plyr rbind.fill
 #' @importFrom utils combn
 #' @importFrom WGCNA cor
-#' @importFrom ff as.ffdf ff ffdforder 
-#' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf
+#' @importFrom ff as.ffdf ff ffdforder as.ff 
+#' @importFrom ffbase ffdfrbind.fill merge.ffdf subset.ffdf duplicated.ffdf ffdfdply
 #' @importFrom matrixStats rowSums2 rowMedians rowMeans2 rowSds
 #' @importFrom RColorBrewer brewer.pal
 NULL
@@ -39,6 +39,7 @@ NULL
 #' \code{adjacency} (returns discretized edges)
 #'
 #' @examples
+#' \dontrun{ 
 #' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 #' data(expr0)
 #' set.seed(10)
@@ -47,6 +48,7 @@ NULL
 #' cem1 <- cemitool(dset1, plot=FALSE) 
 #' cem2 <- cemitool(dset2, plot=FALSE) 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
+#' }
 #' @rdname cem_overlap
 #' @export
 
@@ -236,6 +238,7 @@ outer_join_merge <- function(x, y){
 #'
 #' @export 
 #' @examples
+#' \dontrun{ 
 #' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 #' data(expr0)
 #' set.seed(10)
@@ -245,6 +248,7 @@ outer_join_merge <- function(x, y){
 #' cem2 <- cemitool(dset2, plot=FALSE) 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' comm_overlap_df <- overlap_community(cem_overlap_df)
+#' }
 overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
                               smallest_community = 15, 
                               method = c('cluster_fast_greedy', 'cluster_edge_betweenness', 
@@ -292,6 +296,7 @@ overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
 #' in each CEMiTool object.
 #' 
 #' @examples 
+#' \dontrun{
 #' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 #' data(expr0)
 #' data(sample_annot)
@@ -311,6 +316,7 @@ overlap_community <- function(mod_intersection_df, presence_as_weights = FALSE,
 #' sample_annotation(cem2) <- sample_annot[sample_annot$SampleName %in% samples2, ]
 #' 
 #' mod_enrich <- enrich_mods(comm_overlap, list(cem1, cem2), comp_group='g0')
+#' }
 #' @rdname enrich_mods
 #' @export 
 enrich_mods <- function(community_list, analyses, 
@@ -521,6 +527,7 @@ makeLimmaComp <- function(expr, design, cont.matrix){
 #' @export
 #'
 #' @examples
+#' \dontrun{ 
 #' # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
 #' data(expr0)
 #' data(sample_annot)
@@ -543,6 +550,7 @@ makeLimmaComp <- function(expr, design, cont.matrix){
 #' 
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2, cem3, cem4, cem5))
 #' plot_comembership(cem_overlap_df)
+#' }
 plot_comembership <- function(cem_overlap_df){
     
     x <- table(cem_overlap_df$edgeCount[])
@@ -572,6 +580,7 @@ plot_comembership <- function(cem_overlap_df){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 #' data(expr0)
 #' data(sample_annot)
@@ -583,6 +592,7 @@ plot_comembership <- function(cem_overlap_df){
 #' cem_overlap_df <- cem_overlap(list(cem1, cem2))
 #' comm_overlap_df <- overlap_community(cem_overlap_df)
 #' plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)
+#' }
 plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num, num_sd_cut=2){
     overlap_df <- cem_overlap_df
     
@@ -845,6 +855,7 @@ mod_activity <- function(analyses, comp_group, subject_col){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
 #' data(expr0)
 #' data(sample_annot)
@@ -866,6 +877,7 @@ mod_activity <- function(analyses, comp_group, subject_col){
 #' cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
 #' mod_stats <- stat_overlap_mods(list(cem1, cem2, cem3, cem4, cem5), comp_group="g0")
 #' plot_similarity(mod_stats)
+#' }
 plot_similarity <- function(mod_stats, weight_col="logfdr"){
     df_output <- mod_stats[[1]]
     ig_obj <- igraph::graph_from_data_frame(df_output, directed=FALSE)

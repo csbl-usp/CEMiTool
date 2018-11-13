@@ -33,6 +33,7 @@ every other gene from the same module. Argument desired_table must be one of
 \code{adjacency} (returns discretized edges)
 }
 \examples{
+\dontrun{ 
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 set.seed(10)
@@ -41,4 +42,5 @@ dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
 cem1 <- cemitool(dset1, plot=FALSE) 
 cem2 <- cemitool(dset2, plot=FALSE) 
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
+}
 }

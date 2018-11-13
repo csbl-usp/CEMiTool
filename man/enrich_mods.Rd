@@ -32,6 +32,7 @@ have a high proportion of differentially regulated genes in a certain direction.
 NON-relevant modules will be centered at zero.
 }
 \examples{
+\dontrun{
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 data(sample_annot)
@@ -51,4 +52,5 @@ sample_annotation(cem1) <- sample_annot[sample_annot$SampleName \%in\% samples1,
 sample_annotation(cem2) <- sample_annot[sample_annot$SampleName \%in\% samples2, ]
 
 mod_enrich <- enrich_mods(comm_overlap, list(cem1, cem2), comp_group='g0')
+}
 }
