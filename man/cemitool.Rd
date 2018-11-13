@@ -96,7 +96,6 @@ Object of class \code{CEMiTool}
 Defines co-expression modules and runs several different analyses.
 }
 \examples{
-\dontrun{
 # Get example expression data
 data(expr0)
 # Run CEMiTool analyses
@@ -106,6 +105,7 @@ cem <- cemitool(expr=expr0, apply_vst=TRUE)
 # Run CEMiTool with additional processing messages
 cem <- cemitool(expr=expr0, verbose=TRUE)
 
+\dontrun{ 
 # Run full CEMiTool analysis
 ## Get example sample annotation data
 data(sample_annot)
@@ -127,6 +127,4 @@ write_files(cem, directory="./Tables", force=TRUE)
 # Save all plots
 save_plots(cem, "all", directory="./Plots")
 }
-
-
 }

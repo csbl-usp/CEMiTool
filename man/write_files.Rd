@@ -27,11 +27,9 @@ A directory containing CEMiTool results in files.
 Save the CEMiTool object in files
 }
 \examples{
-\dontrun{
 # Get example CEMiTool object
 data(cem)
 # Save CEMiTool results in files
 write_files(cem, directory=".", force=TRUE)
-}
 
 }

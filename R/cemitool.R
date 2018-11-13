@@ -370,7 +370,6 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @return Object of class \code{CEMiTool}
 #'
 #' @examples
-#' \dontrun{
 #' # Get example expression data
 #' data(expr0)
 #' # Run CEMiTool analyses
@@ -380,6 +379,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' # Run CEMiTool with additional processing messages
 #' cem <- cemitool(expr=expr0, verbose=TRUE)
 #'
+#' \dontrun{ 
 #' # Run full CEMiTool analysis
 #' ## Get example sample annotation data
 #' data(sample_annot)
@@ -401,8 +401,6 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' # Save all plots
 #' save_plots(cem, "all", directory="./Plots")
 #' }
-#' 
-#' 
 #' @export
 cemitool <- function(expr,
                      annot,
@@ -826,12 +824,10 @@ module_to_gmt <- function(cem, directory="./Tables"){
 #' @param ... Optional parameters
 #' @return A directory containing CEMiTool results in files.
 #' @examples
-#' \dontrun{
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#' }
 #' 
 #' @rdname write_files
 #' @export

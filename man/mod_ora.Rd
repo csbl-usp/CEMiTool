@@ -38,3 +38,6 @@ cem <- mod_ora(cem, gmt)
 head(ora_data(cem))
 
 }
+\seealso{
+\code{\link{ora_data}}
+}

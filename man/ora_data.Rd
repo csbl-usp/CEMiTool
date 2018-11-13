@@ -19,6 +19,16 @@ Object of class \code{data.frame} with ORA data
 \description{
 Retrieve over representation analysis (ORA) results
 }
+\details{
+This function returns the results of the \code{mod_ora} function on the 
+\code{CEMiTool} object. The ID column corresponds to pathways in the gmt file for which 
+genes in the modules were enriched. The Count column shows the number of genes in the 
+module that are enriched for each pathway. The GeneRatio column shows the proportion of 
+genes in the module enriched for a given pathway out of all the genes in the module
+enriched for any given pathway. The BgRatio column shows the proportion of genes in a
+given pathway out of all the genes in the gmt file. For more details, please refer to 
+the \code{clusterProfiler} package documentation.
+}
 \examples{
 # Get example CEMiTool object
 data(cem)
@@ -29,4 +39,9 @@ gmt <- read_gmt(system.file('extdata', 'pathways.gmt',
 cem <- mod_ora(cem, gmt)
 # Check results
 head(ora_data(cem))
+}
+\references{
+Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler: 
+an R package for comparing biological themes among gene clusters. OMICS: 
+A Journal of Integrative Biology. 2012, 16(5):284-287.
 }

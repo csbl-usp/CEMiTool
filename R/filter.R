@@ -48,10 +48,6 @@ setMethod('filter_expr', signature('CEMiTool'),
             stop("CEMiTool object has no expression file!")
         }
 
-        #vars <- mget(ls())
-        #vars$expr <- NULL
-        #cem <- get_args(cem=cem, vars=vars)
-
         expr <- expr_pct_filter(expr, pct)
 
         temp <- as.matrix(expr)
@@ -69,10 +65,11 @@ setMethod('filter_expr', signature('CEMiTool'),
 
         if (apply_vst){
             expr <- vst(expr)
-            temp <- data.frame(expr)
+            #temp <- data.frame(expr)
             rownames(temp) <- rownames(expr)
             names(temp) <- colnames(expr)
-            expr_data(cem) <- temp
+            #expr_data(cem) <- temp
+            expr <- temp
         }
 
         expr_var <- matrixStats::rowVars(expr)
