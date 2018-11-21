@@ -325,6 +325,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
         nes_melted <- reshape2::melt(nes)
         colnames(nes_melted) <- c("Module", "Class", "NES")
         nes_melted$Module <- factor(nes_melted$Module, levels=row_order)
+        nes_melted$Class <- as.character(nes_melted$Class)
         max_abs_nes <- max(abs(nes_melted$NES))
         res <- ggplot(nes_melted, aes_(x=~Class, y=~Module, size=~abs(NES), fill=~NES)) +
             geom_point(color = "white", shape=21) +
