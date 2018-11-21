@@ -1,8 +1,8 @@
 FROM r-base:3.5.1
 
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends libssl-dev\
-    libssh2-1-dev libcurl4-openssl-dev pandoc libxml2-dev\
+    apt-get install -y --no-install-recommends --allow-downgrades libssl-dev\
+    libssh2-1-dev pandoc libcurl4=7.61.0-1  libcurl4-openssl-dev libxml2-dev\
     libudunits2-dev
 
 ADD . /CEMiTool
