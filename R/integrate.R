@@ -759,7 +759,7 @@ mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
 #' @param analyses List of \code{CEMiTool} objects
 #' @param df_output Output of function \code{mod_compare}
 #' @param gsea_metric GSEA metric to be used. One of "nes", 
-#' "es" or "pval". Default: "nes".
+#' "es" or "padj". Default: "nes".
 #'
 #' @return A \code{data.frame} containing the results
 #' @keywords internal

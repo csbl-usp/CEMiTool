@@ -312,7 +312,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         }, gsea_list) 
 
         # separating ES / NES / pval
-        patterns <- list('es'='^ES_','nes'='^NES_', 'pval'='^pval_')
+        patterns <- list('es'='^ES_','nes'='^NES_', 'padj'='^padj_')
         out_gsea <- lapply(patterns, function(pattern) {
             desired_stat <- all_classes_df[, c('pathway',
                                                grep(pattern, colnames(all_classes_df),value=TRUE))]

@@ -28,12 +28,14 @@ test_that('mod_gsea throws error when expression has more samples than annotatio
 	expect_error(mod_gsea(cem))
 })
 
+test_that('mod_gsea returns padj instead of pval', {
+    cem_padj <- mod_gsea(cem)
+    expect_true('padj' %in% names(gsea_data(cem_padj)))
+    expect_false('pval' %in% names(gsea_data(cem_padj)))
+})
+
 test_that('mod_gsea throws warning when expression has less samples than annotation', {
 	expr_bad <- expr0[, 1:round(ncol(expr0)/2)]
 	expr_data(cem) <- expr_bad
 	expect_warning(mod_gsea(cem))	
 })
-
-
-
-
