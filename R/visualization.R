@@ -296,7 +296,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
         })
         names(enrichment) <- stats
 
-        pval <- enrichment[['pval']]
+        pval <- enrichment[['padj']]
         nes <- enrichment[['nes']]
 
         pval <- pval[rowSums(pval < pv_cut) >= 1, , drop=FALSE]
