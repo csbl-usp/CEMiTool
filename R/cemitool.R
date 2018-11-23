@@ -845,6 +845,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
         } else {
             dir.create(directory, recursive=TRUE)
         }
+
         if(nrow(cem@module) > 0){
             write.table(cem@module, file.path(directory, "module.tsv"), sep="\t", row.names=FALSE)
 
@@ -859,17 +860,23 @@ setMethod('write_files', signature(cem='CEMiTool'),
             
             module_to_gmt(cem, directory=directory)
         }
+
         if(length(cem@selected_genes) > 0){
             writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
         }
+
         if(length(cem@enrichment) > 0){
-            write.table(cem@enrichment$nes, file.path(directory, "enrichment_nes.tsv"), sep="\t", row.names=FALSE)
-            write.table(cem@enrichment$es, file.path(directory, "enrichment_es.tsv"), sep="\t", row.names=FALSE)
-            write.table(cem@enrichment$pval, file.path(directory, "enrichment_pval.tsv"), sep="\t", row.names=FALSE)
+            for (stat in names(cem@enrichment)) {
+                write.table(cem@enrichment[[stat]],
+                            file.path(directory, paste0("enrichment_", stat, ".tsv")),
+                            sep="\t", row.names=FALSE)
+            }
         }
+
         if(nrow(cem@ora) > 0){
             write.table(cem@ora, file.path(directory, "ora.tsv"), sep="\t", row.names=FALSE)
         }
+
         if(length(cem@interactions) > 0){
             mod_ints <- lapply(names(cem@interactions), function(x){
                 mod_int <- igraph::get.edgelist(cem@interactions[[x]])
@@ -881,6 +888,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
             colnames(int_df) <- c("Module", "Gene1", "Gene2")
             write.table(int_df, file.path(directory, "interactions.tsv"), sep="\t", row.names=FALSE)
         }
+
         if(length(cem@parameters) > 0){
             params <- cem@parameters
             param_df <- data.frame(Parameter=names(params), Value=as.character(params))
