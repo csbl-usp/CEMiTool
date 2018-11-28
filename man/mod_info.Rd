@@ -12,7 +12,7 @@ mod_info(analyses, df_output, gsea_metric = "nes")
 \item{df_output}{Output of function \code{mod_compare}}
 
 \item{gsea_metric}{GSEA metric to be used. One of "nes", 
-"es" or "pval". Default: "nes".}
+"es" or "padj". Default: "nes".}
 }
 \value{
 A \code{data.frame} containing the results
