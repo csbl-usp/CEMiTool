@@ -796,7 +796,8 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #' Returns \code{n} genes in each module with high connectivity. 
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param n Number of genes to return in each module (default: 5).
+#' @param n Number of hubs to return from each module. If "all", returns all genes
+#' in decreasing order of connectivity. Default: 5. 
 #' @param method Method for hub calculation. Either "adjacency" or "kME". 
 #' Default: "adjacency"
 #' @param ... Optional parameters.
@@ -828,10 +829,11 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
               hubs <- lapply(mod2gene, function(x){
                   if (length(x) > 1) {
                       mod_adj <- cem@adjacency[x, x]
+                      diag(mod_adj) <- NA
                       if(n == "all"){
-                          top <- sort(rowSums(mod_adj), decreasing=TRUE)
+                          top <- sort(rowSums(mod_adj, na.rm=TRUE), decreasing=TRUE)
                       }else{
-                          top <- head(sort(rowSums(mod_adj), decreasing=TRUE), n=n)
+                          top <- head(sort(rowSums(mod_adj, na.rm=TRUE), decreasing=TRUE), n=n)
                       }
                       return(top)
                   } else {
