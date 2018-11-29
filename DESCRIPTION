@@ -1,6 +1,6 @@
 Package: CEMiTool
 Title: Co-expression Modules identification Tool
-Version: 1.7.2
+Version: 1.7.3
 Authors@R: c( person("Pedro", "Russo", email = "pedro.russo@usp.br",
         role = c("aut")), person("Gustavo", "Ferreira", email =
         "gustavo.rodrigues.ferreira@usp.br", role = c("aut")),
@@ -29,7 +29,7 @@ Suggests: testthat, BiocManager
 License: GPL-3
 Encoding: UTF-8
 biocViews: GeneExpression, Transcriptomics, GraphAndNetwork,
-	mRNAMicroarray, RNASeq, Network, NetworkEnrichment, Pathways
+	mRNAMicroarray, RNASeq, Network, NetworkEnrichment, Pathways, ImmunoOncology
 LazyData: true
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
