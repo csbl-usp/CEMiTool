@@ -194,12 +194,11 @@ Finally, a `CEMiTool` object with all of the components mentioned above can also
 library(ggplot2)
 cem <- cemitool(expr0, sample_annot, gmt_in, interactions=int_df, 
                 filter=TRUE, plot=TRUE, verbose=TRUE)
-# create report as pdf and html documents
-generate_report(cem, directory="./Report", 
-                output_format=c("pdf_document", "html_document"))
+# create report as html document
+generate_report(cem, directory="./Report")
 
 # write analysis results into files
-write_files(cem, directory="./Tables", force=TRUE)
+write_files(cem, directory="./Tables")
 
 # save all plots
 save_plots(cem, "all", directory="./Plots")
