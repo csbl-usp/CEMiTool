@@ -66,11 +66,11 @@ height <- ifelse(length(height) == 0, 7, height)
     if(length(cem@enrichment) > 0){
         nes <- cem@enrichment$nes
         nes[, -1] <- round(nes[, -1], digits=2)
-        pv <- cem@enrichment$pval
+        pv <- cem@enrichment$padj
         pv[, -1] <- round(pv[, -1], digits=5)
 
         colnames(nes)[-1] <- paste0(colnames(nes)[-1], ": NES")
-        colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": p-value")
+        colnames(pv)[-1] <- paste0(colnames(pv)[-1], ": Adjusted p-value")
 
         # join p-values and nes
         enrich_df <- merge(nes, pv, by.x="pathway")
