@@ -351,5 +351,5 @@ setMethod('diagnostic_report', signature('CEMiTool'),
             dir.create(directory, recursive=TRUE)
         }
         rmd <- system.file("diagnostics", "diagnostics.Rmd", package = "CEMiTool")
-        rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, ...)
+        rmarkdown::render(rmd, output_dir=directory, intermediates_dir=directory, quiet=TRUE, ...)
     })
