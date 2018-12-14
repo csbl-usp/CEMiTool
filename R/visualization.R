@@ -285,6 +285,10 @@ setMethod('plot_gsea', signature('CEMiTool'),
         if(length(cem@enrichment) == 0){
             stop("No GSEA data! Did you run mod_gsea()?")
         }
+        if(all(unlist(lapply(cem@enrichment, nrow))) == 0){
+            warning("No modules were enriched for any classes. Unable to plot enrichment.")
+            return(cem)
+        }
         #cem <- get_args(cem, vars=mget(ls()))
 
         stats <- names(cem@enrichment)

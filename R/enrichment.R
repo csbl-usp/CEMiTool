@@ -106,10 +106,13 @@ setGeneric('mod_ora', function(cem, ...) {
 setMethod('mod_ora', signature(cem='CEMiTool'),
     function(cem, gmt, verbose=FALSE) {
         #cem <- get_args(cem, vars=mget(ls()))
+        if(!"gene" %in% names(gmt) | !"term" %in% names(gmt)){
+            stop("The gmt object must contain two columns named 'term' and 'gene'")
+        }
         if (verbose) {
             message('Running ORA')
+            message("Using all genes in GMT file as universe.")
         }
-        message("Using all genes in GMT file as universe.")
         allgenes <- unique(gmt[, "gene"])
         if(is.null(module_genes(cem))){
               warning("No modules in CEMiTool object! Did you run find_modules()?")
@@ -321,6 +324,9 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         })
 
         names(out_gsea) <- names(patterns)
+        if(all(unlist(lapply(out_gsea, nrow))) == 0){
+            warning("Unable to enrich any module for any given class")
+        }
         cem@enrichment <- out_gsea 
         return(cem)
     })
