@@ -520,7 +520,7 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
               geom_point(size=1.5) +
               theme(axis.text=element_text(size=12), 
                     plot.title=element_text(hjust=0.5)) +
-              scale_y_continuous(breaks=seq(round(min(fit$new_fit)), 1, by=0.2), 
+              scale_y_continuous(breaks=seq(round(min(fit$new_fit), 1), 1, by=0.2), 
                                  limits=c(NA, 1)) +
               labs(y="Scale-free topology model fit, R squared", title=plot_title, 
                    x="Soft-threshold beta")
@@ -528,7 +528,7 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
         if(!is.na(beta_power)){
             pl <- pl + annotate(geom="text", label=beta_power, 
                                 x=beta_power, 
-                                y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.1,
+                                y=fit[fit$Power == beta_power, "new_fit"] + 0.1,
                                 color="red", size=7)
         }
 

@@ -596,7 +596,9 @@ plot_comembership <- function(cem_overlap_df){
 plot_consensus <- function(cem_overlap_df, comm_overlap_df, study_num, num_sd_cut=2){
     overlap_df <- cem_overlap_df
     
-    cem_num <- grep("cem", names(overlap_df), value=TRUE)
+    cem_num <- names(overlap_df)
+    cem_num <- cem_num[!cem_num %in% c("gene1", "gene2", "edgeCount", "proportion", 
+                                       "edgeCorMedian", "edgeSd", "edgeCorMean")]
     
     stop_if(study_num > length(cem_num), "Variable study_num cannot exceed number of studies")
     stop_if(study_num == 1, "Cannot do consensus of one study")
