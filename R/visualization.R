@@ -505,7 +505,7 @@ setGeneric('plot_beta_r2', function(cem, ...){
 
 #' @rdname plot_beta_r2
 setMethod('plot_beta_r2', signature('CEMiTool'),
-    function(cem, title="Scale independence (beta selection)"){
+    function(cem, plot_title="Scale independence (beta selection)"){
           if(nrow(cem@fit_indices) == 0){
             stop("No fit indices data! Did you run find_modules()?")
         }
@@ -518,16 +518,21 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
         pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
               geom_line(color="darkgrey") +
               geom_point(size=1.5) +
-              #annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7) +
-              theme(axis.text=element_text(size=12), plot.title=element_text(hjust=0.5)) +
-              scale_y_continuous(breaks=seq(0, 1, by=0.2)) +
-              labs(y="Scale-free topology model fit, R squared", title=title, x="Soft-threshold beta")
+              theme(axis.text=element_text(size=12), 
+                    plot.title=element_text(hjust=0.5)) +
+              scale_y_continuous(breaks=seq(round(min(fit$new_fit)), 1, by=0.2), 
+                                 limits=c(NA, 1)) +
+              labs(y="Scale-free topology model fit, R squared", title=plot_title, 
+                   x="Soft-threshold beta")
 
         if(!is.na(beta_power)){
-            pl <- pl + annotate(geom="text", label=beta_power, x=beta_power, y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.05, color="red", size=7)
+            pl <- pl + annotate(geom="text", label=beta_power, 
+                                x=beta_power, 
+                                y=fit[fit$Power == beta_power, "SFT.R.sq"] + 0.1,
+                                color="red", size=7)
         }
 
-          res_list <- list(beta_r2_plot=pl)
+        res_list <- list(beta_r2_plot=pl)
         cem@beta_r2_plot <- res_list
         return(cem)
     })
