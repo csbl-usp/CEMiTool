@@ -9,14 +9,14 @@
 plot_beta_r2(cem, ...)
 
 \S4method{plot_beta_r2}{CEMiTool}(cem,
-  title = "Scale independence (beta selection)")
+  plot_title = "Scale independence (beta selection)")
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}.}
 
 \item{...}{Optional parameters.}
 
-\item{title}{title of the graph}
+\item{plot_title}{title of the graph}
 }
 \value{
 Object of class \code{CEMiTool} with beta x R squared plot
