@@ -5,10 +5,10 @@ NULL
 
 #' Read a GMT file
 #'
-#' @param fname GMT file name. 
+#' @param fname GMT file name.
 #'
 #' @return A list containing genes and description of each pathway
-#' @examples 
+#' @examples
 #' # Read example gmt file
 #' gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
 #' gmt_in <- read_gmt(gmt_fname)
@@ -58,7 +58,7 @@ ora <- function(mod_name, gmt_list, allgenes, mods){
         result <- enriched@result
     } else {
         if(mod_name != "Not.Correlated"){
-            warning("Enrichment for module ", mod_name, " is NULL")    
+            warning("Enrichment for module ", mod_name, " is NULL")
         }
         result <- data.frame(Module=character(), ID=character(),
                              Description=character(),
@@ -144,22 +144,22 @@ setMethod('mod_ora', signature(cem='CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}
 #'
-#' @details This function returns the results of the \code{mod_ora} function on the 
-#' \code{CEMiTool} object. The ID column corresponds to pathways in the gmt file for which 
-#' genes in the modules were enriched. The Count column shows the number of genes in the 
-#' module that are enriched for each pathway. The GeneRatio column shows the proportion of 
+#' @details This function returns the results of the \code{mod_ora} function on the
+#' \code{CEMiTool} object. The ID column corresponds to pathways in the gmt file for which
+#' genes in the modules were enriched. The Count column shows the number of genes in the
+#' module that are enriched for each pathway. The GeneRatio column shows the proportion of
 #' genes in the module enriched for a given pathway out of all the genes in the module
 #' enriched for any given pathway. The BgRatio column shows the proportion of genes in a
-#' given pathway out of all the genes in the gmt file. For more details, please refer to 
-#' the \code{clusterProfiler} package documentation. 
+#' given pathway out of all the genes in the gmt file. For more details, please refer to
+#' the \code{clusterProfiler} package documentation.
 #'
 #' @return Object of class \code{data.frame} with ORA data
 #'
-#' @references Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler: 
-#' an R package for comparing biological themes among gene clusters. OMICS: 
+#' @references Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler:
+#' an R package for comparing biological themes among gene clusters. OMICS:
 #' A Journal of Integrative Biology. 2012, 16(5):284-287.
 #'
-#' @examples 
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Read gmt file
@@ -181,19 +181,19 @@ setMethod("ora_data", signature("CEMiTool"),
         return(cem@ora)
     })
 
-#' Module Gene Set Enrichment Analysis 
+#' Module Gene Set Enrichment Analysis
 #'
 #' Perfoms Gene Set Enrichment Analysis (GSEA) for each co-expression module found.
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param gsea_scale If TRUE, transform data using z-score transformation. Default: TRUE
-#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#' @param rank_method Character string indicating how to rank genes. Either "mean"
 #' (the default) or "median".
 #' @param gsea_min_size Minimum gene set size (Default: 15).
 #' @param gsea_max_size Maximum gene set size (Default: 1000).
 #' @param verbose logical. Report analysis steps.
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return GSEA results.
 #'
 #' @examples
@@ -216,12 +216,12 @@ setGeneric('mod_gsea', function(cem, ...) {
 
 #' @rdname mod_gsea
 setMethod('mod_gsea', signature(cem='CEMiTool'),
-    function(cem, gsea_scale=TRUE, rank_method="mean", 
+    function(cem, gsea_scale=TRUE, rank_method="mean",
              gsea_min_size=15, gsea_max_size=1000, verbose=FALSE) {
         if(!tolower(rank_method) %in% c("mean", "median")){
             stop("Invalid rank_method type. Valid values are 'mean' and 'median'")
         }
-        if(nrow(expr_data(cem)) == 0){
+        if(nrow(expr_data(cem, filter=FALSE, apply_vst=FALSE)) == 0){
             warning("CEMiTool object has no expression file!")
               return(cem)
         }
@@ -255,7 +255,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         classes <- unique(annot[, class_col])
 
         # Check if expression samples are all in sample_annotation
-        expr_samples <- names(expr_data(cem))
+        expr_samples <- names(expr_data(cem, filter=FALSE, apply_vst=FALSE))
         annot_samples <- sample_annotation(cem)[, sample_col]
         if(!all(expr_samples %in% annot_samples)){
             stop("Sample annotation file does not contain all samples in expression file. Please input new sample annotation file using function sample_annotation()")
@@ -268,13 +268,13 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
 
         # expression to z-score
         if(gsea_scale){
-            z_expr <- data.frame(t(scale(t(expr_data(cem, filtered=FALSE)), 
-                                     center=TRUE, 
+            z_expr <- data.frame(t(scale(t(expr_data(cem, filter=FALSE, apply_vst=FALSE)),
+                                     center=TRUE,
                                      scale=TRUE)),
                                      check.names = FALSE,
                                      stringsAsFactors=FALSE)
         }else{
-            z_expr <- expr_data(cem, filtered=FALSE)
+            z_expr <- expr_data(cem, filter=FALSE, apply_vst=FALSE)
         }
         # calculates enrichment for each module for each class in annot
 
@@ -305,14 +305,14 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
                                                            function(ledges){
                                                                ledges <- paste(ledges, collapse=",")
                                                            }))
-            columns <- colnames(gsea_results) 
+            columns <- colnames(gsea_results)
             colnames(gsea_results) <- c(columns[1], paste0(columns[-1], "_", class_group))
             return(gsea_results)
         })
         # merging all classes gsea results into one data.frame
         all_classes_df <- Reduce(function(x,y) {
             merge(x,y, all=TRUE, by='pathway')
-        }, gsea_list) 
+        }, gsea_list)
 
         # separating ES / NES / pval
         patterns <- list('es'='^ES_','nes'='^NES_', 'padj'='^padj_')
@@ -327,7 +327,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
         if(all(unlist(lapply(out_gsea, nrow))) == 0){
             warning("Unable to enrich any module for any given class")
         }
-        cem@enrichment <- out_gsea 
+        cem@enrichment <- out_gsea
         return(cem)
     })
 
@@ -336,7 +336,7 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}
 #'
 #' @return Object of class \code{list} with GSEA data
-#' @examples 
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Look at example annotation file

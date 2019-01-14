@@ -34,15 +34,13 @@ and returns a CEMiTool object with an adjacency matrix in the adjacency slot.
 \examples{
 # Get example expression data
 data(expr0)
-# Initialize new CEMiTool object with expression 
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+# Initialize new CEMiTool object with expression
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Calculate adjacency matrix with example beta value 8
 cem <- get_adj(cem, beta=8)
 # Return adjacency matrix
 adj <- adj_data(cem)
-# Check result 
+# Check result
 adj[1:5, 1:5]
 # Set adjacency matrix to CEMiTool object
 adj_data(cem) <- adj

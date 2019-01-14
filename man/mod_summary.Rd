@@ -16,7 +16,7 @@ mod_summary(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{method}{A character string indicating which summarization method 
+\item{method}{A character string indicating which summarization method
 is to be used. Can be 'eigengene', 'mean' or 'median'. Default is 'mean'.}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}

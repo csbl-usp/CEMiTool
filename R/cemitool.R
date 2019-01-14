@@ -99,6 +99,11 @@ setMethod("initialize", signature="CEMiTool",
 #'        sample identification. Default: "SampleName".
 #' @param class_column A string specifying the column to be used as
 #'        a grouping factor for samples. Default: "Class"
+#' @param filter Logical. Used to define if posterior functions should use filtered
+#' expression data or not (Default: TRUE)
+#' @param apply_vst Logical. Used to define if posterior functions should use a
+#' variance stabilizing transformation on expression data before analyses. Only
+#' valid if argument \code{filter} is TRUE. (Default: FALSE)
 #'
 #' @return Object of class \code{CEMiTool}
 #' @examples
@@ -113,7 +118,11 @@ setMethod("initialize", signature="CEMiTool",
 #' identical(cem, cem2)
 #' @export
 new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
-        sample_name_column="SampleName", class_column="Class"){
+        sample_name_column="SampleName", class_column="Class",
+        filter=TRUE, apply_vst=FALSE){
+
+    stop_if(!is.logical(filter), "Argument 'filter' must evaluate to TRUE or FALSE.")
+    stop_if(!is.logical(apply_vst), "Argument 'apply_vst' must evaluate to TRUE or FALSE.")
 
     if(nrow(sample_annot) > 0){
         if(!sample_name_column %in% names(sample_annot)){
@@ -127,8 +136,24 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
                 " or change the class_column argument.")
         }
     }
+
     cem <- new("CEMiTool", expression=expr, sample_annotation=sample_annot,
-        sample_name_column=sample_name_column, class_column=class_column)
+        sample_name_column=sample_name_column, class_column=class_column,
+        parameters=list(filter=filter, apply_vst=apply_vst))
+
+    msg <- "Created new CEMiTool object with"
+
+    if(missing(expr) & missing(sample_annot)){
+        msg <- paste(msg, paste0("no objects and parameters sample_name_column='",
+            sample_name_column, "', class_column='", class_column, "', filter=",
+            filter, ", apply_vst=", apply_vst, "."))
+    }else{
+        msg <- paste(msg, paste0("the provided object(s) and parameters sample_name_column='",
+            sample_name_column, "', class_column='", class_column, "', filter=",
+            filter, ", apply_vst=", apply_vst, "."))
+    }
+
+    message(msg)
     #cem <- get_args(cem, vars=mget(ls()))
     return(cem)
 }
@@ -138,8 +163,11 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 #' @param cem Object of class \code{CEMiTool}
 #' @param value Object of class \code{data.frame} with gene
 #'        expression data
-#' @param filtered logical. If TRUE retrieves filtered expression data
-#' @param ... Optional parameters.
+#' @param filter logical. If TRUE, retrieves filtered expression data (Default: TRUE)
+#' @param apply_vst logical. If TRUE, applies variance stabilizing transformation to
+#' expression data (Default: FALSE)
+#' @param ... Additional parameters to \code{filter_genes} or
+#' \code{select_genes} functions.
 #'
 #' @return Object of class \code{data.frame} with gene expression data
 #' @examples
@@ -158,14 +186,33 @@ setGeneric("expr_data", function(cem, ...) {
 })
 
 #' @rdname expr_data
+# setMethod("expr_data", signature("CEMiTool"),
+#     function(cem, filtered=TRUE){
+#        if (filtered) {
+#            return(cem@expression[cem@selected_genes,])
+#        } else {
+#            return(cem@expression)
+#        }
+#     })
 setMethod("expr_data", signature("CEMiTool"),
-    function(cem, filtered=TRUE){
-       if (filtered) {
-           return(cem@expression[cem@selected_genes,])
-       } else {
-           return(cem@expression)
-       }
-    })
+function(cem, filter=TRUE, apply_vst=FALSE, ...){
+    stop_if(!is.logical(filter), "Argument 'filter' must evaluate to TRUE or FALSE.")
+    stop_if(!is.logical(apply_vst), "Argument 'apply_vst' must evaluate to TRUE or FALSE.")
+    if(missing(filter)) filter <- cem@parameters$filter
+    if(missing(apply_vst)) apply_vst <- cem@parameters$apply_vst
+    if (filter){
+        expr <- cem@expression
+        expr_f <- filter_genes(expr, apply_vst=apply_vst, ...)
+        selected <- select_genes(expr_f)
+        return(expr_f[selected, ])
+    }else{
+        if(apply_vst){
+            warning("Argument apply_vst cannot be TRUE if filter argument is FALSE. ",
+                      "Using original expression.")
+        }
+        return(cem@expression)
+    }
+})
 
 
 #' @rdname expr_data
@@ -237,11 +284,13 @@ setGeneric("mod_colors<-", function(cem, value) {
 #' @rdname mod_colors
 setReplaceMethod("mod_colors", signature("CEMiTool", "character"),
     function(cem, value){
-        mod_names <- mod_names(cem)
+        mods <- mod_names(cem)
         cem@mod_colors <- value
         if(is.null(names(cem@mod_colors))){
-            stop("mod_colors should be a character vector with names corresponding to the modules")
-        } else if(!all(sort(names(cem@mod_colors)) == sort(mod_names))){
+            stop("mod_colors should be a character vector with names corresponding to the modules.")
+        }else if(length(names(cem@mod_colors)) != length(mods)){
+            stop("A different number of values than the number of modules was provided.")
+        }else if(!all(sort(names(cem@mod_colors)) == sort(mods))){
             stop("mod_colors names do not match with modules!")
         }
         return(cem)
@@ -292,7 +341,8 @@ setMethod("sample_annotation", signature("CEMiTool"),
 
 #' @rdname sample_annotation
 #' @export
-setGeneric("sample_annotation<-", function(cem, sample_name_column="SampleName", class_column="Class", value) {
+setGeneric("sample_annotation<-", function(cem, sample_name_column="SampleName",
+                                           class_column="Class", value) {
     standardGeneric("sample_annotation<-")
 })
 
@@ -328,11 +378,11 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param gmt A data.frame containing two columns, one with pathways and one with genes
 #' @param interactions A data.frame containing two columns with gene names.
 #' @param filter Logical. If TRUE, will filter expression data.
-#' @param filter_pval P-value threshold for filtering.Default \code{0.1}.
+#' @param filter_pval P-value threshold for filtering. Default \code{0.1}.
 #' @param apply_vst Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
 #'           Currently ignored if parameter \code{filter} is FALSE.
 #' @param n_genes Number of genes left after filtering.
-#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1. 
+#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1.
 #' @param cor_method A character string indicating which correlation coefficient is
 #'        to be computed. One of \code{"pearson"} or \code{"spearman"}.
 #'        Default is \code{"pearson"}.
@@ -349,7 +399,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param class_column A character string indicating the class column name of the
 #'        annotation table.
 #' @param merge_similar Logical. If \code{TRUE}, merge similar modules.
-#' @param rank_method Character string indicating how to rank genes. Either "mean" 
+#' @param rank_method Character string indicating how to rank genes. Either "mean"
 #'        (the default) or "median".
 #' @param ora_pval P-value for overrepresentation analysis. Default \code{0.05}.
 #' @param gsea_scale If TRUE, apply z-score transformation for GSEA analysis. Default is \code{TRUE}
@@ -359,8 +409,8 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param plot Logical. If \code{TRUE}, plots all figures.
-#' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups  
-#'           defined by the class_column slot in the sample annotation file. Ignored if there is no 
+#' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
+#'           defined by the class_column slot in the sample annotation file. Ignored if there is no
 #'           sample_annotation file. Default \code{TRUE}.
 #' @param center_func Character string indicating the centrality measure to show in
 #'        the plot. Either 'mean' (the default) or 'median'.
@@ -379,7 +429,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' # Run CEMiTool with additional processing messages
 #' cem <- cemitool(expr=expr0, verbose=TRUE)
 #'
-#' \dontrun{ 
+#' \dontrun{
 #' # Run full CEMiTool analysis
 #' ## Get example sample annotation data
 #' data(sample_annot)
@@ -397,7 +447,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #'
 #' # Write analysis results into files
 #' write_files(cem, directory="./Tables", force=TRUE)
-#' 
+#'
 #' # Save all plots
 #' save_plots(cem, "all", directory="./Plots")
 #' }
@@ -416,7 +466,7 @@ cemitool <- function(expr,
                      network_type='unsigned',
                      tom_type='signed',
                      set_beta=NULL,
-                     force_beta=FALSE, 
+                     force_beta=FALSE,
                      sample_name_column="SampleName",
                      class_column="Class",
                      merge_similar=TRUE,
@@ -438,22 +488,28 @@ cemitool <- function(expr,
         stop('Please provide expression data!')
     }
 
-    # initialize CEMiTool object to hold data, analysis results and plots
+    # initialize CEMiTool object to hold data, parameters, analysis results and plots
     results <- new('CEMiTool', expression=expr,
                    sample_name_column=sample_name_column,
-                   class_column=class_column)
-    
+                   class_column=class_column,
+                   parameters=list(filter=filter, apply_vst=apply_vst))
+
     # keep input parameters
     #results <- get_args(cem=results, vars=mget(ls()))
 
     if (filter) {
+        expr_f <- filter_genes(expr, apply_vst=apply_vst)
         if(!missing(n_genes)){
-            results <- filter_expr(results, n_genes=n_genes, apply_vst=apply_vst)
+            selected <- select_genes(expr=expr_f, n_genes=n_genes)
         } else {
-            results <- filter_expr(results, filter_pval=filter_pval, apply_vst=apply_vst)
+            selected <- select_genes(expr=expr_f, filter_pval=filter_pval)
         }
-        if (length(results@selected_genes) <= 0) {
-            stop('Stopping analysis, no gene left for analysis. Maybe try to change the filter parameters.')
+
+        results@selected_genes <- selected
+
+        if (length(selected) <= 0) {
+            stop('Stopping analysis, no gene left for analysis. ',
+                    'Maybe try to change the filter parameters.')
         }
     }
 
@@ -462,7 +518,8 @@ cemitool <- function(expr,
         if(verbose){
             message("Including sample annotation ...")
         }
-        sample_annotation(results, sample_name_column=sample_name_column, class_column=class_column) <- annot
+        sample_annotation(results, sample_name_column=sample_name_column,
+                          class_column=class_column) <- annot
     }
 
     if(plot){
@@ -524,8 +581,9 @@ cemitool <- function(expr,
             message("Running Gene Set Enrichment Analysis ...")
         }
         #run mod_gsea
-        results <- mod_gsea(results, gsea_scale=gsea_scale, rank_method=rank_method, 
-                            gsea_min_size=gsea_min_size, gsea_max_size=gsea_max_size, verbose=verbose)
+        results <- mod_gsea(results, gsea_scale=gsea_scale, rank_method=rank_method,
+                            gsea_min_size=gsea_min_size, gsea_max_size=gsea_max_size,
+                            verbose=verbose)
     }
 
     # if user provides .gmt file
@@ -542,7 +600,8 @@ cemitool <- function(expr,
         if(verbose){
             message("Generating profile plots ...")
         }
-        results <- plot_profile(results, order_by_class=order_by_class, center_func=center_func)
+        results <- plot_profile(results, order_by_class=order_by_class,
+                                center_func=center_func)
 
         if (length(results@enrichment) > 0) {
             if(verbose){
@@ -581,7 +640,7 @@ cemitool <- function(expr,
 
     #results@input_params <- as.list(results@input_params$cemitool)
     #results@calls <- as.list(results@calls$cemitool)
-    
+
     #cem@input_params <- list()
     #cem@calls <- list()
     #results <- get_args(cem=results, vars=mget(ls()))
@@ -727,7 +786,9 @@ setMethod('show', signature(object='CEMiTool'),
             cat("data.frame with", nrow(object@expression), "genes and", ncol(object@expression), "samples\n")
         }
         if(is.character(object@selected_genes)){
-            cat("- Selected data:", length(object@selected_genes), "genes selected\n")
+            if(length(object@selected_genes) != nrow(object@expression)){
+                cat("- Selected data:", length(object@selected_genes), "genes selected\n")
+            }
         }
         cat("- Gene Set Enrichment Analysis: ")
         if(length(object@enrichment)!=3) {
@@ -784,8 +845,8 @@ setMethod('show', signature(object='CEMiTool'),
 #' Transform module genes list to a gmt file
 #'
 #' @keywords internal
-#' 
-#' @param cem 
+#'
+#' @param cem
 #'
 #' @return A .gmt file containing module genes in each row
 #'
@@ -828,7 +889,7 @@ module_to_gmt <- function(cem, directory="./Tables"){
 #' data(cem)
 #' # Save CEMiTool results in files
 #' write_files(cem, directory=".", force=TRUE)
-#' 
+#'
 #' @rdname write_files
 #' @export
 setGeneric('write_files', function(cem, ...) {
@@ -855,15 +916,16 @@ setMethod('write_files', signature(cem='CEMiTool'),
             median_summary <- mod_summary(cem, "median")
             write.table(median_summary, file.path(directory, "summary_median.tsv"), sep="\t", row.names=FALSE)
 
-            eg_summary <- mod_summary(cem, "eigengene")        
+            eg_summary <- mod_summary(cem, "eigengene")
             write.table(eg_summary, file.path(directory, "summary_eigengene.tsv"), sep="\t", row.names=FALSE)
-            
+
             module_to_gmt(cem, directory=directory)
         }
 
-        if(length(cem@selected_genes) > 0){
-            writeLines(cem@selected_genes, file.path(directory, "selected_genes.txt"))
-        }
+        expr_f <- expr_data(cem, filter=cem@parameters$filter,
+                            apply_vst=cem@parameters$apply_vst)
+        selected <- select_genes(expr_f)
+        writeLines(selected, file.path(directory, "selected_genes.txt"))
 
         if(length(cem@enrichment) > 0){
             for (stat in names(cem@enrichment)) {

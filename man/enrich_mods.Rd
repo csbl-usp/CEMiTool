@@ -12,7 +12,7 @@ enrich_mods(community_list, analyses, comp_group = "none",
 
 \item{analyses}{List of CEMiTool objects}
 
-\item{comp_group}{Which group will be used as base for comparison. If 'none', 
+\item{comp_group}{Which group will be used as base for comparison. If 'none',
 then all combinations of comparisons will be made}
 
 \item{subject_col}{Column containing subject information in sample annotation slot of CEMiTool objects}
@@ -20,14 +20,14 @@ then all combinations of comparisons will be made}
 \item{run_fgsea}{Logical. Should fgsea be run?}
 }
 \value{
-A \code{data.frame} containing information of how much each comparison is enriched in each community 
+A \code{data.frame} containing information of how much each comparison is enriched in each community
 in each CEMiTool object.
 }
 \description{
 Returns enrichment of communities from edgelist created by cemoverlap function.
 }
 \details{
-This function assumes that relevant modules for a comparison in a study will 
+This function assumes that relevant modules for a comparison in a study will
 have a high proportion of differentially regulated genes in a certain direction. Base assumption is that
 NON-relevant modules will be centered at zero.
 }
@@ -39,14 +39,14 @@ data(sample_annot)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, plot=FALSE) 
-cem2 <- cemitool(dset2, plot=FALSE) 
+cem1 <- cemitool(dset1, plot=FALSE)
+cem2 <- cemitool(dset2, plot=FALSE)
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 
 comm_overlap <- overlap_community(cem_overlap_df)
 
-samples1 <- names(expr_data(cem1))
-samples2 <- names(expr_data(cem2))
+samples1 <- names(expr_data(cem1, filter=TRUE, apply_vst=TRUE))
+samples2 <- names(expr_data(cem2, filter=TRUE, apply_vst=TRUE))
 
 sample_annotation(cem1) <- sample_annot[sample_annot$SampleName \%in\% samples1, ]
 sample_annotation(cem2) <- sample_annot[sample_annot$SampleName \%in\% samples2, ]

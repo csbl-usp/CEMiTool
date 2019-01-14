@@ -16,13 +16,13 @@ get_mods(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{cor_function}{A character string indicating the correlation function 
+\item{cor_function}{A character string indicating the correlation function
 to be used. Default \code{'cor'}.}
 
-\item{cor_method}{A character string indicating which correlation 
+\item{cor_method}{A character string indicating which correlation
 coefficient is to be computed. Default \code{"pearson"}.}
 
-\item{tom_type}{A character string indicating to use either "unsigned" or 
+\item{tom_type}{A character string indicating to use either "unsigned" or
 "signed" (default) TOM similarity measure.}
 
 \item{min_ngen}{Minimal number of genes per module (Default: 20).}
@@ -31,17 +31,15 @@ coefficient is to be computed. Default \code{"pearson"}.}
 Numeric labels assigning genes to modules.
 }
 \description{
-This function takes a \code{CEMiTool} object containing an adjacency matrix 
-together with the given network parameters, and returns the given 
+This function takes a \code{CEMiTool} object containing an adjacency matrix
+together with the given network parameters, and returns the given
 co-expression modules.
 }
 \examples{
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Calculate adjacency matrix with example beta value 8
 cem <- get_adj(cem, beta=8)
 # Get module labels

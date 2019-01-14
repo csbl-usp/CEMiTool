@@ -14,13 +14,15 @@ test_that('objects constructed are of class CEMiTool', {
 })
 
 test_that('objects constructed receive the expected data', {
-	expect_identical(expr0, expr_data(cem2))
+	expect_identical(expr0, expr_data(cem2, filter=FALSE, apply_vst=FALSE))
 	expect_identical(sample_annot, sample_annotation(cem2))
 })
 
 test_that('new_cem returns errors when appropriate', {
 	expect_error(cem <- new_cem(expr0, sample_annot, sample_name_column="foo"))
 	expect_error(cem <- new_cem(expr0, sample_annot, class_column="bar"))
+    expect_error(cem <- new_cem(expr0, sample_annot, filter="baz"))
+    expect_error(cem <- new_cem(expr0, sample_annot, apply_vst="bum"))
 })
 
 

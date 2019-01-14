@@ -18,11 +18,11 @@ get_hubs(cem, ...)
 \item{n}{Number of hubs to return from each module. If "all", returns all genes
 in decreasing order of connectivity. Default: 5.}
 
-\item{method}{Method for hub calculation. Either "adjacency" or "kME". 
+\item{method}{Method for hub calculation. Either "adjacency" or "kME".
 Default: "adjacency"}
 }
 \value{
-A \code{list} containing hub genes for each module and the value of 
+A \code{list} containing hub genes for each module and the value of
 the calculated method.
 }
 \description{

@@ -19,7 +19,7 @@ Default: 'adjacency'.}
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps.}
 }
 \value{
-Object of class \code{data.frame} containing edgelist describing common 
+Object of class \code{data.frame} containing edgelist describing common
 edges between the networks defined in module slots from the input objects
 }
 \description{
@@ -27,20 +27,20 @@ Returns the occurrence of edges between different analyses
 }
 \details{
 The method assumes that all genes inside each module are connected to
-every other gene from the same module. Argument desired_table must be one of 
-\code{spearman} (returns Spearman's rho), \code{pearson} (Pearson's R), 
+every other gene from the same module. Argument desired_table must be one of
+\code{spearman} (returns Spearman's rho), \code{pearson} (Pearson's R),
 \code{b_correlations} (returns adjacency list defined in CEMiTool object),
 \code{adjacency} (returns discretized edges)
 }
 \examples{
-\dontrun{ 
+\dontrun{
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, plot=FALSE) 
-cem2 <- cemitool(dset2, plot=FALSE) 
+cem1 <- cemitool(dset1, plot=FALSE)
+cem2 <- cemitool(dset2, plot=FALSE)
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 }
 }

@@ -26,7 +26,7 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE,
 
 \item{filter}{Logical. If TRUE, will filter expression data.}
 
-\item{filter_pval}{P-value threshold for filtering.Default \code{0.1}.}
+\item{filter_pval}{P-value threshold for filtering. Default \code{0.1}.}
 
 \item{apply_vst}{Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
 Currently ignored if parameter \code{filter} is FALSE.}
@@ -60,7 +60,7 @@ annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
 
-\item{rank_method}{Character string indicating how to rank genes. Either "mean" 
+\item{rank_method}{Character string indicating how to rank genes. Either "mean"
 (the default) or "median".}
 
 \item{ora_pval}{P-value for overrepresentation analysis. Default \code{0.05}.}
@@ -79,7 +79,7 @@ Default \code{0.8}.}
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
 
 \item{order_by_class}{Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
-defined by the class_column slot in the sample annotation file. Ignored if there is no 
+defined by the class_column slot in the sample annotation file. Ignored if there is no
 sample_annotation file. Default \code{TRUE}.}
 
 \item{center_func}{Character string indicating the centrality measure to show in
@@ -105,7 +105,7 @@ cem <- cemitool(expr=expr0, apply_vst=TRUE)
 # Run CEMiTool with additional processing messages
 cem <- cemitool(expr=expr0, verbose=TRUE)
 
-\dontrun{ 
+\dontrun{
 # Run full CEMiTool analysis
 ## Get example sample annotation data
 data(sample_annot)

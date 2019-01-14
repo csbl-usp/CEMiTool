@@ -25,9 +25,7 @@ This function takes a CEMiTool object and returns the phi parameter.
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Get modules and beta data
 cem <- find_modules(cem)
 # Get phi

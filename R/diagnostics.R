@@ -12,21 +12,21 @@
 NULL
 
 #' Sample clustering
-#' 
+#'
 #' Creates a dendrogram showing the similarities between samples in the expression data.
-#' 
+#'
 #' @param cem Object of class \code{CEMiTool} or \code{data.frame}.
 #' @param col_vector A vector of columns to use for visualizing the clustering. See Details.
 #' @param sample_name_column A string specifying the column to be used as sample identification.
 #'           For CEMiTool objects, this will be the string specified in the sample_name_column slot.
 #' @param class_column A string specifying the column to be used as sample group identification.
 #'           For CEMiTool objects, this will be the string specified in the class_column slot.
-#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
+#' @param filter Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters.
-#' 
-#' @return Object of class \code{CEMiTool} with dendrogram or a plot object. 
-#' 
-#' @examples 
+#'
+#' @return Object of class \code{CEMiTool} with dendrogram or a plot object.
+#'
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Plot sample dendrogram
@@ -43,9 +43,12 @@ setGeneric('plot_sample_tree', function(cem, ...){
 #' @rdname plot_sample_tree
 setMethod('plot_sample_tree', signature('CEMiTool'),
     function(cem, col_vector=NULL, sample_name_column=NULL,
-             class_column=NULL, filtered=FALSE){
+             class_column=NULL, filter=FALSE){
 
-        expr <- expr_data(cem, filtered=filtered)
+        if(missing(filter)) filter <- cem@parameters$filter
+
+        expr <- expr_data(cem, filter=filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -127,7 +130,7 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
                         theme(axis.title=element_blank(),
                               axis.ticks=element_blank(),
                               axis.text.x=element_blank(),
-                              legend.position="none") 
+                              legend.position="none")
 
                 gp3 <- ggplot2::ggplotGrob(p3)
                 maxWidth <- grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5], gp3$widths[2:5])
@@ -159,13 +162,13 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
 #' of gene expression. A linear relationship between these values for
 #' RNAseq data suggest that an appropriate transformation such as the
 #' Variance Stabilizing Transformation should be applied.
-#' 
+#'
 #' @param cem Object of class \code{CEMiTool}
-#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
+#' @param filter Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
 #'
 #' @return Object of class \code{CEMiTool} containing a mean and variance plot
-#' 
+#'
 #' @examples
 #' # Get example CEMiTool object
 #' data(cem)
@@ -182,8 +185,11 @@ setGeneric('plot_mean_var', function(cem, ...){
 
 #' @rdname plot_mean_var
 setMethod('plot_mean_var', signature('CEMiTool'),
-    function(cem, filtered=FALSE){
-        expr <- expr_data(cem, filtered=filtered)
+    function(cem, filter=FALSE){
+        if(missing(filter)) filter <- cem@parameters$filter
+
+        expr <- expr_data(cem, filter=filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -198,11 +204,11 @@ setMethod('plot_mean_var', signature('CEMiTool'),
         log_mean_var <- as.data.frame(apply(mean_var, 2, log10))
         my_formula <- y ~ x
 
-        pl <- ggplot(log_mean_var, aes(x=Mean, y=Variance)) + 
-                geom_point() + 
+        pl <- ggplot(log_mean_var, aes(x=Mean, y=Variance)) +
+                geom_point() +
                 geom_smooth(method="lm", se=FALSE, color="red", formula=my_formula)+
-                ggpmisc::stat_poly_eq(formula=my_formula, 
-                    aes(label=paste(..eq.label.., ..rr.label.., sep="*plain(\",\")~")), 
+                ggpmisc::stat_poly_eq(formula=my_formula,
+                    aes(label=paste(..eq.label.., ..rr.label.., sep="*plain(\",\")~")),
                     parse=TRUE) +
             labs(x = "Mean Expression (log10)", y="Variance (log10)") +
             ggthemes::theme_gdocs() +
@@ -216,13 +222,13 @@ setMethod('plot_mean_var', signature('CEMiTool'),
 
 #' Plot histogram
 #'
-#' This function plots a histogram of the distribution of gene expression, to 
-#' help assess the normality of the data. 
-#' 
+#' This function plots a histogram of the distribution of gene expression, to
+#' help assess the normality of the data.
+#'
 #' @param cem Object of class \code{CEMiTool}
-#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
+#' @param filter Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
-#' 
+#'
 #' @return Object of class \code{CEMiTool} containing expression histogram
 #'
 #' @examples
@@ -242,8 +248,11 @@ setGeneric('plot_hist', function(cem, ...){
 
 #' @rdname plot_hist
 setMethod('plot_hist', signature('CEMiTool'),
-    function(cem, filtered=FALSE){
-        expr <- expr_data(cem, filtered=filtered)
+    function(cem, filter=FALSE){
+        if(missing(filter)) filter <- cem@parameters$filter
+
+        expr <- expr_data(cem, filter=filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -256,15 +265,15 @@ setMethod('plot_hist', signature('CEMiTool'),
         maxExp <- round(max(measures, na.rm=TRUE)+0.5, digits=0)
         delta <- (maxExp -minExp)/100
 
-        pl <- ggplot(measures, aes(measures$data)) + 
-                geom_histogram(breaks=seq(minExp,maxExp , by=delta), 
+        pl <- ggplot(measures, aes(measures$data)) +
+                geom_histogram(breaks=seq(minExp,maxExp , by=delta),
                                col="lightgrey",
                                fill="#4A7CB2") +
                 labs(x="Measures", y="Count") +
                 ggthemes::theme_gdocs() +
                 theme(rect=element_blank(),
                       axis.title.x = element_text(face="bold", size=12),
-                      axis.title.y = element_text(face="bold", size=12), 
+                      axis.title.y = element_text(face="bold", size=12),
                       panel.grid=element_blank())
 
         cem@hist_plot <- pl
@@ -276,9 +285,9 @@ setMethod('plot_hist', signature('CEMiTool'),
 #' This function creates a normal QQ plot of the expression values.
 #'
 #' @param cem Object of class \code{CEMiTool}
-#' @param filtered Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
+#' @param filter Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).
 #' @param ... Optional parameters
-#' 
+#'
 #' @return Object of class \code{CEMiTool} containing qqplot
 #'
 #' @examples
@@ -288,7 +297,7 @@ setMethod('plot_hist', signature('CEMiTool'),
 #' cem <- plot_qq(cem)
 #' # Check results
 #' show_plot(cem, 'qq')
-#' 
+#'
 #' @rdname plot_qq
 #' @export
 
@@ -298,9 +307,13 @@ setGeneric('plot_qq', function(cem, ...){
 
 #' @rdname plot_qq
 setMethod('plot_qq', signature('CEMiTool'),
-    function(cem, filtered=FALSE){
-        expr <- expr_data(cem, filtered=filtered)
-            if(nrow(expr) == 0){
+    function(cem, filter=FALSE){
+        if(missing(filter)) filter <- cem@parameters$filter
+
+        expr <- expr_data(cem, filter=filter,
+                          apply_vst=cem@parameters$apply_vst)
+
+        if(nrow(expr) == 0){
                 stop("CEMiTool object has no expression file!")
         }
         #vars <- mget(ls())
@@ -309,13 +322,13 @@ setMethod('plot_qq', signature('CEMiTool'),
         measures <- as.data.frame(as.vector(as.matrix(expr)))
         names(measures) <- "data"
 
-        pl <- ggplot(measures, aes(sample = data)) + 
-            stat_qq() + 
+        pl <- ggplot(measures, aes(sample = data)) +
+            stat_qq() +
             stat_qq_line() +
             ggthemes::theme_gdocs() +
             theme(rect=element_blank(),
                   axis.title.x = element_text(face="bold", size=12),
-                  axis.title.y = element_text(face="bold", size=12), 
+                  axis.title.y = element_text(face="bold", size=12),
                   panel.grid=element_blank())
 
         cem@qq_plot <- pl
@@ -329,9 +342,9 @@ setMethod('plot_qq', signature('CEMiTool'),
 #' @param cem Object of class \code{CEMiTool}.
 #' @param directory Directory name for results.
 #' @param title Character string with the title of the report.
-#' @param force If the directory exists, execution will not stop. 
+#' @param force If the directory exists, execution will not stop.
 #' @param ... parameters to rmarkdown::render
-#' 
+#'
 #' @return An HTML file with an interactive diagnostic report.
 #'
 #' @rdname diagnostic_report
