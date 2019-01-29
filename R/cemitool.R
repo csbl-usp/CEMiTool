@@ -409,6 +409,7 @@ setReplaceMethod("sample_annotation", signature("CEMiTool"),
 #' @param diss_thresh Module merging correlation threshold for eigengene similarity.
 #'        Default \code{0.8}.
 #' @param plot Logical. If \code{TRUE}, plots all figures.
+#' @param plot_diagnostics Logical. If \code{TRUE}, creates diagnostic plots. Overwritten if plot=FALSE.
 #' @param order_by_class Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
 #'           defined by the class_column slot in the sample annotation file. Ignored if there is no
 #'           sample_annotation file. Default \code{TRUE}.
@@ -478,6 +479,7 @@ cemitool <- function(expr,
                      min_ngen=30,
                      diss_thresh=0.8,
                      plot=TRUE,
+                     plot_diagnostics=TRUE,
                      order_by_class=TRUE,
                      center_func="mean",
                      directed=FALSE,
@@ -523,17 +525,19 @@ cemitool <- function(expr,
     }
 
     if(plot){
-        if(verbose){
-            message("Plotting diagnostic plots ...")
-            message("...Plotting mean and variance scatterplot ...")
-            message("...Plotting expression histogram ...")
-            message("...Plotting qq plot ...")
-            message("...Plotting sample tree ...")
+        if(plot_diagnostics){
+            if(verbose){
+                message("Plotting diagnostic plots ...")
+                message("...Plotting mean and variance scatterplot ...")
+                message("...Plotting expression histogram ...")
+                message("...Plotting qq plot ...")
+                message("...Plotting sample tree ...")
+            }
+            results <- plot_mean_var(results)
+            results <- plot_hist(results)
+            results <- plot_qq(results)
+            results <- plot_sample_tree(results)
         }
-        results <- plot_mean_var(results)
-        results <- plot_hist(results)
-        results <- plot_qq(results)
-        results <- plot_sample_tree(results)
     }
 
     if(verbose){
@@ -560,7 +564,12 @@ cemitool <- function(expr,
     results <- plot_mean_k(results)
 
     if(is.na(results@parameters$beta)){
-        message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
+        if(plot_diagnostics){
+            message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
+        }else{
+            message("Unable to find parameter beta. Please re-run the cemitool function setting plot_diagnostics=TRUE", 
+                    " and check diagnostic plots with function diagnostic_report().") 
+        }
         return(results)
     }
 

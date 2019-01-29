@@ -4,7 +4,7 @@
 \alias{filter_genes}
 \title{Filter a gene expression data.frame}
 \usage{
-filter_genes(expr, filter_pval = 0.1, pct = 0.75, apply_vst = FALSE)
+filter_genes(expr, pct = 0.75, apply_vst = FALSE)
 }
 \arguments{
 \item{expr}{A data.frame containing expression data}

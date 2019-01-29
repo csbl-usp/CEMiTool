@@ -12,8 +12,8 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE,
   class_column = "Class", merge_similar = TRUE, rank_method = "mean",
   ora_pval = 0.05, gsea_scale = TRUE, gsea_min_size = 15,
   gsea_max_size = 1000, min_ngen = 30, diss_thresh = 0.8,
-  plot = TRUE, order_by_class = TRUE, center_func = "mean",
-  directed = FALSE, verbose = FALSE)
+  plot = TRUE, plot_diagnostics = TRUE, order_by_class = TRUE,
+  center_func = "mean", directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -77,6 +77,8 @@ annotation table.}
 Default \code{0.8}.}
 
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
+
+\item{plot_diagnostics}{Logical. If \code{TRUE}, creates diagnostic plots. Overwritten if plot=FALSE.}
 
 \item{order_by_class}{Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
 defined by the class_column slot in the sample annotation file. Ignored if there is no
