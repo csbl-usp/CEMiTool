@@ -721,7 +721,9 @@ stat_overlap_mods <- function(analyses, comp_group, subject_col=NULL, ...){
 #' @keywords internal
 #'
 mod_compare <- function(analyses, p_thresh = 1, fdr_thresh = 1, jac_thresh = 0){
+    if(is.null(names(analyses))){
     names(analyses) <- paste0("cem_", seq_along(analyses))
+    }
     new_mods_per_cem <- lapply(analyses, function(cem){
         tmpmod <- subset(module_genes(cem), modules != 'Not.Correlated')
         spmod <- split(tmpmod$genes, tmpmod$modules)
