@@ -1,6 +1,7 @@
 #' @importFrom grDevices rainbow
 #' @importFrom utils write.table
 #' @importFrom methods new 'slot<-' show
+#' @import dplyr
 
 setOldClass('gg')
 setOldClass('ggplot')
@@ -567,8 +568,8 @@ cemitool <- function(expr,
         if(plot_diagnostics){
             message("Unable to find parameter beta. Please check diagnostic plots with function diagnostic_report().")
         }else{
-            message("Unable to find parameter beta. Please re-run the cemitool function setting plot_diagnostics=TRUE", 
-                    " and check diagnostic plots with function diagnostic_report().") 
+            message("Unable to find parameter beta. Please re-run the cemitool function setting plot_diagnostics=TRUE",
+                    " and check diagnostic plots with function diagnostic_report().")
         }
         return(results)
     }
@@ -686,6 +687,56 @@ setMethod('nmodules', signature(cem='CEMiTool'),
         }
         return(n)
     })
+
+
+
+
+#' Get the number of genes in modules in a CEMiTool object
+#'
+#' @param cem Object of class \code{CEMiTool}
+#' @param module Default is NULL. If a character string designating a module is
+#' given, the number of genes in that module is returned instead.
+#'
+#' @return The number of genes in module(s)
+#'
+#' @rdname mod_gene_num
+#' @examples
+#' # Get example CEMiTool object
+#' data(cem)
+#' # Get the number of genes in modules
+#' mod_gene_num(cem)
+#' # Get the number of genes in module M1
+#' mod_gene_num(cem, "M1")
+#'
+#' @export
+setGeneric('mod_gene_num', function(cem, module=NULL) {
+    standardGeneric('mod_gene_num')
+})
+#' @rdname mod_gene_num
+setMethod('mod_gene_num', signature(cem='CEMiTool'),
+          function(cem, module=NULL){
+              if(!is.null(module)){
+                  if(!module %in% mod_names(cem)){
+                      stop("Module '", module, "' not in CEMiTool object!")
+                  }
+              }
+              if(!nrow(module_genes(cem))>0){
+                  stop("No modules in CEMiTool object!")
+              }
+
+              mod_genes <- cem %>%
+                  module_genes() %>%
+                  group_by(modules) %>%
+                  summarize(num_genes = n())
+              if(!is.null(module)){
+                  mod_genes <- mod_genes %>%
+                      filter(modules %in% module) %>%
+                      pull(num_genes)
+              }
+              return(mod_genes)
+          })
+
+
 
 #' Get module names in a CEMiTool object
 #'

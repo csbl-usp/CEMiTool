@@ -826,9 +826,9 @@ mod_activity <- function(analyses, comp_group, subject_col){
         annot <- sample_annotation(cem)
         annot <- annot[annot[[cem@sample_name_column]] %in% names(expr), ]
         contmat <- makeContMatrix(sample_annot = annot,
-                                  class_column = cem@class_column,
-                                  comp_group = comp_group, expr = expr,
-                                  subject_col = subject_col)
+                                             class_column = cem@class_column,
+                                             comp_group = comp_group, expr = expr,
+                                             subject_col = subject_col)
         toptables <- do.call(makeLimmaComp, contmat)
         toptables <- do.call(rbind, c(toptables, make.row.names = FALSE))
         # Now determine activity of module
@@ -841,17 +841,22 @@ mod_activity <- function(analyses, comp_group, subject_col){
                 group_by(comparison) %>%
                 summarise(fc_median = median(logFC)) %>%
                 ungroup() %>%
-                mutate(module = paste0(cem_name, '.', modname)) %>%
-                select(comparison, module, fc_median) %>%
+                #mutate(module = paste0(cem_name, '.', modname)) %>%
+                mutate(module = modname, cem_name = cem_name) %>%
+                select(comparison, module, cem_name, fc_median) %>%
                 gather(key = parameter, value = value, fc_median)
             tmptop
         }, names(cemsp), cemsp)
         cem_actv <- do.call(rbind, c(cem_actv, make.row.names = FALSE))
         cem_actv <- cem_actv %>%
             unite(new_col, comparison, parameter, sep = '.') %>%
-            spread(new_col, value)
+            spread(new_col, value) %>%
+            mutate(genes_in_mod=mod_gene_num(cem, module=module),
+                   module = paste0(cem_name, '.', module)) %>%
+            select(-cem_name)
         cem_actv
     }, names(analyses), analyses)
+
     mod_mean <- plyr::rbind.fill(mod_mean)
     return(mod_mean)
 }
