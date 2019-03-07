@@ -714,9 +714,9 @@ setGeneric('mod_gene_num', function(cem, module=NULL) {
 })
 #' @rdname mod_gene_num
 setMethod('mod_gene_num', signature(cem='CEMiTool'),
-          function(cem, module=NULL){
+         function(cem, module=NULL){
               if(!is.null(module)){
-                  if(!module %in% mod_names(cem)){
+                  if(!(all(module %in% mod_names(cem)))){
                       stop("Module '", module, "' not in CEMiTool object!")
                   }
               }
