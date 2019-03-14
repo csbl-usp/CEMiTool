@@ -134,7 +134,8 @@ setMethod('find_modules', signature('CEMiTool'),
     cem@parameters$phi <- phi
 
     # Get adjacency matrix
-    cem <- get_adj(cem, beta=beta)
+    cem <- get_adj(cem, beta=beta, network_type=network_type,
+                   cor_function=cor_function, cor_method=cor_method)
 
     # Get modules
     mods <- get_mods(cem, tom_type=tom_type, min_ngen=min_ngen)
