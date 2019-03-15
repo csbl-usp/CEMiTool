@@ -8,13 +8,13 @@ plot_consensus(cem_overlap_df, comm_overlap_df, study_num,
   num_sd_cut = 2)
 }
 \arguments{
-\item{cem_overlap_df}{Output \code{data.frame} from function 
+\item{cem_overlap_df}{Output \code{data.frame} from function
 \code{cem_overlap}}
 
-\item{comm_overlap_df}{Output \code{data.frame} from function 
+\item{comm_overlap_df}{Output \code{data.frame} from function
 \code{overlap_community}}
 
-\item{study_num}{Minimum number of studies an edge must be present in for it 
+\item{study_num}{Minimum number of studies an edge must be present in for it
 to be included}
 
 \item{num_sd_cut}{Number of standard deviations an edge's mean must be above in order
@@ -34,8 +34,8 @@ data(sample_annot)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
-cem2 <- cemitool(dset2, sample_annot, plot=FALSE) 
+cem1 <- cemitool(dset1, sample_annot, plot=FALSE)
+cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 comm_overlap_df <- overlap_community(cem_overlap_df)
 plot_consensus(cem_overlap_df, comm_overlap_df, study_num=2)

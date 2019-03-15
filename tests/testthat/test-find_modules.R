@@ -12,10 +12,10 @@ test_that('find_modules functions throw errors when there is no expression file'
 
 cem <- cem0
 expr_data(cem) <- expr0
-cem <- filter_expr(cem)
+#cem <- filter_expr(cem)
 
 test_that('find_modules functions throw errors when there is no fit_indices slot', {
-	expect_error(get_cemitool_beta(cem))
+	expect_error(get_cemitool_r2_beta(cem))
 	expect_error(get_phi(cem))
 	expect_error(get_connectivity(cem))
 
@@ -28,6 +28,6 @@ test_that('find_modules throws errors with innapropriate set_beta values', {
 })
 
 test_that('find_modules throws error when set_beta and force_beta are given together', {
-	expect_error(invisible(capture.output(find_modules(cem, set_beta=7, force_beta=TRUE))))		  
+	expect_error(invisible(capture.output(find_modules(cem, set_beta=7, force_beta=TRUE))))
 })
 

@@ -16,13 +16,13 @@ get_beta_data(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{network_type}{A character string indicating to use either "unsigned" 
+\item{network_type}{A character string indicating to use either "unsigned"
 (default) or "signed" networks. Default \code{"unsigned"}.}
 
-\item{cor_function}{A character string indicating the correlation function 
+\item{cor_function}{A character string indicating the correlation function
 to be used. Default \code{'cor'}.}
 
-\item{cor_method}{A character string indicating which correlation 
+\item{cor_method}{A character string indicating which correlation
 coefficient is to be computed. Default \code{"pearson"}}
 
 \item{verbose}{Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}}
@@ -31,7 +31,7 @@ coefficient is to be computed. Default \code{"pearson"}}
 A list containing the soft-threshold selected by WGCNA and scale-free model parameters
 }
 \description{
-This function takes the input parameters from find_modules 
+This function takes the input parameters from find_modules
 and calculates the WGCNA soft-threshold parameters and returns
 them.
 }
@@ -39,9 +39,7 @@ them.
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Get beta data
 beta_data <- get_beta_data(cem)
 

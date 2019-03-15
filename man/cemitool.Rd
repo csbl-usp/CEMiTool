@@ -12,8 +12,8 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE,
   class_column = "Class", merge_similar = TRUE, rank_method = "mean",
   ora_pval = 0.05, gsea_scale = TRUE, gsea_min_size = 15,
   gsea_max_size = 1000, min_ngen = 30, diss_thresh = 0.8,
-  plot = TRUE, order_by_class = TRUE, center_func = "mean",
-  directed = FALSE, verbose = FALSE)
+  plot = TRUE, plot_diagnostics = TRUE, order_by_class = TRUE,
+  center_func = "mean", directed = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{expr}{Gene expression \code{data.frame}.}
@@ -26,7 +26,7 @@ cemitool(expr, annot, gmt, interactions, filter = TRUE,
 
 \item{filter}{Logical. If TRUE, will filter expression data.}
 
-\item{filter_pval}{P-value threshold for filtering.Default \code{0.1}.}
+\item{filter_pval}{P-value threshold for filtering. Default \code{0.1}.}
 
 \item{apply_vst}{Logical. If TRUE, will apply Variance Stabilizing Transform before filtering genes.
 Currently ignored if parameter \code{filter} is FALSE.}
@@ -60,7 +60,7 @@ annotation table.}
 
 \item{merge_similar}{Logical. If \code{TRUE}, merge similar modules.}
 
-\item{rank_method}{Character string indicating how to rank genes. Either "mean" 
+\item{rank_method}{Character string indicating how to rank genes. Either "mean"
 (the default) or "median".}
 
 \item{ora_pval}{P-value for overrepresentation analysis. Default \code{0.05}.}
@@ -78,8 +78,10 @@ Default \code{0.8}.}
 
 \item{plot}{Logical. If \code{TRUE}, plots all figures.}
 
+\item{plot_diagnostics}{Logical. If \code{TRUE}, creates diagnostic plots. Overwritten if plot=FALSE.}
+
 \item{order_by_class}{Logical. If \code{TRUE}, samples in profile plot are ordered by the groups
-defined by the class_column slot in the sample annotation file. Ignored if there is no 
+defined by the class_column slot in the sample annotation file. Ignored if there is no
 sample_annotation file. Default \code{TRUE}.}
 
 \item{center_func}{Character string indicating the centrality measure to show in
@@ -105,7 +107,7 @@ cem <- cemitool(expr=expr0, apply_vst=TRUE)
 # Run CEMiTool with additional processing messages
 cem <- cemitool(expr=expr0, verbose=TRUE)
 
-\dontrun{ 
+\dontrun{
 # Run full CEMiTool analysis
 ## Get example sample annotation data
 data(sample_annot)

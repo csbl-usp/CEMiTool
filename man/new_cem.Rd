@@ -5,7 +5,8 @@
 \title{Create a CEMiTool object}
 \usage{
 new_cem(expr = data.frame(), sample_annot = data.frame(),
-  sample_name_column = "SampleName", class_column = "Class")
+  sample_name_column = "SampleName", class_column = "Class",
+  filter = TRUE, apply_vst = FALSE)
 }
 \arguments{
 \item{expr}{Object of class \code{data.frame} with gene
@@ -21,6 +22,13 @@ sample identification. Default: "SampleName".}
 
 \item{class_column}{A string specifying the column to be used as
 a grouping factor for samples. Default: "Class"}
+
+\item{filter}{Logical. Used to define if posterior functions should use filtered
+expression data or not (Default: TRUE)}
+
+\item{apply_vst}{Logical. Used to define if posterior functions should use a
+variance stabilizing transformation on expression data before analyses. Only
+valid if argument \code{filter} is TRUE. (Default: FALSE)}
 }
 \value{
 Object of class \code{CEMiTool}

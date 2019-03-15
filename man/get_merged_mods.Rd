@@ -26,16 +26,14 @@ get_merged_mods(cem, ...)
 Numeric labels assigning genes to modules.
 }
 \description{
-This function takes a CEMiTool object with expression and a vector of 
+This function takes a CEMiTool object with expression and a vector of
 numeric labels to merge similar modules.
 }
 \examples{
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Calculate adjacency matrix with example beta value 8
 cem <- get_adj(cem, beta=8)
 # Get modules

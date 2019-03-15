@@ -16,7 +16,7 @@ get_cemitool_r2_beta(cem, ...)
 \item{...}{Optional parameters.}
 
 \item{eps}{A value indicating the accepted interval between successive
-   values of R squared to use to calculate the selected beta. 
+   values of R squared to use to calculate the selected beta.
 Default: 0.1.}
 }
 \value{
@@ -30,9 +30,7 @@ a vector containing the chosen beta and corresponding R squared value.
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Get modules and beta data
 cem <- find_modules(cem)
 # Get CEMiTool R2 and beta values

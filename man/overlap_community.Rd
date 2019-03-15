@@ -17,9 +17,9 @@ overlap_community(mod_intersection_df, presence_as_weights = FALSE,
 
 \item{smallest_community}{Minimal number of genes in community (default:15)}
 
-\item{method}{Character string denoting an \code{igraph} package clustering function. 
+\item{method}{Character string denoting an \code{igraph} package clustering function.
 One of 'cluster_fast_greedy',  'cluster_edge_betweenness', 'cluster_fast_greedy',
- 'cluster_label_prop', 'cluster_leading_eigen', 'cluster_louvain', 'cluster_optimal', 
+ 'cluster_label_prop', 'cluster_leading_eigen', 'cluster_louvain', 'cluster_optimal',
  'cluster_spinglass' or 'cluster_walktrap'. Default: 'cluster_fast_greedy'}
 }
 \value{
@@ -29,18 +29,18 @@ A list containing the genes present in each community detected
 Returns communities from edgelist created by cemoverlap function.
 }
 \details{
-Function takes edgelist as inputs and generates communities using functions 
+Function takes edgelist as inputs and generates communities using functions
    provided in igraph package (default:'cluster_fast_greedy')
 }
 \examples{
-\dontrun{ 
+\dontrun{
 # Run the cemitool function twice on expr dataset. Each time, one sample will be removed
 data(expr0)
 set.seed(10)
 dset1 <- expr0[,-sample(1:ncol(expr0), 1)]
 dset2 <- expr0[,-sample(1:ncol(expr0), 1)]
-cem1 <- cemitool(dset1, plot=FALSE) 
-cem2 <- cemitool(dset2, plot=FALSE) 
+cem1 <- cemitool(dset1, plot=FALSE)
+cem2 <- cemitool(dset2, plot=FALSE)
 cem_overlap_df <- cem_overlap(list(cem1, cem2))
 comm_overlap_df <- overlap_community(cem_overlap_df)
 }

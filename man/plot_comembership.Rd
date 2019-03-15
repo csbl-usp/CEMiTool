@@ -16,7 +16,7 @@ A plot containing the number of edges present in each fraction of studies
 Plot module edge co-membership
 }
 \examples{
-\dontrun{ 
+\dontrun{
 # Run the cemitool function five times on expr0 dataset. Each time, 10 samples will be removed.
 data(expr0)
 data(sample_annot)
@@ -31,11 +31,11 @@ dset4 <- expr0[,-sample(1:ncol(expr0), 10)]
 set.seed(14)
 dset5 <- expr0[,-sample(1:ncol(expr0), 10)]
 
-cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+cem1 <- cemitool(dset1, sample_annot, plot=FALSE)
 cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
-cem3 <- cemitool(dset3, sample_annot, plot=FALSE) 
-cem4 <- cemitool(dset4, sample_annot, plot=FALSE) 
-cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
+cem3 <- cemitool(dset3, sample_annot, plot=FALSE)
+cem4 <- cemitool(dset4, sample_annot, plot=FALSE)
+cem5 <- cemitool(dset5, sample_annot, plot=FALSE)
 
 cem_overlap_df <- cem_overlap(list(cem1, cem2, cem3, cem4, cem5))
 plot_comembership(cem_overlap_df)

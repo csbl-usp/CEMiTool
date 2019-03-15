@@ -16,9 +16,9 @@ plot_profile(cem, ...)
 
 \item{...}{Optional parameters.}
 
-\item{order_by_class}{Logical. Only used if a sample 
-annotation file is present. Whether or not to order by the 
-class column in the sample annotation file (as defined by the 
+\item{order_by_class}{Logical. Only used if a sample
+annotation file is present. Whether or not to order by the
+class column in the sample annotation file (as defined by the
 class_column slot in \code{cem}).}
 
 \item{center_func}{Character string indicating the centrality measure to show in

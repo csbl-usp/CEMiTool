@@ -15,9 +15,9 @@ NULL
 #' Creates a plot with module gene expression profiles along samples
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param order_by_class Logical. Only used if a sample 
-#'           annotation file is present. Whether or not to order by the 
-#'           class column in the sample annotation file (as defined by the 
+#' @param order_by_class Logical. Only used if a sample
+#'           annotation file is present. Whether or not to order by the
+#'           class column in the sample annotation file (as defined by the
 #'           class_column slot in \code{cem}).
 #' @param center_func Character string indicating the centrality measure to show in
 #'        the plot. Either 'mean' (the default) or 'median'.
@@ -54,7 +54,8 @@ setMethod('plot_profile', signature('CEMiTool'),
         #cem <- get_args(cem=cem, vars=vars)
 
         modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
-        expr <- expr_data(cem)
+        expr <- expr_data(cem, filter=cem@parameters$filter,
+                          apply_vst=cem@parameters$apply_vst)
         annot <- sample_annotation(cem)
         sample_name_column <- cem@sample_name_column
         class_column <- cem@class_column
@@ -166,7 +167,7 @@ setMethod('plot_ora', signature('CEMiTool'),
         if(nrow(cem@ora) == 0){
             stop("No ORA data! Did you run mod_ora()?")
         }
-          
+
         #cem <- get_args(cem=cem, vars=mget(ls()))
         ora_splitted <- split(cem@ora, cem@ora$Module)
         mod_cols <- mod_colors(cem)
@@ -518,16 +519,16 @@ setMethod('plot_beta_r2', signature('CEMiTool'),
         pl <- ggplot(fit, aes_(x=~Power, y=~new_fit)) +
               geom_line(color="darkgrey") +
               geom_point(size=1.5) +
-              theme(axis.text=element_text(size=12), 
+              theme(axis.text=element_text(size=12),
                     plot.title=element_text(hjust=0.5)) +
-              scale_y_continuous(breaks=seq(round(min(fit$new_fit), 1), 1, by=0.2), 
+              scale_y_continuous(breaks=seq(round(min(fit$new_fit), 1), 1, by=0.2),
                                  limits=c(NA, 1)) +
-              labs(y="Scale-free topology model fit, R squared", title=plot_title, 
+              labs(y="Scale-free topology model fit, R squared", title=plot_title,
                    x="Soft-threshold beta")
 
         if(!is.na(beta_power)){
-            pl <- pl + annotate(geom="text", label=beta_power, 
-                                x=beta_power, 
+            pl <- pl + annotate(geom="text", label=beta_power,
+                                x=beta_power,
                                 y=fit[fit$Power == beta_power, "new_fit"] + 0.1,
                                 color="red", size=7)
         }
