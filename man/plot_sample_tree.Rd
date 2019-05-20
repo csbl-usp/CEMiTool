@@ -9,7 +9,7 @@
 plot_sample_tree(cem, ...)
 
 \S4method{plot_sample_tree}{CEMiTool}(cem, col_vector = NULL,
-  sample_name_column = NULL, class_column = NULL, filtered = FALSE)
+  sample_name_column = NULL, class_column = NULL, filter = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool} or \code{data.frame}.}
@@ -24,7 +24,7 @@ For CEMiTool objects, this will be the string specified in the sample_name_colum
 \item{class_column}{A string specifying the column to be used as sample group identification.
 For CEMiTool objects, this will be the string specified in the class_column slot.}
 
-\item{filtered}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
+\item{filter}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
 }
 \value{
 Object of class \code{CEMiTool} with dendrogram or a plot object.

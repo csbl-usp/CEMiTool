@@ -21,25 +21,25 @@ Make LIMMA comparisons
 }
 \examples{
 \dontrun{
-# Create a mock expressionset to test functions 
+# Create a mock expressionset to test functions
       mockexpset <- matrix(rnorm(15000), ncol = 15)
       colnames(mockexpset) <- paste0('GSM', seq(1, 15))
       set.seed(100)
       rownames(mockexpset) <- apply(replicate(n = 1000, sample(letters, 8)),
-                                  2, function(x) paste(x, collapse = '')) 
-      sample_annot <- data.frame(geo_accession = colnames(mockexpset), 
-                               group = c(rep('skin_healthy', 5), rep('degree1', 5), 
-                                         rep('degree2', 5)), 
+                                  2, function(x) paste(x, collapse = ''))
+      sample_annot <- data.frame(geo_accession = colnames(mockexpset),
+                               group = c(rep('skin_healthy', 5), rep('degree1', 5),
+                                         rep('degree2', 5)),
                                subject = paste0('S', c(rep(1:5),rep(1:5), rep(1:5))))
-# Testing function below 
+# Testing function below
       # Paired
-      cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-                                 comp_group = 'skin_healthy', subject_col= 'subject', 
+      cont_mat1 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'),
+                                 comp_group = 'skin_healthy', subject_col= 'subject',
                                  sample_annot = sample_annot, expr = mockexpset)
       limma_result1 <- do.call(makeLimmaComp, cont_mat1)
       # Unpaired
-      cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'), 
-                                 comp_group = 'skin_healthy', sample_annot = sample_annot, 
+      cont_mat2 <- makeContMatrix(class_column = 'group', which_groups = c('degree1', 'degree2'),
+                                 comp_group = 'skin_healthy', sample_annot = sample_annot,
                                  expr = mockexpset)
       limma_result2 <- do.call(makeLimmaComp, cont_mat2)
 }

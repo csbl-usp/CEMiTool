@@ -1,5 +1,7 @@
 context('mod_colors')
 
+data(cem)
+
 test_that('mod_colors input is a named character vector', {
 	mod_cols <- mod_colors(cem)
 	expect_is(mod_cols, "character")
@@ -11,4 +13,5 @@ test_that('mod_colors returns the correct errors when given bad input', {
     expect_error(mod_colors(cem) <- mock_colors)
     names(mock_colors) <- c("A", "B", "C", "D", "E")
     expect_error(mod_colors(cem) <- mock_colors)
+    expect_error(mod_colors(cem) <- mock_colors[1:4])
 })

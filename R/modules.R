@@ -12,9 +12,9 @@
 #' @param cor_method A character string indicating which correlation coefficient
 #'                   is to be computed. Default \code{"pearson"}
 #' @param cor_function A character string indicating the correlation function to be used. Default \code{'cor'}.
-#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1. 
+#' @param eps A value for accepted R-squared interval between subsequent beta values. Default is 0.1.
 #' @param set_beta A value to override the automatically selected beta value. Default is NULL.
-#' @param force_beta Whether or not to automatically force a beta value based on number of samples. Default is FALSE. 
+#' @param force_beta Whether or not to automatically force a beta value based on number of samples. Default is FALSE.
 #' @param min_ngen Minimal number of genes per submodule. Default \code{20}.
 #' @param merge_similar Logical. If \code{TRUE}, (the default) merge similar modules.
 #' @param network_type A character string indicating to use either "unsigned" (default) or "signed" networks. Default \code{"unsigned"}
@@ -24,15 +24,13 @@
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}
 #' @param ... Optional parameters.
 #'
-#' @return Object of class \code{CEMiTool} 
+#' @return Object of class \code{CEMiTool}
 #'
 #' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize CEMiTool object with expression
-#' cem <- new_cem(expr0)
-#' # Filter data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Define network modules
 #' cem <- find_modules(cem)
 #' # Check results
@@ -45,17 +43,18 @@ setGeneric('find_modules', function(cem, ...) {
 })
 #' @rdname find_modules
 #' @export
-setMethod('find_modules', signature('CEMiTool'), 
+setMethod('find_modules', signature('CEMiTool'),
     function(cem, cor_method=c('pearson', 'spearman'),
-                  cor_function='cor', eps=0.1, 
-                  set_beta=NULL, force_beta=FALSE, 
+                  cor_function='cor', eps=0.1,
+                  set_beta=NULL, force_beta=FALSE,
                   min_ngen=20, merge_similar=TRUE,
                   network_type='unsigned', tom_type='signed',
                   diss_thresh=0.8, verbose=FALSE) {
 
     cor_method <- match.arg(cor_method)
-    
-    expr <- expr_data(cem)
+
+    expr <- expr_data(cem, filter=cem@parameters$filter,
+                      apply_vst=cem@parameters$apply_vst)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -92,6 +91,8 @@ setMethod('find_modules', signature('CEMiTool'),
             stop(c("Parameter set_beta must be one of: ", paste(fit_indices$Power, collapse=" ")))
         }else if(is.character(set_beta) & tolower(set_beta)!= "wgcna"){
             stop("Unrecognized string character for parameter set_beta")
+        }else if(is.na(set_beta)){
+            stop("Parameter set_beta cannot be NA.")
         }
     }
 
@@ -133,7 +134,8 @@ setMethod('find_modules', signature('CEMiTool'),
     cem@parameters$phi <- phi
 
     # Get adjacency matrix
-    cem <- get_adj(cem, beta=beta)
+    cem <- get_adj(cem, beta=beta, network_type=network_type,
+                   cor_function=cor_function, cor_method=cor_method)
 
     # Get modules
     mods <- get_mods(cem, tom_type=tom_type, min_ngen=min_ngen)
@@ -164,16 +166,16 @@ setMethod('find_modules', signature('CEMiTool'),
     names(new_names) <- original_names
     new_names["0"] <- "Not.Correlated"
 
-    out <- data.frame(genes=rownames(expr), 
-                      modules=new_names[as.character(mods)], 
+    out <- data.frame(genes=rownames(expr),
+                      modules=new_names[as.character(mods)],
                       stringsAsFactors=FALSE)
 
     #params <- list('cor_method'=cor_method,
     #               'min_ngen'=min_ngen,
     #               'merge_similar'=merge_similar,
     #               'diss_thresh'=diss_thresh,
-    #               'r2'=r2, 
-    #               'beta'=beta, 
+    #               'r2'=r2,
+    #               'beta'=beta,
     #               'phi'=phi,
     #               'n_mods'=n_mods)
 
@@ -187,8 +189,8 @@ setMethod('find_modules', signature('CEMiTool'),
 #'
 #' @param cem Object of class \code{CEMiTool}
 #'
-#' @return Object of class \code{data.frame} 
-#' @examples 
+#' @return Object of class \code{data.frame}
+#' @examples
 #' # Get example CEMiTool object
 #' data(cem)
 #' # Get modules and beta data
@@ -209,32 +211,30 @@ setMethod("fit_data", signature("CEMiTool"),
 })
 
 #' Soft-threshold beta data
-#' 
-#' This function takes the input parameters from find_modules 
+#'
+#' This function takes the input parameters from find_modules
 #' and calculates the WGCNA soft-threshold parameters and returns
 #' them.
-#' 
+#'
 #' @param cem A CEMiTool object containing expression data
-#' @param network_type A character string indicating to use either "unsigned" 
+#' @param network_type A character string indicating to use either "unsigned"
 #'           (default) or "signed" networks. Default \code{"unsigned"}.
-#' @param cor_function A character string indicating the correlation function 
+#' @param cor_function A character string indicating the correlation function
 #'           to be used. Default \code{'cor'}.
-#' @param cor_method A character string indicating which correlation 
+#' @param cor_method A character string indicating which correlation
 #'           coefficient is to be computed. Default \code{"pearson"}
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}
 #' @param ... Optional parameters.
 #'
 #' @return A list containing the soft-threshold selected by WGCNA and scale-free model parameters
-#' @examples 
+#' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Get beta data
 #' beta_data <- get_beta_data(cem)
-#' 
+#'
 #' @rdname get_beta_data
 #' @export
 setGeneric('get_beta_data', function(cem, ...) {
@@ -243,10 +243,11 @@ setGeneric('get_beta_data', function(cem, ...) {
 #' @rdname get_beta_data
 #' @export
 setMethod('get_beta_data', signature('CEMiTool'),
-    function(cem, network_type="unsigned", cor_function="cor", 
+    function(cem, network_type="unsigned", cor_function="cor",
                       cor_method="pearson", verbose=FALSE){
 
-    expr <- expr_data(cem)
+    expr <- expr_data(cem, filter=cem@parameters$filter,
+                      apply_vst=cem@parameters$apply_vst)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -269,7 +270,7 @@ setMethod('get_beta_data', signature('CEMiTool'),
 
     # Define a range of soft-thresholding candidates
     if(network_type=="unsigned"){
-        powers_end <- 20 
+        powers_end <- 20
     } else if (network_type=="signed"){
         powers_end <- 30
     }
@@ -286,25 +287,23 @@ setMethod('get_beta_data', signature('CEMiTool'),
 })
 
 #' Calculate phi
-#' 
-#' This function takes a CEMiTool object and returns the phi parameter. 
-#' 
+#'
+#' This function takes a CEMiTool object and returns the phi parameter.
+#'
 #' @param cem A CEMiTool object containing the fit_indices slot
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return The phi parameter
-#' @examples 
+#' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Get modules and beta data
 #' cem <- find_modules(cem)
 #' # Get phi
 #' get_phi(cem)
-#' 
+#'
 #' @rdname get_phi
 #' @export
 setGeneric('get_phi', function(cem, ...) {
@@ -337,18 +336,16 @@ setMethod('get_phi', signature('CEMiTool'),
 #'
 #' @param cem A CEMiTool object containing the fit_indices slot
 #' @param eps A value indicating the accepted interval between successive
-#'                 values of R squared to use to calculate the selected beta. 
+#'                 values of R squared to use to calculate the selected beta.
 #'              Default: 0.1.
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return A vector containing R squared value and the chosen beta parameter.
 #' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Get modules and beta data
 #' cem <- find_modules(cem)
 #' # Get CEMiTool R2 and beta values
@@ -388,21 +385,19 @@ setMethod('get_cemitool_r2_beta', signature(cem='CEMiTool'),
     })
 
 #' Calculate network connectivity
-#' 
-#' This function takes a CEMiTool object and returns the network connectivity. 
+#'
+#' This function takes a CEMiTool object and returns the network connectivity.
 #' @param cem Object of class \code{CEMiTool} containing the fit_indices slot
 #' @param beta A soft-thresholding value to be used for the network.
 #' @param ... Optional parameters.
 #'
 #' @return The value of the network's connectivity.
-#' 
-#' @examples 
+#'
+#' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Get modules and beta data
 #' cem <- find_modules(cem)
 #' # Get network connectivity with example beta value 8
@@ -434,9 +429,9 @@ setMethod('get_connectivity', signature(cem='CEMiTool'),
     })
 
 #' Get or set adjacency matrix value
-#' 
+#'
 #' This function takes a \code{CEMiTool} object containing expression values
-#' and returns a CEMiTool object with an adjacency matrix in the adjacency slot. 
+#' and returns a CEMiTool object with an adjacency matrix in the adjacency slot.
 #'
 #' @param cem Object of class \code{CEMiTool}
 #' @param value Object of class \code{matrix} containing adjacency data. Only used
@@ -445,18 +440,16 @@ setMethod('get_connectivity', signature(cem='CEMiTool'),
 #'
 #' @return Object of class \code{matrix} with adjacency values or object of class \code{CEMiTool}.
 #'
-#' @examples 
+#' @examples
 #' # Get example expression data
 #' data(expr0)
-#' # Initialize new CEMiTool object with expression 
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' # Initialize new CEMiTool object with expression
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Calculate adjacency matrix with example beta value 8
 #' cem <- get_adj(cem, beta=8)
 #' # Return adjacency matrix
 #' adj <- adj_data(cem)
-#' # Check result 
+#' # Check result
 #' adj[1:5, 1:5]
 #' # Set adjacency matrix to CEMiTool object
 #' adj_data(cem) <- adj
@@ -473,7 +466,7 @@ setMethod("adj_data", signature("CEMiTool"),
     })
 
 #' @rdname adj_data
-#' @export 
+#' @export
 setGeneric("adj_data<-", function(cem, value) {
     standardGeneric("adj_data<-")
 })
@@ -481,13 +474,14 @@ setGeneric("adj_data<-", function(cem, value) {
 
 #' @rdname adj_data
 setReplaceMethod('adj_data', signature(cem='CEMiTool'),
-    function(cem, value) {    
+    function(cem, value) {
 
         if(!is.matrix(value)){
             stop("The object provided is not a matrix object")
         }
 
-        expr <- expr_data(cem)
+        expr <- expr_data(cem, filter=cem@parameters$filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -502,28 +496,26 @@ setReplaceMethod('adj_data', signature(cem='CEMiTool'),
 
 #' Calculate adjacency matrix
 #'
-#' This function takes a \code{CEMiTool} object 
+#' This function takes a \code{CEMiTool} object
 #' and returns an adjacency matrix.
 #'
 #' @param cem Object of class \code{CEMiTool}
 #' @param beta Selected soft-threshold value
-#' @param network_type A character string indicating to use either "unsigned" 
+#' @param network_type A character string indicating to use either "unsigned"
 #'        (default) or "signed" networks. Default \code{"unsigned"}.
-#' @param cor_function A character string indicating the correlation function 
+#' @param cor_function A character string indicating the correlation function
 #'        to be used. Default \code{'cor'}.
-#' @param cor_method A character string indicating which correlation 
+#' @param cor_method A character string indicating which correlation
 #'        coefficient is to be computed. Default \code{"pearson"}.
 #' @param ... Optional parameters.
-#' 
+#'
 #' @return Object of class \code{CEMiTool} with adjacency data
 #'
 #' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Calculate adjacency matrix with example beta value 8
 #' cem <- get_adj(cem, beta=8)
 #' # Check results
@@ -544,7 +536,8 @@ setMethod("get_adj", signature("CEMiTool"),
             stop("Please provide a soft-threshold beta value. Run get_cemitool_r2_beta() for CEMiTool's default value.")
         }
 
-        expr <- expr_data(cem)
+        expr <- expr_data(cem, filter=cem@parameters$filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -560,22 +553,23 @@ setMethod("get_adj", signature("CEMiTool"),
         }
 
         # Calculating adjacency matrix
-        adj <- WGCNA::adjacency(expr_t, power=beta, type=network_type, corFnc=cor_function, corOptions=cor_options)
+        adj <- WGCNA::adjacency(expr_t, power=beta, type=network_type,
+                                corFnc=cor_function, corOptions=cor_options)
         cem@adjacency <- adj
         return(cem)
     })
 
 #' Calculate co-expression modules
-#' 
-#' This function takes a \code{CEMiTool} object containing an adjacency matrix 
-#' together with the given network parameters, and returns the given 
+#'
+#' This function takes a \code{CEMiTool} object containing an adjacency matrix
+#' together with the given network parameters, and returns the given
 #' co-expression modules.
 #' @param cem Object of class \code{CEMiTool}.
-#' @param cor_function A character string indicating the correlation function 
+#' @param cor_function A character string indicating the correlation function
 #'        to be used. Default \code{'cor'}.
-#' @param cor_method A character string indicating which correlation 
+#' @param cor_method A character string indicating which correlation
 #'        coefficient is to be computed. Default \code{"pearson"}.
-#' @param tom_type A character string indicating to use either "unsigned" or 
+#' @param tom_type A character string indicating to use either "unsigned" or
 #'           "signed" (default) TOM similarity measure.
 #' @param min_ngen Minimal number of genes per module (Default: 20).
 #' @param ... Optional parameters.
@@ -586,9 +580,7 @@ setMethod("get_adj", signature("CEMiTool"),
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Calculate adjacency matrix with example beta value 8
 #' cem <- get_adj(cem, beta=8)
 #' # Get module labels
@@ -603,8 +595,9 @@ setGeneric('get_mods', function(cem, ...) {
 setMethod('get_mods', signature(cem='CEMiTool'),
     function(cem, cor_function="cor", cor_method="pearson",
              tom_type="signed", min_ngen=20) {
-    
-    expr <- expr_data(cem)
+
+    expr <- expr_data(cem, filter=cem@parameters$filter,
+                      apply_vst=cem@parameters$apply_vst)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -626,7 +619,7 @@ setMethod('get_mods', signature(cem='CEMiTool'),
 
     # Calculating Topological Overlap Matrix
     if (tom_type == 'signed') {
-        tom <- WGCNA::TOMsimilarity(adj*sign(WGCNA::cor(expr_t, use=cor_options$use, 
+        tom <- WGCNA::TOMsimilarity(adj*sign(WGCNA::cor(expr_t, use=cor_options$use,
                                                         method=cor_options$method)), TOMType=tom_type)
     } else if (tom_type == 'unsigned') {
         tom <- WGCNA::TOMsimilarity(adj, TOMType=tom_type)
@@ -648,24 +641,22 @@ setMethod('get_mods', signature(cem='CEMiTool'),
 
 #' Merge similar modules
 #'
-#' This function takes a CEMiTool object with expression and a vector of 
+#' This function takes a CEMiTool object with expression and a vector of
 #' numeric labels to merge similar modules.
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param mods A vector containing numeric labels for each module gene
 #' @param diss_thresh A threshold of dissimilarity for modules. Default is 0.8.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps. Default \code{FALSE}
-#' @param ... Optional parameters. 
+#' @param ... Optional parameters.
 #'
 #' @return Numeric labels assigning genes to modules.
 #'
-#' @examples 
+#' @examples
 #' # Get example expression data
 #' data(expr0)
 #' # Initialize new CEMiTool object with expression data
-#' cem <- new_cem(expr0)
-#' # Filter expression data
-#' cem <- filter_expr(cem)
+#' cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 #' # Calculate adjacency matrix with example beta value 8
 #' cem <- get_adj(cem, beta=8)
 #' # Get modules
@@ -674,55 +665,56 @@ setMethod('get_mods', signature(cem='CEMiTool'),
 #' merged_mods <- get_merged_mods(cem, mods)
 #'
 #' @rdname get_merged_mods
-#' @export 
+#' @export
 setGeneric('get_merged_mods', function(cem, ...) {
     standardGeneric('get_merged_mods')
 })
 #' @rdname get_merged_mods
 setMethod('get_merged_mods', signature(cem='CEMiTool'),
     function(cem, mods, diss_thresh=0.8, verbose=FALSE){
-        expr <- expr_data(cem)
+        expr <- expr_data(cem, filter=cem@parameters$filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
         expr_t <- t(expr)
         names(expr_t) <- rownames(expr)
         rownames(expr_t) <- colnames(expr)
-                
+
         if (verbose) {
             message('Merging modules based on eigengene similarity')
         }
-                    
+
         # Calculates eigengenes
         me_list <- WGCNA::moduleEigengenes(expr_t, colors=mods, grey=0)
         me_eigen <- me_list$eigengenes
-                        
+
         # Calculates dissimilarity of module eigengenes
         me_diss <- 1 - stats::cor(me_eigen)
-                    
+
         # Clustering module eigengenes
         me_tree <- hclust(as.dist(me_diss), method='average')
-                            
+
         # Setting cut height
-        me_diss_thresh <- 1 - diss_thresh 
-                            
-        # Merging modules                    
+        me_diss_thresh <- 1 - diss_thresh
+
+        # Merging modules
         merged_mods <-  WGCNA::mergeCloseModules(expr_t, mods,
                                                  cutHeight=me_diss_thresh)
-                                
+
         # The merged modules colors
         mods <- merged_mods$colors
-                                
+
         return(mods)
     })
 
-#' Co-expression module summarization 
+#' Co-expression module summarization
 #'
 #' Summarizes modules using mean or eigengene expression.
 #'
 #' @param cem Object of class \code{CEMiTool}.
-#' @param method A character string indicating which summarization method 
-#' is to be used. Can be 'eigengene', 'mean' or 'median'. Default is 'mean'. 
+#' @param method A character string indicating which summarization method
+#' is to be used. Can be 'eigengene', 'mean' or 'median'. Default is 'mean'.
 #' @param verbose Logical. If \code{TRUE}, reports analysis steps.
 #' @param ... Optional parameters.
 #'
@@ -733,7 +725,7 @@ setMethod('get_merged_mods', signature(cem='CEMiTool'),
 #' data(cem)
 #' # Summarize results
 #' mod_summary <- mod_summary(cem)
-#' 
+#'
 #' @rdname mod_summary
 #' @export
 setGeneric('mod_summary', function(cem, ...) {
@@ -757,7 +749,8 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 
         modules <- unique(cem@module[, 'modules'])
 
-        expr <- expr_data(cem)
+        expr <- expr_data(cem, filter=cem@parameters$filter,
+                          apply_vst=cem@parameters$apply_vst)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -780,7 +773,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
             expr_t <- t(expr)
             colnames(expr_t) <- rownames(expr)
             rownames(expr_t) <- colnames(expr)
-            me_list <- WGCNA::moduleEigengenes(expr_t, 
+            me_list <- WGCNA::moduleEigengenes(expr_t,
                                                colors=cem@module[,2])
             me_eigen <- data.table(t(me_list$eigengenes), keep.rownames=TRUE)
             setnames(me_eigen, c('modules', colnames(expr)))
@@ -791,18 +784,18 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
         }
     })
 
-#' Get hubs 
+#' Get hubs
 #'
-#' Returns \code{n} genes in each module with high connectivity. 
+#' Returns \code{n} genes in each module with high connectivity.
 #'
 #' @param cem Object of class \code{CEMiTool}.
 #' @param n Number of hubs to return from each module. If "all", returns all genes
-#' in decreasing order of connectivity. Default: 5. 
-#' @param method Method for hub calculation. Either "adjacency" or "kME". 
+#' in decreasing order of connectivity. Default: 5.
+#' @param method Method for hub calculation. Either "adjacency" or "kME".
 #' Default: "adjacency"
 #' @param ... Optional parameters.
 #'
-#' @return A \code{list} containing hub genes for each module and the value of 
+#' @return A \code{list} containing hub genes for each module and the value of
 #' the calculated method.
 #'
 #' @examples
@@ -810,7 +803,7 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
 #' data(cem)
 #' # Get module hubs
 #' hubs <- get_hubs(cem, n=10, "adjacency")
-#' 
+#'
 #' @rdname get_hubs
 #' @export
 setGeneric('get_hubs', function(cem, ...) {
@@ -823,7 +816,7 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
           if(nrow(cem@adjacency) == 0){
               stop("Make sure that you ran the method find_modules.")
           }
-          
+
           if(method == "adjacency"){
               mod2gene <- split(cem@module$genes, cem@module$modules)
               hubs <- lapply(mod2gene, function(x){
@@ -840,18 +833,19 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
                       return(character())
                   }
               })
-              return(hubs)    
+              return(hubs)
           }else if(method == "kME"){
               eigens <- mod_summary(cem, "eigengene")
               rownames(eigens) <- eigens$modules
               eigens$modules <- NULL
               eigens <- as.data.frame(t(eigens))
-              
-              expr <- expr_data(cem, filtered=TRUE)
+
+              expr <- expr_data(cem, filter=cem@parameters$filter,
+                                apply_vst=cem@parameters$apply_vst)
               datExpr <- as.data.frame(t(expr))
               kmes <- signedKME(datExpr, eigens)
               names(kmes) <- names(eigens)
-              
+
               kme_list <- as.list(kmes)
               kme_list <- lapply(kme_list, function(x){
                   names(x) <- rownames(kmes)

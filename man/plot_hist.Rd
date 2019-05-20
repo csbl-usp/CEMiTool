@@ -8,20 +8,20 @@
 \usage{
 plot_hist(cem, ...)
 
-\S4method{plot_hist}{CEMiTool}(cem, filtered = FALSE)
+\S4method{plot_hist}{CEMiTool}(cem, filter = FALSE)
 }
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
 \item{...}{Optional parameters}
 
-\item{filtered}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
+\item{filter}{Logical. Whether or not to use filtered data for CEMiTool objects (Default: FALSE).}
 }
 \value{
 Object of class \code{CEMiTool} containing expression histogram
 }
 \description{
-This function plots a histogram of the distribution of gene expression, to 
+This function plots a histogram of the distribution of gene expression, to
 help assess the normality of the data.
 }
 \examples{

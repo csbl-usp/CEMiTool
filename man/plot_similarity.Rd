@@ -34,11 +34,11 @@ dset4 <- expr0[,-sample(1:ncol(expr0), 10)]
 set.seed(14)
 dset5 <- expr0[,-sample(1:ncol(expr0), 10)]
 
-cem1 <- cemitool(dset1, sample_annot, plot=FALSE) 
+cem1 <- cemitool(dset1, sample_annot, plot=FALSE)
 cem2 <- cemitool(dset2, sample_annot, plot=FALSE)
-cem3 <- cemitool(dset3, sample_annot, plot=FALSE) 
-cem4 <- cemitool(dset4, sample_annot, plot=FALSE) 
-cem5 <- cemitool(dset5, sample_annot, plot=FALSE) 
+cem3 <- cemitool(dset3, sample_annot, plot=FALSE)
+cem4 <- cemitool(dset4, sample_annot, plot=FALSE)
+cem5 <- cemitool(dset5, sample_annot, plot=FALSE)
 mod_stats <- stat_overlap_mods(list(cem1, cem2, cem3, cem4, cem5), comp_group="g0")
 plot_similarity(mod_stats)
 }

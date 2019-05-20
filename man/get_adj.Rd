@@ -18,29 +18,27 @@ get_adj(cem, ...)
 
 \item{beta}{Selected soft-threshold value}
 
-\item{network_type}{A character string indicating to use either "unsigned" 
+\item{network_type}{A character string indicating to use either "unsigned"
 (default) or "signed" networks. Default \code{"unsigned"}.}
 
-\item{cor_function}{A character string indicating the correlation function 
+\item{cor_function}{A character string indicating the correlation function
 to be used. Default \code{'cor'}.}
 
-\item{cor_method}{A character string indicating which correlation 
+\item{cor_method}{A character string indicating which correlation
 coefficient is to be computed. Default \code{"pearson"}.}
 }
 \value{
 Object of class \code{CEMiTool} with adjacency data
 }
 \description{
-This function takes a \code{CEMiTool} object 
+This function takes a \code{CEMiTool} object
 and returns an adjacency matrix.
 }
 \examples{
 # Get example expression data
 data(expr0)
 # Initialize new CEMiTool object with expression data
-cem <- new_cem(expr0)
-# Filter expression data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Calculate adjacency matrix with example beta value 8
 cem <- get_adj(cem, beta=8)
 # Check results

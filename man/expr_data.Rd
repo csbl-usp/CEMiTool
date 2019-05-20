@@ -10,7 +10,8 @@
 \usage{
 expr_data(cem, ...)
 
-\S4method{expr_data}{CEMiTool}(cem, filtered = TRUE)
+\S4method{expr_data}{CEMiTool}(cem, filter = TRUE, apply_vst = FALSE,
+  ...)
 
 expr_data(cem) <- value
 
@@ -19,9 +20,13 @@ expr_data(cem) <- value
 \arguments{
 \item{cem}{Object of class \code{CEMiTool}}
 
-\item{...}{Optional parameters.}
+\item{...}{Additional parameters to \code{filter_genes} or
+\code{select_genes} functions.}
 
-\item{filtered}{logical. If TRUE retrieves filtered expression data}
+\item{filter}{logical. If TRUE, retrieves filtered expression data (Default: TRUE)}
+
+\item{apply_vst}{logical. If TRUE, applies variance stabilizing transformation to
+expression data (Default: FALSE)}
 
 \item{value}{Object of class \code{data.frame} with gene
 expression data}

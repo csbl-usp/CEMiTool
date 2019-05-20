@@ -53,9 +53,7 @@ Defines co-expression modules
 # Get example expression data
 data(expr0)
 # Initialize CEMiTool object with expression
-cem <- new_cem(expr0)
-# Filter data
-cem <- filter_expr(cem)
+cem <- new_cem(expr0, filter=TRUE, apply_vst=FALSE)
 # Define network modules
 cem <- find_modules(cem)
 # Check results

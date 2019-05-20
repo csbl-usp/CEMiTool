@@ -19,7 +19,7 @@ mod_gsea(cem, ...)
 
 \item{gsea_scale}{If TRUE, transform data using z-score transformation. Default: TRUE}
 
-\item{rank_method}{Character string indicating how to rank genes. Either "mean" 
+\item{rank_method}{Character string indicating how to rank genes. Either "mean"
 (the default) or "median".}
 
 \item{gsea_min_size}{Minimum gene set size (Default: 15).}
