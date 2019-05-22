@@ -336,7 +336,7 @@ setMethod('plot_gsea', signature('CEMiTool'),
             geom_point(color = "white", shape=21) +
             scale_fill_gradientn(colours=custom_pal, space = "Lab",
                                  limits=c(-max_abs_nes, max_abs_nes)) +
-            scale_size(range=c(0,30), limits=(0, NA)) +
+            scale_size(range=c(0,30), limits=c(0, NA)) +
             guides(size="none") +
             theme_minimal() +
             theme(panel.grid.major = element_blank()) +
