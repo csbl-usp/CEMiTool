@@ -7,5 +7,5 @@ test_that('a warning is thrown if there are no modules', {
 
 test_that('modules are sorted by size', {
     data(cem)
-    expect_true(identical(mod_names(cem), names(sort(table(cem@module$modules), decreasing=T))))
+    expect_true(identical(mod_names(cem), names(sort(table(cem@module$modules), decreasing=TRUE))))
 })

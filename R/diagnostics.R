@@ -48,7 +48,8 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
         if(missing(filter)) filter <- cem@parameters$filter
 
         expr <- expr_data(cem, filter=filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -189,7 +190,8 @@ setMethod('plot_mean_var', signature('CEMiTool'),
         if(missing(filter)) filter <- cem@parameters$filter
 
         expr <- expr_data(cem, filter=filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -252,7 +254,8 @@ setMethod('plot_hist', signature('CEMiTool'),
         if(missing(filter)) filter <- cem@parameters$filter
 
         expr <- expr_data(cem, filter=filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -311,7 +314,8 @@ setMethod('plot_qq', signature('CEMiTool'),
         if(missing(filter)) filter <- cem@parameters$filter
 
         expr <- expr_data(cem, filter=filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
 
         if(nrow(expr) == 0){
                 stop("CEMiTool object has no expression file!")

@@ -6,7 +6,7 @@
 \usage{
 new_cem(expr = data.frame(), sample_annot = data.frame(),
   sample_name_column = "SampleName", class_column = "Class",
-  filter = TRUE, apply_vst = FALSE)
+  filter = TRUE, apply_vst = FALSE, filter_pval = 0.1)
 }
 \arguments{
 \item{expr}{Object of class \code{data.frame} with gene
@@ -29,6 +29,9 @@ expression data or not (Default: TRUE)}
 \item{apply_vst}{Logical. Used to define if posterior functions should use a
 variance stabilizing transformation on expression data before analyses. Only
 valid if argument \code{filter} is TRUE. (Default: FALSE)}
+
+\item{filter_pval}{logical. Threshold for filter p-value. Ignored if 
+filter = FALSE (Default: 0.1)}
 }
 \value{
 Object of class \code{CEMiTool}

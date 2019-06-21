@@ -54,7 +54,8 @@ setMethod('find_modules', signature('CEMiTool'),
     cor_method <- match.arg(cor_method)
 
     expr <- expr_data(cem, filter=cem@parameters$filter,
-                      apply_vst=cem@parameters$apply_vst)
+                      apply_vst=cem@parameters$apply_vst, 
+                      filter_pval=cem@parameters$filter_pval)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -247,7 +248,8 @@ setMethod('get_beta_data', signature('CEMiTool'),
                       cor_method="pearson", verbose=FALSE){
 
     expr <- expr_data(cem, filter=cem@parameters$filter,
-                      apply_vst=cem@parameters$apply_vst)
+                      apply_vst=cem@parameters$apply_vst, 
+                      filter_pval=cem@parameters$filter_pval)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -481,7 +483,8 @@ setReplaceMethod('adj_data', signature(cem='CEMiTool'),
         }
 
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -537,7 +540,8 @@ setMethod("get_adj", signature("CEMiTool"),
         }
 
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -597,7 +601,8 @@ setMethod('get_mods', signature(cem='CEMiTool'),
              tom_type="signed", min_ngen=20) {
 
     expr <- expr_data(cem, filter=cem@parameters$filter,
-                      apply_vst=cem@parameters$apply_vst)
+                      apply_vst=cem@parameters$apply_vst, 
+                      filter_pval=cem@parameters$filter_pval)
     if(nrow(expr) == 0){
         stop("CEMiTool object has no expression file!")
     }
@@ -673,7 +678,8 @@ setGeneric('get_merged_mods', function(cem, ...) {
 setMethod('get_merged_mods', signature(cem='CEMiTool'),
     function(cem, mods, diss_thresh=0.8, verbose=FALSE){
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -750,7 +756,8 @@ setMethod('mod_summary', signature(cem='CEMiTool'),
         modules <- unique(cem@module[, 'modules'])
 
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         if(nrow(expr) == 0){
             stop("CEMiTool object has no expression file!")
         }
@@ -841,7 +848,8 @@ setMethod('get_hubs', signature(cem='CEMiTool'),
               eigens <- as.data.frame(t(eigens))
 
               expr <- expr_data(cem, filter=cem@parameters$filter,
-                                apply_vst=cem@parameters$apply_vst)
+                                apply_vst=cem@parameters$apply_vst, 
+                                filter_pval=cem@parameters$filter_pval)
               datExpr <- as.data.frame(t(expr))
               kmes <- signedKME(datExpr, eigens)
               names(kmes) <- names(eigens)

@@ -153,5 +153,5 @@ for(np in numeric_params){
 params <- data.frame(Parameter=names(params_list), 
                      Value=as.character(params_list))
 params <- merge(desc_df, params, all.y=TRUE)
-DT::datatable(params, rownames=F)
+DT::datatable(params, rownames=FALSE)
 ```

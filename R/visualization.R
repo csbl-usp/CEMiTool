@@ -55,7 +55,8 @@ setMethod('plot_profile', signature('CEMiTool'),
 
         modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         annot <- sample_annotation(cem)
         sample_name_column <- cem@sample_name_column
         class_column <- cem@class_column

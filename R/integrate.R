@@ -61,7 +61,8 @@ cem_overlap <- function(analyses, num_studies = 0, desired_table = 'adjacency', 
     analyses <- Filter(Negate(is.null), analyses)
     expr_dfs <- lapply(analyses, function(x){
         expr_data(x, filter=x@parameters$filter,
-            apply_vst=x@parameters$apply_vst)
+            apply_vst=x@parameters$apply_vst, 
+            filter_pval=x@parameters$filter_pval)
     })
     if(desired_table == "b_correlations"){
         adj_list <- lapply(analyses, adj_data)
@@ -333,7 +334,8 @@ enrich_mods <- function(community_list, analyses,
     mod_exp <- Map(function(cem, cem_name){
         annot <- sample_annotation(cem)
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         annot <- annot[annot[[cem@sample_name_column]] %in%
                            names(expr), ]
         contmat <- makeContMatrix(sample_annot = annot, class_column = cem@class_column,
@@ -822,7 +824,8 @@ mod_info <- function(analyses, df_output, gsea_metric="nes"){
 mod_activity <- function(analyses, comp_group, subject_col){
     mod_mean <- Map(function(cem_name, cem){
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst)
+                          apply_vst=cem@parameters$apply_vst, 
+                          filter_pval=cem@parameters$filter_pval)
         annot <- sample_annotation(cem)
         annot <- annot[annot[[cem@sample_name_column]] %in% names(expr), ]
         contmat <- makeContMatrix(sample_annot = annot,
