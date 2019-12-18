@@ -4,9 +4,15 @@
 \alias{new_cem}
 \title{Create a CEMiTool object}
 \usage{
-new_cem(expr = data.frame(), sample_annot = data.frame(),
-  sample_name_column = "SampleName", class_column = "Class",
-  filter = TRUE, apply_vst = FALSE, filter_pval = 0.1)
+new_cem(
+  expr = data.frame(),
+  sample_annot = data.frame(),
+  sample_name_column = "SampleName",
+  class_column = "Class",
+  filter = TRUE,
+  apply_vst = FALSE,
+  filter_pval = 0.1
+)
 }
 \arguments{
 \item{expr}{Object of class \code{data.frame} with gene
