@@ -55,7 +55,7 @@ filter_genes <- function(expr, pct=0.75, apply_vst=FALSE){
     colnames(temp) <- names(expr)
     expr <- temp
 
-    expr_var <- matrixStats::rowVars(expr)
+    expr_var <- matrixStats::rowVars(expr, na.rm=TRUE)
 
     expr <- expr[which(expr_var!=0),]
 

@@ -49,13 +49,10 @@ setMethod('plot_profile', signature('CEMiTool'),
         if(is.null(modules)){
                stop("No modules in this CEMiTool object.")
         }
-        #vars <- mget(ls())
-        #vars$modules <- NULL
-        #cem <- get_args(cem=cem, vars=vars)
 
         modules <- modules[order(as.numeric(stringr::str_extract(modules, "\\d+")))]
         expr <- expr_data(cem, filter=cem@parameters$filter,
-                          apply_vst=cem@parameters$apply_vst, 
+                          apply_vst=cem@parameters$apply_vst,
                           filter_pval=cem@parameters$filter_pval)
         annot <- sample_annotation(cem)
         sample_name_column <- cem@sample_name_column
@@ -65,7 +62,7 @@ setMethod('plot_profile', signature('CEMiTool'),
             # subsets from expr all genes inside module mod
             genes <- cem@module[cem@module[,'modules']==mod, 'genes']
             expr[, 'id'] <- rownames(expr)
-            mod_expr <- data.table::melt(expr[genes,], 'id',
+            mod_expr <- reshape2::melt(expr[genes,], 'id',
                               variable.name='sample',
                               value.name='expression')
 

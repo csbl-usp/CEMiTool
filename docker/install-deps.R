@@ -1,5 +1,5 @@
 install.packages('devtools')
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-BiocManager::install(c('gRbase', 'preprocessCore', 'impute'))
+BiocManager::install(c('preprocessCore', 'impute'))
 devtools::install_deps(dep=TRUE)
