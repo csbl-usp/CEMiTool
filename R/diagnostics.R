@@ -99,7 +99,7 @@ setMethod('plot_sample_tree', signature('CEMiTool'),
         )
 
         gp1 <- ggplot2::ggplotGrob(p1)
-        invisible(dev.off())
+        try(invisible(dev.off()), TRUE)
 
         if(!is.null(annot)){
             p2 <- ggplot2::ggplot(colors_samples, aes(samples, y=1, fill=factor(class))) +
