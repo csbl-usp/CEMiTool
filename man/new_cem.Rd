@@ -36,7 +36,7 @@ expression data or not (Default: TRUE)}
 variance stabilizing transformation on expression data before analyses. Only
 valid if argument \code{filter} is TRUE. (Default: FALSE)}
 
-\item{filter_pval}{logical. Threshold for filter p-value. Ignored if 
+\item{filter_pval}{logical. Threshold for filter p-value. Ignored if
 filter = FALSE (Default: 0.1)}
 }
 \value{

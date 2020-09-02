@@ -4,7 +4,9 @@
 \name{cem}
 \alias{cem}
 \title{CEMiTool Object}
-\format{An object of class \code{CEMiTool}}
+\format{
+An object of class \code{CEMiTool}
+}
 \usage{
 data(cem)
 }

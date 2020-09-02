@@ -161,6 +161,7 @@ setMethod('find_modules', signature('CEMiTool'),
         mods <- get_merged_mods(cem, mods, diss_thresh, verbose)
         # Re-count number of modules after merging
         n_mods <- length(unique(mods))
+        cem@parameters$n_mods <- n_mods
     }
 
     original_names <- setdiff(names(sort(table(mods), decreasing=TRUE)), 0)
@@ -172,16 +173,6 @@ setMethod('find_modules', signature('CEMiTool'),
                       modules=new_names[as.character(mods)],
                       stringsAsFactors=FALSE)
 
-    #params <- list('cor_method'=cor_method,
-    #               'min_ngen'=min_ngen,
-    #               'merge_similar'=merge_similar,
-    #               'diss_thresh'=diss_thresh,
-    #               'r2'=r2,
-    #               'beta'=beta,
-    #               'phi'=phi,
-    #               'n_mods'=n_mods)
-
-    #cem@parameters <- c(cem@parameters, params)
     cem@module <- out
     return(cem)
 
