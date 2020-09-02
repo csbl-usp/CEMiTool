@@ -105,7 +105,7 @@ setMethod("initialize", signature="CEMiTool",
 #' @param apply_vst Logical. Used to define if posterior functions should use a
 #' variance stabilizing transformation on expression data before analyses. Only
 #' valid if argument \code{filter} is TRUE. (Default: FALSE)
-#' @param filter_pval logical. Threshold for filter p-value. Ignored if 
+#' @param filter_pval logical. Threshold for filter p-value. Ignored if
 #'        filter = FALSE (Default: 0.1)
 #'
 #' @return Object of class \code{CEMiTool}
@@ -126,7 +126,7 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 
     stop_if(!is.logical(filter), "Argument 'filter' must evaluate to TRUE or FALSE.")
     stop_if(!is.logical(apply_vst), "Argument 'apply_vst' must evaluate to TRUE or FALSE.")
-    stop_if((filter_pval > 1 | filter_pval < 0), 
+    stop_if((filter_pval > 1 | filter_pval < 0),
             "Argument 'filter_pval' must be between 0 and 1.")
 
     if(nrow(sample_annot) > 0){
@@ -171,7 +171,7 @@ new_cem <- function(expr=data.frame(), sample_annot=data.frame(),
 #' @param filter logical. If TRUE, retrieves filtered expression data (Default: TRUE)
 #' @param apply_vst logical. If TRUE, applies variance stabilizing transformation to
 #' expression data (Default: FALSE)
-#' @param filter_pval logical. Threshold for filter p-value. Ignored if 
+#' @param filter_pval logical. Threshold for filter p-value. Ignored if
 #'        filter = FALSE (Default: 0.1)
 #' @param ... Additional parameters to \code{filter_genes} or
 #' \code{select_genes} functions.
@@ -197,7 +197,7 @@ setMethod("expr_data", signature("CEMiTool"),
 function(cem, filter=TRUE, apply_vst=FALSE, filter_pval=0.1, ...){
     stop_if(!is.logical(filter), "Argument 'filter' must evaluate to TRUE or FALSE.")
     stop_if(!is.logical(apply_vst), "Argument 'apply_vst' must evaluate to TRUE or FALSE.")
-    stop_if((filter_pval > 1 | filter_pval < 0), 
+    stop_if((filter_pval > 1 | filter_pval < 0),
             "Argument 'filter_pval' must be between 0 and 1.")
     if(missing(filter)) filter <- cem@parameters$filter
     if(missing(apply_vst)) apply_vst <- cem@parameters$apply_vst
@@ -496,7 +496,7 @@ cemitool <- function(expr,
     results <- new('CEMiTool', expression=expr,
                    sample_name_column=sample_name_column,
                    class_column=class_column,
-                   parameters=list(filter=filter, apply_vst=apply_vst, 
+                   parameters=list(filter=filter, apply_vst=apply_vst,
                                    filter_pval=filter_pval))
 
     # keep input parameters
@@ -586,7 +586,6 @@ cemitool <- function(expr,
         }
         interactions_data(results) <- interactions
     }
-
 
     if (!missing(annot)){
         if(verbose){
@@ -985,7 +984,7 @@ setMethod('write_files', signature(cem='CEMiTool'),
         }
 
         expr_f <- expr_data(cem, filter=cem@parameters$filter,
-                            apply_vst=cem@parameters$apply_vst, 
+                            apply_vst=cem@parameters$apply_vst,
                             filter_pval=cem@parameters$filter_pval)
         selected <- select_genes(expr_f, filter_pval=cem@parameters$filter_pval)
         writeLines(selected, file.path(directory, "selected_genes.txt"))

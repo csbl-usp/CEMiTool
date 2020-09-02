@@ -4,7 +4,9 @@
 \name{expr0}
 \alias{expr0}
 \title{Yellow Fever gene expression data from GEO study GSE13485}
-\format{An object of class \code{data.frame}}
+\format{
+An object of class \code{data.frame}
+}
 \source{
 \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse13485}{GEO}
 }

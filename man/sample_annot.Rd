@@ -4,7 +4,9 @@
 \name{sample_annot}
 \alias{sample_annot}
 \title{Yellow Fever Sample Annotation data}
-\format{An object of class \code{data.frame}}
+\format{
+An object of class \code{data.frame}
+}
 \source{
 \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=gse13485}{GEO}
 }

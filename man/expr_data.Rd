@@ -26,7 +26,7 @@ expr_data(cem) <- value
 \item{apply_vst}{logical. If TRUE, applies variance stabilizing transformation to
 expression data (Default: FALSE)}
 
-\item{filter_pval}{logical. Threshold for filter p-value. Ignored if 
+\item{filter_pval}{logical. Threshold for filter p-value. Ignored if
 filter = FALSE (Default: 0.1)}
 
 \item{value}{Object of class \code{data.frame} with gene

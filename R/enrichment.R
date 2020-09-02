@@ -268,13 +268,17 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
 
         # expression to z-score
         if(gsea_scale){
-            z_expr <- data.frame(t(scale(t(expr_data(cem, filter=FALSE, apply_vst=FALSE)),
+            z_expr <- data.frame(t(scale(t(expr_data(cem, filter=cem@parameters$filter,
+                                                     apply_vst=cem@parameters$apply_vst,
+                                                     filter_pval=cem@parameters$filter_pval)),
                                      center=TRUE,
                                      scale=TRUE)),
                                      check.names = FALSE,
                                      stringsAsFactors=FALSE)
         }else{
-            z_expr <- expr_data(cem, filter=FALSE, apply_vst=FALSE)
+            z_expr <- expr_data(cem, filter=cem@parameters$filter,
+                                apply_vst=cem@parameters$apply_vst,
+                                filter_pval=cem@parameters$filter_pval)
         }
         # calculates enrichment for each module for each class in annot
 
@@ -298,7 +302,8 @@ setMethod('mod_gsea', signature(cem='CEMiTool'),
                                          stats=genes_ranked,
                                          minSize=gsea_min_size,
                                          maxSize=gsea_max_size,
-                                         nperm=10000,
+                                         eps=0,
+                                         #nperm=10000,
                                          nproc=0)
             data.table::setDF(gsea_results)
             gsea_results[, 'leadingEdge'] <- unlist(lapply(gsea_results[, 'leadingEdge'],
