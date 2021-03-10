@@ -983,11 +983,10 @@ setMethod('write_files', signature(cem='CEMiTool'),
             module_to_gmt(cem, directory=directory)
         }
 
-        expr_f <- expr_data(cem, filter=cem@parameters$filter,
-                            apply_vst=cem@parameters$apply_vst,
-                            filter_pval=cem@parameters$filter_pval)
-        selected <- select_genes(expr_f, filter_pval=cem@parameters$filter_pval)
-        writeLines(selected, file.path(directory, "selected_genes.txt"))
+        selected <- cem@selected_genes
+        if(length(selected) > 0){
+            writeLines(selected, file.path(directory, "selected_genes.txt"))
+        }
 
         if(length(cem@enrichment) > 0){
             for (stat in names(cem@enrichment)) {
