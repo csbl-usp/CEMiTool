@@ -7,3 +7,7 @@ Co-Expression Module Identification Tool (CEMiTool) official repository
 
 ### Docker Image
 For more information about using the official CEMiTool Docker image, see [here](docker/example.md)
+
+
+### webCEMiTool
+For issues with webCEMiTool, DON'T open an issue. Please use the following form: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2053-1/email/correspondent/c1/new
