@@ -25,7 +25,7 @@ Options:
   --network-type=<nettype>           network type, 'signed' or 'unsigned' [default: unsigned]
   --tom-type=<nettype>               TOM type, 'signed' or 'unsigned' [default: signed]
   --no-merge                         does not merge related modules based on eigengene similarity
-  --rank-method=<rank                rank method [default: mean]
+  --rank-method=<rank>                rank method [default: mean]
   --min-module-size=<min>            minimum module size [default: 30]
   --diss-thresh=<thresh>             module merging correlation threshold for eigengene similarity [default: 0.8]
   --center-func=<fun>                metric used for centering [default: mean]
