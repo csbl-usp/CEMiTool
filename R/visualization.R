@@ -212,11 +212,17 @@ plot_ora_single <- function(es, ordr_by='p.adjust', max_length=50, pv_cut=0.05,
     ovf_data <- es[ovf_rows, "GeneSet"]
     test <- strtrim(ovf_data, max_length)
     dupes <- duplicated(test) | duplicated(test, fromLast=TRUE)
-    if(sum(dupes) > 0){
+    # if(sum(dupes) > 0){
+    #     test[dupes] <- ovf_data[dupes]
+    #     test[dupes] <- comsub(test[dupes])
+    #     max_length <- max(nchar(test))
+    # }
+    while(sum(dupes) > 0){
         test[dupes] <- ovf_data[dupes]
         test[dupes] <- comsub(test[dupes])
-        max_length <- max(nchar(test))
+        dupes <- duplicated(test) | duplicated(test, fromLast=TRUE)
     }
+    max_length <- max(nchar(test))
 
     es[ovf_rows, "GeneSet"] <-  paste0(strtrim(test, max_length), "...")
     es[, "GeneSet"] <- stringr::str_wrap(es[, "GeneSet"], width = 20)
