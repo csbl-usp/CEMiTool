@@ -10,4 +10,4 @@ For more information about using the official CEMiTool Docker image, see [here](
 
 
 ### webCEMiTool
-For issues with webCEMiTool, DON'T open an issue. Please use the following form: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2053-1/email/correspondent/c1/new
+For issues with webCEMiTool, DON'T open an issue. Please send an e-mail to: hnakaya at usp dot com dot br 
