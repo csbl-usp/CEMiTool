@@ -92,7 +92,7 @@ setMethod('plot_profile', signature('CEMiTool'),
 
             # adding lines
             g <- g + geom_line(aes_(group=~id), alpha=0.2, colour=mod_cols[mod]) +
-                stat_summary(aes(group=1), size=1, fun.y=get(tolower(center_func)), geom='line')
+                stat_summary(aes(group=1), size=1, fun=get(tolower(center_func)), geom='line')
 
             # custom theme
             g <- g + theme(plot.title=element_text(lineheight=0.8,
