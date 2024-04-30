@@ -1,6 +1,6 @@
 Package: CEMiTool
 Title: Co-expression Modules identification Tool
-Version: 1.27.1
+Version: 1.28.0
 Authors@R: c( person("Pedro", "Russo", email = "pedro.russo@usp.br",
         role = c("aut")), person("Gustavo", "Ferreira", email =
         "gustavo.rodrigues.ferreira@usp.br", role = c("aut")),
