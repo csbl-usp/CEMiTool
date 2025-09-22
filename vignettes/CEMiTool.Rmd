@@ -32,7 +32,6 @@ For the most basic usage of `CEMiTool` only a `data.frame` containing expression
 with gene symbols in the rows and sample names in the columns is needed, as following:
 
 ```{r}
-BiocManager::install("CEMiTool")
 library("CEMiTool")
 # load expression data
 data(expr0)
@@ -227,3 +226,5 @@ These plots are intended to highlight the distribution of expression values. A Q
 ## Beta x R2 plot and Mean connectivity plot
 These plots can only be generated if the `diagnostic_report()` function is run after the `cemitool()` function. The Beta x R2 plot is used to visualize the selection of the soft-thresholding parameter Beta and its corresponding adherence to the scale-free topology model. Selected Beta values will be shown in red, unless NA. 
 The Mean connectivity plot is intended to show the tradeoff between the network's underlying connectivity and a higher adherence to the scale-free topology model (via higher values of the soft-threshold Beta parameter).
+
+sessionInfo()

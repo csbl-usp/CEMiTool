@@ -27,9 +27,16 @@ get_args <- function(cem, vars){
     func <- as.character(sys.calls()[[sys.nframe()-go_back]][[1]])
 
     # Get command
-    if(class(get(func)) == "function"){
+    #if(class(get(func)) == "function"){
+    #    command <- deparse(sys.call(-1))
+    #}else if(class(get(func)) == "nonstandardGenericFunction"){
+    #    command <- deparse(sys.call(-2))
+    #}
+    obj <- get(func)
+
+    if (is(obj, "function")) {
         command <- deparse(sys.call(-1))
-    }else if(class(get(func)) == "nonstandardGenericFunction"){
+    } else if (is(obj, "nonstandardGenericFunction")) {
         command <- deparse(sys.call(-2))
     }
 

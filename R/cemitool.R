@@ -3,8 +3,8 @@
 #' @importFrom methods new 'slot<-' show
 #' @import dplyr
 
-setOldClass('gg')
-setOldClass('ggplot')
+#setOldClass('gg')
+#setOldClass('ggplot')
 setOldClass('gtable')
 
 #' An S4 class to represent the CEMiTool analysis.
@@ -60,9 +60,9 @@ setClass('CEMiTool', slots=list(expression='data.frame',
                                 mean_k_plot='list',
                                 barplot_ora='list',
                                 sample_tree_plot='gtable',
-                                mean_var_plot='gg',
-                                hist_plot='gg',
-                                qq_plot='gg',
+                                mean_var_plot='ANY',
+                                hist_plot='ANY',
+                                qq_plot='ANY',
                                 sample_name_column='vector',
                                 class_column='vector',
                                 mod_colors='character',
