@@ -36,8 +36,6 @@ get_args <- function(cem, vars){
 
     if (is(obj, "function")) {
         command <- deparse(sys.call(-1))
-    } else if (is(obj, "nonstandardGenericFunction")) {
-        command <- deparse(sys.call(-2))
     }
 
     # Get the name of the cemitool object variable
